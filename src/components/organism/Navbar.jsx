@@ -9,6 +9,9 @@ linkHref || (linkHref = () => {});
 
 const Logo = () => {
   const Wrapper = styled.div`
+    .text-lg {
+      font-size: 22px;
+    }
     @media screen and (max-width: 768px) {
       img {
         width: 90px;
@@ -17,17 +20,29 @@ const Logo = () => {
         margin-left: 1rem;
       }
     }
+
+    a:hover {
+      text-decoration: none;
+    }
   `;
 
   return (
     <Wrapper>
       <Link
         to={linkHref({
-          widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
+          widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
           params: { page: "about" },
         })}
       >
-        <img src="https://ipfs.near.social/ipfs/bafkreicgbhtzxgdb3noivjfx4xcwsx6nq5pnjttdc4fpgfq74ynqj5h6mq" />
+        <div className="d-flex gap-2 align-items-center">
+          <img
+            height={35}
+            width={35}
+            src="https://ipfs.near.social/ipfs/bafkreicgbhtzxgdb3noivjfx4xcwsx6nq5pnjttdc4fpgfq74ynqj5h6mq"
+          />
+
+          <b className="text-lg">infrastructure committee</b>
+        </div>
       </Link>
     </Wrapper>
   );
@@ -41,17 +56,10 @@ const ProfileIcon = () => {
     }
   `;
   return (
-    <Link
-      to={linkHref({
-        widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
-        params: { page: "profile", accountId: context.accountId },
-      })}
-    >
-      <Widget
-        src={`${REPL_DEVHUB}/widget/devhub.components.molecule.ProfileCard`}
-        props={{ iconOnly: true, accountId: context.accountId || null }}
-      />
-    </Link>
+    <Widget
+      src={`${REPL_DEVHUB}/widget/devhub.components.molecule.ProfileCard`}
+      props={{ iconOnly: true, accountId: context.accountId || null }}
+    />
   );
 };
 
@@ -110,23 +118,23 @@ const MobileMenu = styled.button`
 
 let links = [
   {
-    title: "/Admin",
+    title: "Admin",
     href: "admin",
     links: [],
   },
   {
-    title: "/Proposals",
+    title: "Proposals",
     href: "proposals",
     links: [],
   },
   {
-    title: "/RFPs",
+    title: "RFPs",
     href: "rfps",
     links: [],
   },
   {
-    title: "/About",
-    ref: "about",
+    title: "About",
+    href: "about",
     links: [],
   },
 ];
@@ -182,7 +190,7 @@ return (
       <LinksContainer>
         {links.map((link) => (
           <Widget
-            src={`${REPL_DEVHUB}/widget/devhub.components.molecule.NavbarDropdown`}
+            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.NavbarDropdown`}
             props={{
               title: link.title,
               href: link.href,
@@ -211,7 +219,7 @@ return (
               <MobileLink
                 key={`mobile-link-${idx}`}
                 className={link.href === props.page && "active"}
-                href={`/${REPL_DEVHUB}/widget/app?page=${link.href}`}
+                href={`/${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=${link.href}`}
               >
                 {link.title}
               </MobileLink>
@@ -231,7 +239,7 @@ return (
                   <MobileLink
                     key={`nested-link-${idx}`}
                     className={link.href === props.page && "active"}
-                    href={`/${REPL_DEVHUB}/widget/app?page=${it.href}`}
+                    href={`/${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=${it.href}`}
                   >
                     /{it.title}
                   </MobileLink>

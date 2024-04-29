@@ -9,9 +9,6 @@ const Theme = styled.div`
   overflow-y: scroll;
   padding-top: calc(-1 * var(--body-top-padding));
   background: #f4f4f4;
-  .container-xl {
-    padding-inline: 0px !important;
-  }
 `;
 
 const Container = styled.div`
@@ -28,7 +25,7 @@ const ContentContainer = styled.div`
 
 const AppHeader = ({ page }) => (
   <Widget
-    src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.organism.Navbar`}
+    src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.organism.Navbar`}
     props={{
       page: page,
       ...props,
@@ -39,7 +36,7 @@ const AppHeader = ({ page }) => (
 const AppLayout = ({ page, children }) => {
   return (
     <Theme>
-      <Container className="container-xl">
+      <Container className="container-xl p-3">
         <AppHeader page={page} />
         <ContentContainer>{children}</ContentContainer>
       </Container>
