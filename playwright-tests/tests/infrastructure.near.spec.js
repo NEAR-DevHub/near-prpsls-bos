@@ -5,7 +5,7 @@ test("should go to homepage", async ({ page }) => {
     "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app"
   );
 
-  const dashboardHeader = await page.getByText("Home Page");
+  const dashboardHeader = await page.getByText("About");
   await dashboardHeader.waitFor({ state: "visible" });
   expect(await dashboardHeader.isVisible()).toBeTruthy();
 });
