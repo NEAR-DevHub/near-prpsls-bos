@@ -994,7 +994,7 @@ if (showRFPPage) {
             style={{ minWidth: "350px" }}
             className="flex-1 w-100 order-1 order-md-2"
           >
-            <CollapsibleContainer noPaddingTop={true} title="Other Details">
+            <CollapsibleContainer noPaddingTop={true}>
               <div className="d-flex flex-column gap-3 gap-sm-4">
                 <InputContainer
                   heading="Submission Deadline"
