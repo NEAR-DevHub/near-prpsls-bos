@@ -12,14 +12,6 @@ const Logo = () => {
     .text-lg {
       font-size: 22px;
     }
-    @media screen and (max-width: 768px) {
-      img {
-        width: 90px;
-        height: 12px;
-        transform: scale(1.5);
-        margin-left: 1rem;
-      }
-    }
 
     a:hover {
       text-decoration: none;
