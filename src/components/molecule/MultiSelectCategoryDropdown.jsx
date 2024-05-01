@@ -3,7 +3,7 @@ import { REPL_DEVHUB } from "@/includes//common";
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 href || (href = () => {});
 
-const { selected, onChange, disabled, availableOptions } = props;
+const { selected, onChange, disabled, availableOptions, hideDropdown } = props;
 
 const [selectedOptions, setSelectedOptions] = useState(selected);
 const [isOpen, setIsOpen] = useState(false);
@@ -89,63 +89,73 @@ const Item = ({ option }) => {
 
 return (
   <>
-    {selectedOptions.map((option) => {
-      return (
-        <div className="d-flex gap-2 align-items-center">
-          {option.label}
+    <div className="d-flex gap-2 align-items-center">
+      {selectedOptions.map((option) => {
+        return (
           <div
-            className="cursor-pointer"
-            onClick={() => {
-              const updatedOptions = selectedOptions.filter(
-                (item) => item.value !== option.value
-              );
-              setSelectedOptions(updatedOptions);
+            style={{
+              color: "white",
+              backgroundColor: option.color,
+              width: "max-content",
             }}
+            className="d-flex gap-2 align-items-center badge rounded-lg p-2 h6 mb-0"
           >
-            <i class="bi bi-trash3-fill"></i>
-          </div>
-        </div>
-      );
-    })}
-
-    <Container>
-      <div
-        className="custom-select w-100"
-        tabIndex="0"
-        onBlur={() => setIsOpen(false)}
-      >
-        <div
-          className={
-            "dropdown-toggle bg-white border rounded-2 btn drop-btn w-100 " +
-            (disabled ? "disabled" : "")
-          }
-          onClick={!disabled && toggleDropdown}
-        >
-          <div className={`selected-option`}>Select Category</div>
-        </div>
-
-        {isOpen && (
-          <div className="dropdown-menu rounded-2 dropdown-menu-end dropdown-menu-lg-start px-2 shadow show w-100">
-            <div>
-              {availableOptions.map((option) => (
-                <div
-                  key={option.value}
-                  className={`dropdown-item cursor-pointer w-100 my-1 ${
-                    (selectedOptions ?? []).find(
-                      (item) => item.value === option.value
-                    )
-                      ? "selected"
-                      : ""
-                  }`}
-                  onClick={() => handleOptionClick(option)}
-                >
-                  <Item option={option} />
-                </div>
-              ))}
+            {option.label}
+            <div
+              className="cursor-pointer"
+              onClick={() => {
+                const updatedOptions = selectedOptions.filter(
+                  (item) => item.value !== option.value
+                );
+                setSelectedOptions(updatedOptions);
+              }}
+            >
+              <i class="bi bi-trash3-fill"></i>
             </div>
           </div>
-        )}
-      </div>
-    </Container>
+        );
+      })}
+    </div>
+    {!hideDropdown && (
+      <Container>
+        <div
+          className="custom-select w-100"
+          tabIndex="0"
+          onBlur={() => setIsOpen(false)}
+        >
+          <div
+            className={
+              "dropdown-toggle bg-white border rounded-2 btn drop-btn w-100 " +
+              (disabled ? "disabled" : "")
+            }
+            onClick={!disabled && toggleDropdown}
+          >
+            <div className={`selected-option`}>Select Category</div>
+          </div>
+
+          {isOpen && (
+            <div className="dropdown-menu rounded-2 dropdown-menu-end dropdown-menu-lg-start px-2 shadow show w-100">
+              <div>
+                {availableOptions.map((option) => (
+                  <div
+                    key={option.value}
+                    className={`dropdown-item cursor-pointer w-100 my-1 ${
+                      (selectedOptions ?? []).find(
+                        (item) => item.value === option.value
+                      )
+                        ? "selected"
+                        : ""
+                    }`}
+                    onClick={() => handleOptionClick(option)}
+                  >
+                    <Item option={option} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </Container>
+    )}
   </>
 );
