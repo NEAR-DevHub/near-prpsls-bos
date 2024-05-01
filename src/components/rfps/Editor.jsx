@@ -3,6 +3,7 @@ import {
   REPL_DEVHUB,
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_RPC_URL,
+  RfpCategoryOptions,
 } from "@/includes//common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -20,19 +21,6 @@ const ToCDocs = "";
 const CoCDocs = "";
 const RFPImage =
   "https://ipfs.near.social/ipfs/bafkreicbygt4kajytlxij24jj6tkg2ppc2dw3dlqhkermkjjfgdfnlizzy";
-
-const CategoryOptions = [
-  { label: "Bridges", value: "Bridges" },
-  { label: "Data Lakes", value: "Data Lakes" },
-  { label: "Explorers", value: "Explorers" },
-  { label: "Indexers", value: "Indexers" },
-  { label: "Onramps / Offramps", value: "Onramps / Offramps" },
-  { label: "Oracles", value: "Oracles" },
-  { label: "Other", value: "Other" },
-  { label: "Query API", value: "Query API" },
-  { label: "RPC Nodes", value: "RPC Nodes" },
-  { label: "Wallets", value: "Wallets" },
-];
 
 const TIMELINE_STATUS = {
   ACCEPTING_SUBMISSIONS: "ACCEPTING_SUBMISSIONS",
@@ -421,7 +409,7 @@ useEffect(() => {
     } else {
       const rfpIds = Near.view(
         REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
-        "get_all_rfps_ids"
+        "get_all_rfp_ids"
       );
       if (Array.isArray(rfpIds) && !rfpIdsArray) {
         setRfpIdsArray(rfpIds);
@@ -590,7 +578,7 @@ const CategoryDropdown = useMemo(() => {
         selected: labels,
         onChange: (v) => setLabels(v),
         disabled: false,
-        availableOptions: CategoryOptions,
+        availableOptions: RfpCategoryOptions,
       }}
     />
   );
