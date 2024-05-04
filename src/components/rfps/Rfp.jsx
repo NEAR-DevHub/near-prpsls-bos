@@ -3,7 +3,8 @@ import {
   REPL_DEVHUB,
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_RPC_URL,
-  RfpCategoryOptions,
+  TIMELINE_STATUS,
+  RFPImage,
 } from "@/includes//common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`) || {
@@ -23,16 +24,6 @@ const accountId = context.accountId;
   */
 
 const { id, timestamp } = props;
-
-const TIMELINE_STATUS = {
-  ACCEPTING_SUBMISSIONS: "ACCEPTING_SUBMISSIONS",
-  EVALUATION: "EVALUATION",
-  PROPOSAL_SELECTED: "PROPOSAL_SELECTED",
-  CANCELLED: "CANCELLED",
-};
-
-const RFPImage =
-  "https://ipfs.near.social/ipfs/bafkreicbygt4kajytlxij24jj6tkg2ppc2dw3dlqhkermkjjfgdfnlizzy";
 
 const Container = styled.div`
   .full-width-div {
@@ -153,8 +144,8 @@ const Container = styled.div`
   }
 
   .form-check-input:checked {
-    background-color: #04a46e !important;
-    border-color: #04a46e !important;
+    background-color: #3c697d !important;
+    border-color: #3c697d !important;
   }
 
   .dropdown-toggle:after {
@@ -254,6 +245,11 @@ const Avatar = styled.div`
   }
 `;
 
+const rfpLabelOptions = Near.view(
+  REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
+  "get_global_labels"
+);
+
 const LinkProfile = ({ account, children }) => {
   return (
     <Link href={`/near/widget/ProfilePage?accountId=${account}`}>
@@ -262,28 +258,9 @@ const LinkProfile = ({ account, children }) => {
   );
 };
 
-const rfp = {
-  id: 1,
-  proposal_version: "V0",
-  snapshot: {
-    category: "Events",
-    description: "some description",
-    labels: ["test2", "test1"],
-    name: "Some RFP",
-    rfp_body_version: "V0",
-    submission_deadline: "1707821848175250170",
-    summary: "sum",
-    timeline: {
-      status: "ACCEPTING_SUBMISSIONS",
-    },
-    timestamp: "1714522977348960114",
-  },
-  snapshot_history: [],
-  social_db_post_block_height: "117983121",
-};
-// Near.view(REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT, "get_rfp", {
-//   id: parseInt(id),
-// });
+const rfp = Near.view(REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT, "get_rfp", {
+  rfp_id: parseInt(id),
+});
 
 if (!rfp) {
   return (
@@ -312,7 +289,7 @@ const item = {
   path: `${REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT}/post/main`,
   blockHeight,
 };
-const rfpURL = `https://near.org/${REPL_DEVHUB}/widget/app?page=rfp&id=${rfp.id}&timestamp=${snapshot.timestamp}`;
+const rfpURL = `https://near.org/${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=rfp&id=${rfp.id}&timestamp=${snapshot.timestamp}`;
 
 const SidePanelItem = ({ title, children, hideBorder, ishidden }) => {
   return (
@@ -339,7 +316,7 @@ const isAllowedToWriteRfp = Near.view(
 );
 
 const link = href({
-  widgetSrc: "${REPL_DEVHUB}/widget/app",
+  widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
   params: {
     page: "create-rfp",
     id: rfp.id,
@@ -380,8 +357,9 @@ return (
       </div>
     </div>
     <div className="d-flex flex-wrap flex-md-nowrap px-3 px-lg-0 gap-2 align-items-center text-sm pb-3 w-100">
+      {/* TODO */}
       <Widget
-        src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.StatusTag`}
+        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.StatusTag`}
         props={{
           timelineStatus: snapshot.timeline.status,
           size: "sm",
@@ -473,17 +451,19 @@ return (
                   <div className="d-flex flex-column gap-1 p-2 px-3 description-box">
                     <div className="text-muted h6 border-bottom pb-1 mt-3">
                       RFP CATEGORY
-                      <Widget
-                        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.MultiSelectCategoryDropdown`}
-                        props={{
-                          selected: snapshot.labels,
-                          hideDropdown: true,
-
-                          availableOptions: RfpCategoryOptions,
-                        }}
-                      />
+                      <div className="my-2">
+                        <Widget
+                          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.MultiSelectCategoryDropdown`}
+                          props={{
+                            selected: snapshot.labels,
+                            disabled: true,
+                            hideDropdown: true,
+                            onChange: () => {},
+                            availableOptions: rfpLabelOptions,
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div>{/* TODO */}</div>
                     <div className="text-muted h6 border-bottom pb-1 mt-3">
                       SUMMARY
                     </div>
@@ -525,7 +505,7 @@ return (
               </div>
               <div className="border-bottom pb-4 mt-4">
                 <Widget
-                  src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.CommentsAndLogs`}
+                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.CommentsAndLogs`}
                   props={{
                     ...props,
                     id: rfp.id,
@@ -554,12 +534,12 @@ return (
               </div>
             </div>
             <div
-              style={{ minWidth: "350px" }}
+              style={{ minWidth: "300px" }}
               className="d-flex flex-column gap-4 flex-1 order-1 order-md-2"
             >
               <SidePanelItem title="Submission Deadline">
                 <h5 className="text-black">
-                  {readableDate(snapshot.submission_deadline / 1000000)}
+                  {readableDate(parseFloat(snapshot.submission_deadline))}
                 </h5>
               </SidePanelItem>
               <SidePanelItem title="Timeline">
