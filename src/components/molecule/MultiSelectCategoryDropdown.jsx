@@ -5,7 +5,7 @@ href || (href = () => {});
 
 const { selected, onChange, disabled, availableOptions, hideDropdown } = props;
 
-const [selectedOptions, setSelectedOptions] = useState(selected);
+const [selectedOptions, setSelectedOptions] = useState([]);
 const [isOpen, setIsOpen] = useState(false);
 
 const toggleDropdown = () => {
@@ -14,7 +14,13 @@ const toggleDropdown = () => {
 
 useEffect(() => {
   if (JSON.stringify(selectedOptions) !== JSON.stringify(selected)) {
-    setSelectedOptions(selected);
+    if ((selected ?? []).some((i) => !i.value)) {
+      setSelectedOptions(
+        selected.map((i) => (availableOptions ?? []).find((t) => t.value === i))
+      );
+    } else {
+      setSelectedOptions(selected);
+    }
   }
 }, [selected]);
 
@@ -84,7 +90,7 @@ const handleOptionClick = (option) => {
 };
 
 const Item = ({ option }) => {
-  return <div> {option.label}</div>;
+  return <div> {option.title}</div>;
 };
 
 return (
@@ -95,23 +101,25 @@ return (
           <div
             style={{
               color: "white",
-              backgroundColor: option.color,
+              backgroundColor: `rgb(${option.color})`,
               width: "max-content",
             }}
             className="d-flex gap-2 align-items-center badge rounded-lg p-2 h6 mb-0"
           >
-            {option.label}
-            <div
-              className="cursor-pointer"
-              onClick={() => {
-                const updatedOptions = selectedOptions.filter(
-                  (item) => item.value !== option.value
-                );
-                setSelectedOptions(updatedOptions);
-              }}
-            >
-              <i class="bi bi-trash3-fill"></i>
-            </div>
+            {option.title}
+            {!disabled && (
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  const updatedOptions = selectedOptions.filter(
+                    (item) => item.value !== option.value
+                  );
+                  setSelectedOptions(updatedOptions);
+                }}
+              >
+                <i class="bi bi-trash3-fill"></i>
+              </div>
+            )}
           </div>
         );
       })}

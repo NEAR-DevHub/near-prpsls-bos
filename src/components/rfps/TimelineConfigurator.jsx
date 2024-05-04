@@ -1,16 +1,9 @@
-import { REPL_INFRASTRUCTURE_COMMITTEE } from "@/includes//common";
+import { TIMELINE_STATUS } from "@/includes//common";
 
 const stepsArray = [1, 2, 3];
 const timeline = props.timeline;
 const disabled = props.disabled;
 const setTimeline = props.setTimeline ?? (() => {});
-
-const TIMELINE_STATUS = {
-  ACCEPTING_SUBMISSIONS: "ACCEPTING_SUBMISSIONS",
-  EVALUATION: "EVALUATION",
-  PROPOSAL_SELECTED: "PROPOSAL_SELECTED",
-  CANCELLED: "CANCELLED",
-};
 
 const TimelineStatusOptions = [
   {

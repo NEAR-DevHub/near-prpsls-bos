@@ -3,7 +3,8 @@ import {
   REPL_DEVHUB,
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_RPC_URL,
-  RfpCategoryOptions,
+  RFPImage,
+  TIMELINE_STATUS,
 } from "@/includes//common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -19,15 +20,11 @@ const FundingDocs =
   "https://near.social/devhub.near/widget/app?page=community&handle=developer-dao&tab=funding";
 const ToCDocs = "";
 const CoCDocs = "";
-const RFPImage =
-  "https://ipfs.near.social/ipfs/bafkreicbygt4kajytlxij24jj6tkg2ppc2dw3dlqhkermkjjfgdfnlizzy";
 
-const TIMELINE_STATUS = {
-  ACCEPTING_SUBMISSIONS: "ACCEPTING_SUBMISSIONS",
-  EVALUATION: "EVALUATION",
-  PROPOSAL_SELECTED: "PROPOSAL_SELECTED",
-  CANCELLED: "CANCELLED",
-};
+const rfpLabelOptions = Near.view(
+  REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
+  "get_global_labels"
+);
 
 if (!author) {
   return (
@@ -42,7 +39,7 @@ if (isEditPage) {
     `${REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT}`,
     "get_rfp",
     {
-      id: parseInt(id),
+      rfp_id: parseInt(id),
     }
   );
 }
@@ -126,14 +123,6 @@ const Container = styled.div`
 
   .border-1 {
     border: 1px solid #e2e6ec;
-  }
-  .green-btn {
-    background-color: #04a46e !important;
-    border: none;
-    color: white;
-    &:active {
-      color: white;
-    }
   }
 
   .black-btn {
@@ -268,6 +257,14 @@ const Heading = styled.div`
   }
 `;
 
+function getTimestamp(date) {
+  return Math.floor(new Date(date).getTime()).toString();
+}
+
+function getDate(timestamp) {
+  return new Date(parseFloat(timestamp)).toISOString().split("T")[0];
+}
+
 const [labels, setLabels] = useState([]);
 const [title, setTitle] = useState(null);
 const [description, setDescription] = useState(null);
@@ -285,7 +282,7 @@ const [rfpId, setRfpId] = useState(null);
 const [rfpIdsArray, setRfpIdsArray] = useState(null);
 const [isTxnCreated, setCreateTxn] = useState(false);
 const [oldRfpData, setOldRfpData] = useState(null);
-const [selectedProposals, setSelectedProposals] = useState([]);
+const [isCancelModalOpen, setCancelModal] = useState(false);
 
 const [timeline, setTimeline] = useState({
   status: TIMELINE_STATUS.ACCEPTING_SUBMISSIONS,
@@ -303,11 +300,11 @@ const memoizedDraftData = useMemo(
       description: description,
       labels: labels,
       summary: summary,
-      submission_deadline: submissionDeadline,
+      submission_deadline: getTimestamp(submissionDeadline),
       timeline: timeline,
     },
   }),
-  [title, summary, description, submissionDeadline, labels]
+  [title, summary, description, submissionDeadline, labels, timeline]
 );
 
 useEffect(() => {
@@ -334,7 +331,7 @@ useEffect(() => {
       setTitle(snapshot.name);
       setSummary(snapshot.summary);
       setDescription(snapshot.description);
-      setSubmissionDeadline(snapshot.submission_deadline);
+      setSubmissionDeadline(getDate(snapshot.submission_deadline));
       setTimeline(snapshot.timeline);
       if (isEditPage) {
         setConsent({ toc: true, coc: true });
@@ -355,11 +352,10 @@ useEffect(() => {
     return;
   }
   setDisabledSubmitBtn(
-    isTxnCreated ||
-      !title ||
+    !title ||
       !description ||
       !summary ||
-      !labels ||
+      !(labels ?? []).length ||
       !submissionDeadline ||
       !consent.toc ||
       !consent.coc
@@ -492,19 +488,17 @@ const LoadingButtonSpinner = (
   ></span>
 );
 
-//TODO
 const onSubmit = () => {
   setCreateTxn(true);
-  console.log("submitting transaction");
   const body = {
     rfp_body_version: "V0",
     name: title,
     description: description,
     summary: summary,
-    submission_deadline: submissionDeadline,
-    timeline: {},
+    submission_deadline: getTimestamp(submissionDeadline),
+    timeline: timeline,
   };
-  const args = { labels: labels, body: body };
+  const args = { labels: (labels ?? []).map((i) => i.value), body: body };
   if (isEditPage) {
     args["id"] = editRfpData.id;
   }
@@ -514,6 +508,19 @@ const onSubmit = () => {
       contractName: REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
       methodName: isEditPage ? "edit_rfp" : "add_rfp",
       args: args,
+      gas: 270000000000000,
+    },
+  ]);
+};
+
+const onTimelineChange = ({ timeline }) => {
+  setCreateTxn(true);
+
+  Near.call([
+    {
+      contractName: REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
+      methodName: "edit_rfp_timeline",
+      args: { id: rfpId.id, timeline: timeline },
       gas: 270000000000000,
     },
   ]);
@@ -578,7 +585,7 @@ const CategoryDropdown = useMemo(() => {
         selected: labels,
         onChange: (v) => setLabels(v),
         disabled: false,
-        availableOptions: RfpCategoryOptions,
+        availableOptions: rfpLabelOptions,
       }}
     />
   );
@@ -631,7 +638,7 @@ const DescriptionComponent = useMemo(() => {
       src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Compose`}
       props={{
         data: description,
-        onChange: setDescription,
+        onChange: (v) => setDescription(v),
         autocompleteEnabled: true,
         autoFocus: false,
       }}
@@ -698,25 +705,6 @@ const ConsentComponent = useMemo(() => {
   );
 }, [draftRfpData]);
 
-const SubmitBtn = useMemo(() => {
-  return (
-    <Widget
-      src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
-      props={{
-        classNames: {
-          root: "d-flex h-100 fw-light-bold btn-outline shadow-none border-1",
-        },
-        label: (
-          <div className="d-flex align-items-center gap-2">
-            <div className="circle grey"></div> <div>Submit</div>
-          </div>
-        ),
-        onClick: onSubmit,
-      }}
-    />
-  );
-}, [disabledSubmitBtn]);
-
 const SubmissionDeadline = useMemo(() => {
   return (
     <Widget
@@ -737,21 +725,6 @@ const SubmissionDeadline = useMemo(() => {
   );
 }, [draftRfpData]);
 
-const SelectedProposal = useMemo(() => {
-  return (
-    <Widget
-      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.ProposalSearchDropdown`}
-      props={{
-        whereClause: {
-          timeline: { _cast: { String: { _ilike: `%APPROVED%` } } },
-        },
-        linkedProposals: selectedProposals,
-        onChange: (v) => setSelectedProposals(v),
-      }}
-    />
-  );
-}, [draftRfpData]);
-
 if (showRFPPage) {
   return (
     <Widget
@@ -762,6 +735,20 @@ if (showRFPPage) {
 } else
   return (
     <Container className="w-100 py-2 px-0 px-sm-2 d-flex flex-column gap-3">
+      <Widget
+        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.ConfirmCancelModal`}
+        props={{
+          isOpen: isCancelModalOpen,
+          onCancelClick: () => setCancelModal(false),
+          onConfirmClick: () => {
+            setCancelModal(false);
+            setTimeline({ status: TIMELINE_STATUS.CANCELLED });
+            onTimelineChange({
+              timeline: { status: TIMELINE_STATUS.CANCELLED },
+            });
+          },
+        }}
+      />
       <Heading className="px-2 px-sm-0">
         {isEditPage ? "Edit" : "Create"} RFP
       </Heading>
@@ -868,7 +855,22 @@ if (showRFPPage) {
                         }}
                       />
                     </Link>
-                    {SubmitBtn}
+                    <Widget
+                      src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
+                      props={{
+                        classNames: {
+                          root: "d-flex h-100 fw-light-bold btn-outline shadow-none border-1",
+                        },
+                        label: (
+                          <div className="d-flex align-items-center gap-2">
+                            <div className="circle grey"></div>{" "}
+                            <div>Submit</div>
+                          </div>
+                        ),
+                        onClick: onSubmit,
+                        disabled: disabledSubmitBtn,
+                      }}
+                    />
                   </div>
                 </div>
               </div>
@@ -898,14 +900,6 @@ if (showRFPPage) {
                     disabled: false,
                   }}
                 />
-              </CollapsibleContainer>
-            </div>
-            <div className="my-2">
-              <CollapsibleContainer
-                title="Selected Proposal"
-                description="Add the proposal(s) you want to approve for this RFP. Only approved proposals are shown in the list."
-              >
-                {SelectedProposal}
               </CollapsibleContainer>
             </div>
           </div>
