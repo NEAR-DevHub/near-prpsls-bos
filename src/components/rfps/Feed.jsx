@@ -443,6 +443,14 @@ const FeedPage = () => {
 
   const renderedItems = state.data ? state.data.map(cachedRenderItem) : null;
 
+  const isAllowedToWriteRfp = Near.view(
+    REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
+    "is_allowed_to_write_rfps",
+    {
+      editor: context.accountId,
+    }
+  );
+
   return (
     <Container className="w-100 py-4 px-2 d-flex flex-column gap-3">
       <div className="d-flex justify-content-between flex-wrap gap-2 align-items-center">
@@ -486,29 +494,31 @@ const FeedPage = () => {
             />
           </div>
         </div>
-        <div className="mt-2 mt-xs-0">
-          <Link
-            to={href({
-              widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
-              params: { page: "create-rfp" },
-            })}
-          >
-            <Widget
-              src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
-              props={{
-                label: (
-                  <div className="d-flex gap-2 align-items-center">
-                    <div>
-                      <i class="bi bi-plus-circle-fill"></i>
+        {isAllowedToWriteRfp && (
+          <div className="mt-2 mt-xs-0">
+            <Link
+              to={href({
+                widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+                params: { page: "create-rfp" },
+              })}
+            >
+              <Widget
+                src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
+                props={{
+                  label: (
+                    <div className="d-flex gap-2 align-items-center">
+                      <div>
+                        <i class="bi bi-plus-circle-fill"></i>
+                      </div>
+                      Create RFP
                     </div>
-                    Create RFP
-                  </div>
-                ),
-                classNames: { root: "blue-btn" },
-              }}
-            />
-          </Link>
-        </div>
+                  ),
+                  classNames: { root: "blue-btn" },
+                }}
+              />
+            </Link>
+          </div>
+        )}
       </div>
       <div style={{ minHeight: "50vh" }}>
         {!Array.isArray(state.data) ? (
