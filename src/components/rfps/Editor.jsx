@@ -26,7 +26,15 @@ const rfpLabelOptions = Near.view(
   "get_global_labels"
 );
 
-if (!author) {
+const isAllowedToWriteRfp = Near.view(
+  REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
+  "is_allowed_to_write_rfps",
+  {
+    editor: context.accountId,
+  }
+);
+
+if (!author || !isAllowedToWriteRfp) {
   return (
     <Widget src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.LoginScreen`} />
   );
