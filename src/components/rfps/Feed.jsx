@@ -180,19 +180,30 @@ const FeedItem = ({ rfp, index }) => {
               <div className="d-flex flex-column gap-1">
                 <div className="fw-semi-bold">Submission Deadline</div>
                 <h6 className="mb-0 text-black">
-                  {readableDate(rfp.submission_deadline)}
+                  {readableDate(rfp.submission_deadline / 1000000)}
                 </h6>
               </div>
             </div>
-            <div className="d-flex gap-2 align-items-center">
-              <Widget
-                src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.CommentIcon`}
-                props={{
-                  item,
-                  showOverlay: false,
-                  onClick: () => {},
-                }}
-              />
+            <div className="d-flex gap-2 align-items-center text-sm">
+              <div>
+                <img
+                  src="https://ipfs.near.social/ipfs/bafkreif4p376f3qvpb2ewwsmi6fkcm3jalhuuzuxbgvehgl552agqw47ju"
+                  height={30}
+                  width={30}
+                />
+                proposals
+              </div>
+              <div className="d-flex align-items-center">
+                <Widget
+                  src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.CommentIcon`}
+                  props={{
+                    item,
+                    showOverlay: false,
+                    onClick: () => {},
+                  }}
+                />
+                comments
+              </div>
             </div>
           </div>
         </div>

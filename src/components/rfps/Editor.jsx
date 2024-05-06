@@ -258,11 +258,12 @@ const Heading = styled.div`
 `;
 
 function getTimestamp(date) {
-  return Math.floor(new Date(date).getTime()).toString();
+  // in nanoseconds
+  return Math.floor(new Date(date).getTime() * 1000000).toString();
 }
 
 function getDate(timestamp) {
-  return new Date(parseFloat(timestamp)).toISOString().split("T")[0];
+  return new Date(parseFloat(timestamp / 1000000)).toISOString().split("T")[0];
 }
 
 const [labels, setLabels] = useState([]);
