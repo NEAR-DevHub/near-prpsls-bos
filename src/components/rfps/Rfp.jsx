@@ -539,7 +539,9 @@ return (
             >
               <SidePanelItem title="Submission Deadline">
                 <h5 className="text-black">
-                  {readableDate(parseFloat(snapshot.submission_deadline))}
+                  {readableDate(
+                    parseFloat(snapshot.submission_deadline / 1000000)
+                  )}
                 </h5>
               </SidePanelItem>
               <SidePanelItem title="Timeline">
