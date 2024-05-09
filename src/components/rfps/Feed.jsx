@@ -1,1 +1,1 @@
-return "Feed";
+return "RFP feed";
