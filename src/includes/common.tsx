@@ -6,6 +6,9 @@ export const REPL_NEAR = "near";
 export const RFPImage =
   "https://ipfs.near.social/ipfs/bafkreicbygt4kajytlxij24jj6tkg2ppc2dw3dlqhkermkjjfgdfnlizzy";
 
+export const INDEXER_QUERY_NAME =
+  "polyprogrammist_near_devhub_rfps_linked_rfps_with_latest_snapshot";
+
 export const TIMELINE_STATUS = {
   ACCEPTING_SUBMISSIONS: "ACCEPTING_SUBMISSIONS",
   EVALUATION: "EVALUATION",
