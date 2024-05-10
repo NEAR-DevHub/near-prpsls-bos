@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { pauseIfVideoRecording } from "../util/videorecording";
 
 test.describe("Wallet is connected", () => {
   test.use({
@@ -71,6 +72,7 @@ test.describe("Wallet is connected with admin account", () => {
     const submitbutton = await page.locator("button", { hasText: "submit" });
     await submitbutton.scrollIntoViewIfNeeded();
     await expect(submitbutton).toBeEnabled();
+    await pauseIfVideoRecording(page);
     await submitbutton.click();
 
     const transactionText = JSON.stringify(
@@ -79,19 +81,24 @@ test.describe("Wallet is connected with admin account", () => {
       1
     );
     await expect(transactionText).toEqual(
-      JSON.stringify({
-        labels: ["Explorers"],
-        body: {
-          rfp_body_version: "V0",
-          name: "test title",
-          description: "The RFP description",
-          summary: "the rfp summary",
-          submission_deadline: "-58850841600000000000",
-          timeline: {
-            status: "ACCEPTING_SUBMISSIONS",
+      JSON.stringify(
+        {
+          labels: ["Explorers"],
+          body: {
+            rfp_body_version: "V0",
+            name: "test title",
+            description: "The RFP description",
+            summary: "the rfp summary",
+            submission_deadline: "-58850841600000000000",
+            timeline: {
+              status: "ACCEPTING_SUBMISSIONS",
+            },
           },
         },
-      }, null, 1)
+        null,
+        1
+      )
     );
+    await pauseIfVideoRecording(page);
   });
 });
