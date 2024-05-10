@@ -3,7 +3,7 @@ import {
   REPL_DEVHUB,
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_RPC_URL,
-  RFPImage,
+  RFP_IMAGE,
   TIMELINE_STATUS,
 } from "@/includes//common";
 
@@ -769,7 +769,7 @@ if (showRFPPage) {
           >
             <div className="d-flex gap-3 w-100">
               <div className="d-none d-sm-flex">
-                <img src={RFPImage} height={35} width={35} />
+                <img src={RFP_IMAGE} height={35} width={35} />
               </div>
               <div className="d-flex flex-column gap-4 w-100">
                 <InputContainer

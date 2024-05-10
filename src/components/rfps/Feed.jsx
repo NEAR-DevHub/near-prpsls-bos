@@ -3,8 +3,8 @@ import {
   REPL_DEVHUB,
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_NEAR,
-  RFPImage,
-  INDEXER_QUERY_NAME,
+  RFP_IMAGE,
+  RFP_INDEXER_QUERY_NAME,
 } from "@/includes//common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -143,7 +143,7 @@ const FeedItem = ({ rfp, index }) => {
         }
       >
         <div className="d-flex gap-4 w-100">
-          <img src={RFPImage} height={35} width={35} />
+          <img src={RFP_IMAGE} height={35} width={35} />
           <div className="d-flex flex-column gap-2 w-100 text-wrap">
             <div className="d-flex gap-2 align-items-center flex-wrap w-100">
               <div className="h6 mb-0 text-black">{rfp.name}</div>
@@ -192,7 +192,7 @@ const FeedItem = ({ rfp, index }) => {
                   height={30}
                   width={30}
                 />
-                {rfp.linked_proposals.length}
+                {rfp.linked_proposals.length ?? 0}
                 proposals
               </div>
               <div className="d-flex align-items-center">
@@ -236,15 +236,15 @@ const FeedPage = () => {
     cachedItems: {},
     stage: "",
     sort: "",
-    category: "",
+    label: "",
     input: "",
     loading: false,
     loadingMore: false,
-    aggregatedCount: 0,
+    aggregatedCount: null,
     currentlyDisplaying: 0,
   });
 
-  const queryName = INDEXER_QUERY_NAME;
+  const queryName = RFP_INDEXER_QUERY_NAME;
   const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
     ${queryName}(
       offset: $offset
@@ -255,7 +255,6 @@ const FeedPage = () => {
       author_id
       block_height
       name
-      category
       summary
       editor_id
       rfp_id
@@ -302,8 +301,8 @@ const FeedPage = () => {
   const buildWhereClause = () => {
     let where = {};
 
-    if (state.category) {
-      where = { category: { _eq: state.category }, ...where };
+    if (state.label) {
+      where = { labels: { _contains: state.label }, ...where };
     }
 
     if (state.stage) {
@@ -393,7 +392,7 @@ const FeedPage = () => {
 
   useEffect(() => {
     fetchRfps();
-  }, [state.sort, state.category, state.stage]);
+  }, [state.input, state.sort, state.label, state.stage]);
 
   const mergeItems = (newItems) => {
     const items = [
@@ -485,6 +484,15 @@ const FeedPage = () => {
               },
             }}
           />
+          <Widget
+            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.FilterByLabel`}
+            props={{
+              onStateChange: (select) => {
+                State.update({ label: select.value });
+              },
+              availableOptions: rfpLabelOptions,
+            }}
+          />
           <div className="d-flex gap-4 align-items-center">
             <Widget
               src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.StageDropdown`}
@@ -548,7 +556,7 @@ const FeedPage = () => {
                 </p>
               </div>
               <div className="mt-4 border rounded-2">
-                {state.data.length > 0 ? (
+                {state.data.length > 0 || state.aggregatedCount === 0 ? (
                   <InfiniteScroll
                     pageStart={0}
                     loadMore={makeMoreItems}

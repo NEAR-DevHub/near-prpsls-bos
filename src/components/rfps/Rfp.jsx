@@ -4,7 +4,7 @@ import {
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_RPC_URL,
   TIMELINE_STATUS,
-  RFPImage,
+  RFP_IMAGE,
 } from "@/includes//common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`) || {
@@ -413,7 +413,7 @@ return (
                 }}
               >
                 <div className="d-none d-sm-flex">
-                  <img src={RFPImage} height={35} width={35} />
+                  <img src={RFP_IMAGE} height={35} width={35} />
                 </div>
                 <RfpContainer className="rounded-2 flex-1">
                   <Header className="d-flex gap-1 align-items-center p-2 px-3 ">
