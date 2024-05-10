@@ -56,6 +56,7 @@ test.describe("Wallet is connected with admin account", () => {
     await page.getByText("Explorers").click();
     await expect(page.locator(".badge")).toHaveText("Explorers");
     await page.locator('input[type="text"]').pressSequentially("test title");
+    await page.locator('input[type="date"]').pressSequentially("2030-01-05");
     await page
       .locator('textarea[type="text"]')
       .pressSequentially("the rfp summary");
@@ -67,8 +68,30 @@ test.describe("Wallet is connected with admin account", () => {
     await page.getByRole("checkbox").first().click();
     await page.getByRole("checkbox").nth(1).click();
 
-    await page.locator('input[type="date"]').fill("2030-01-05");
+    const submitbutton = await page.locator("button", { hasText: "submit" });
+    await submitbutton.scrollIntoViewIfNeeded();
+    await expect(submitbutton).toBeEnabled();
+    await submitbutton.click();
 
-    await page.waitForTimeout(2000);
+    const transactionText = JSON.stringify(
+      JSON.parse(await page.locator("div.modal-body code").innerText()),
+      null,
+      1
+    );
+    await expect(transactionText).toEqual(
+      JSON.stringify({
+        labels: ["Explorers"],
+        body: {
+          rfp_body_version: "V0",
+          name: "test title",
+          description: "The RFP description",
+          summary: "the rfp summary",
+          submission_deadline: "-58850841600000000000",
+          timeline: {
+            status: "ACCEPTING_SUBMISSIONS",
+          },
+        },
+      }, null, 1)
+    );
   });
 });
