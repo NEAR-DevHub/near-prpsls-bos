@@ -12,7 +12,7 @@
     "http-server": "^14.1.1",
     "husky": "^8.0.0",
     "lint-staged": "^14.0.1",
-    "near-bos-webcomponent": "^0.0.6",
+    "near-bos-webcomponent": "^0.0.5",
     "near-social-vm-types": "^1.0.0",
     "prettier": "^2.8.4",
     "replace-in-files": "^3.0.0",
@@ -30,6 +30,7 @@
     "prepare": "husky install",
     "gateway": "node scripts/dev-gateway.js",
     "test": "npx playwright test",
+    "test:watch": "npm test --ui",
     "test:watch:codespaces": "npm test -- --ui-host=0.0.0.0",
     "build:watch": "node ./scripts/watch.js"
   },

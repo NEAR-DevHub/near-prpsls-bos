@@ -38,7 +38,9 @@ const AppLayout = ({ page, children }) => {
     <Theme>
       <Container className="container-xl p-3">
         <AppHeader page={page} />
-        <ContentContainer>{children}</ContentContainer>
+        <ContentContainer className="content-container">
+          {children}
+        </ContentContainer>
       </Container>
     </Theme>
   );
