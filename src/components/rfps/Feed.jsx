@@ -369,7 +369,7 @@ const FeedPage = () => {
       key={item.rfp_id}
       className={
         (index !== state.data.length - 1 && "border-bottom ") + index === 0 &&
-        " rounded-top-2"
+        " rounded-top-2 rfp-item-container"
       }
     >
       <FeedItem rfp={item} index={index} />

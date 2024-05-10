@@ -10,6 +10,14 @@ test.describe("Wallet is connected", () => {
     );
 
     await expect(await page.locator(".content-container")).toContainText("RFP");
-    await page.waitForTimeout(6000);
+    await expect(
+      await page.locator(".rfp-item-container").first()
+    ).toContainText("Submission Deadline");
+
+    await page
+      .getByPlaceholder("Search by content")
+      .fill("baysyeir77feroiyvbadfa");
+    await expect(await page.locator(".rfp-item-container")).not.toBeAttached();
+    await expect(await page.locator(".rfp-item-container").count()).toEqual(0);
   });
 });
