@@ -4,6 +4,7 @@ import {
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_NEAR,
   RFPImage,
+  INDEXER_QUERY_NAME,
 } from "@/includes//common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -191,6 +192,7 @@ const FeedItem = ({ rfp, index }) => {
                   height={30}
                   width={30}
                 />
+                {rfp.linked_proposals.length}
                 proposals
               </div>
               <div className="d-flex align-items-center">
@@ -242,8 +244,7 @@ const FeedPage = () => {
     currentlyDisplaying: 0,
   });
 
-  const queryName =
-    "polyprogrammist_near_devhub_rfps_rfps_with_latest_snapshot";
+  const queryName = INDEXER_QUERY_NAME;
   const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
     ${queryName}(
       offset: $offset
@@ -262,6 +263,7 @@ const FeedPage = () => {
       views
       labels
       submission_deadline
+      linked_proposals
     }
     ${queryName}_aggregate(
       order_by: {rfp_id: desc}
