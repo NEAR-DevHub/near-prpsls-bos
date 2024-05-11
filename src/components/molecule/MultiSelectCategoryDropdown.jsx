@@ -7,6 +7,7 @@ const { selected, onChange, disabled, availableOptions, hideDropdown } = props;
 
 const [selectedOptions, setSelectedOptions] = useState([]);
 const [isOpen, setIsOpen] = useState(false);
+const [initialStateApplied, setInitialState] = useState(false);
 
 const toggleDropdown = () => {
   setIsOpen(!isOpen);
@@ -14,21 +15,29 @@ const toggleDropdown = () => {
 
 useEffect(() => {
   if (JSON.stringify(selectedOptions) !== JSON.stringify(selected)) {
-    if ((selected ?? []).some((i) => !i.value)) {
-      setSelectedOptions(
-        selected.map((i) => availableOptions.find((t) => t.value === i))
-      );
-    } else {
-      setSelectedOptions(selected);
+    if (availableOptions.length > 0) {
+      if ((selected ?? []).some((i) => !i.value)) {
+        setSelectedOptions(
+          selected.map((i) => availableOptions.find((t) => t.value === i))
+        );
+      } else {
+        setSelectedOptions(selected);
+      }
+      setInitialState(true);
     }
+  } else {
+    setInitialState(true);
   }
-}, [selected]);
+}, [selected, availableOptions]);
 
 useEffect(() => {
-  if (JSON.stringify(selectedOptions) !== JSON.stringify(selected)) {
+  if (
+    JSON.stringify(selectedOptions) !== JSON.stringify(selected) &&
+    initialStateApplied
+  ) {
     onChange(selectedOptions);
   }
-}, [selectedOptions]);
+}, [selectedOptions, initialStateApplied]);
 
 const Container = styled.div`
   .drop-btn {
@@ -96,7 +105,7 @@ const Item = ({ option }) => {
 return (
   <>
     <div className="d-flex gap-2 align-items-center">
-      {selectedOptions.map((option) => {
+      {(selectedOptions ?? []).map((option) => {
         return (
           <div
             style={{
@@ -144,7 +153,7 @@ return (
           {isOpen && (
             <div className="dropdown-menu rounded-2 dropdown-menu-end dropdown-menu-lg-start px-2 shadow show w-100">
               <div>
-                {availableOptions.map((option) => (
+                {(availableOptions ?? []).map((option) => (
                   <div
                     key={option.value}
                     className={`dropdown-item cursor-pointer w-100 my-1 ${

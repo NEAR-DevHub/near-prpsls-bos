@@ -1,14 +1,14 @@
-import { TIMELINE_STATUS } from "@/includes/common";
+import { RFP_TIMELINE_STATUS } from "@/includes/common";
 const timelineStatus = props.timelineStatus;
 const size = props.size ?? "md";
 
 const getClassNameByStatus = () => {
   switch (timelineStatus) {
-    case TIMELINE_STATUS.CANCELLED:
+    case RFP_TIMELINE_STATUS.CANCELLED:
       return "grey";
-    case TIMELINE_STATUS.PROPOSAL_SELECTED:
+    case RFP_TIMELINE_STATUS.PROPOSAL_SELECTED:
       return "green";
-    case TIMELINE_STATUS.EVALUATION:
+    case RFP_TIMELINE_STATUS.EVALUATION:
       return "orange";
     default:
       return "black";

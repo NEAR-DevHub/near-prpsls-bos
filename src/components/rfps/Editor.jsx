@@ -4,12 +4,12 @@ import {
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_RPC_URL,
   RFP_IMAGE,
-  TIMELINE_STATUS,
+  RFP_TIMELINE_STATUS,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 
-const draftKey = "RFP_EDIT";
+const draftKey = "INFRA_RFP_EDIT";
 href || (href = () => {});
 
 const { id, timestamp } = props;
@@ -294,7 +294,7 @@ const [oldRfpData, setOldRfpData] = useState(null);
 const [isCancelModalOpen, setCancelModal] = useState(false);
 
 const [timeline, setTimeline] = useState({
-  status: TIMELINE_STATUS.ACCEPTING_SUBMISSIONS,
+  status: RFP_TIMELINE_STATUS.ACCEPTING_SUBMISSIONS,
 });
 
 if (allowDraft) {
@@ -751,9 +751,9 @@ if (showRFPPage) {
           onCancelClick: () => setCancelModal(false),
           onConfirmClick: () => {
             setCancelModal(false);
-            setTimeline({ status: TIMELINE_STATUS.CANCELLED });
+            setTimeline({ status: RFP_TIMELINE_STATUS.CANCELLED });
             onTimelineChange({
-              timeline: { status: TIMELINE_STATUS.CANCELLED },
+              timeline: { status: RFP_TIMELINE_STATUS.CANCELLED },
             });
           },
         }}

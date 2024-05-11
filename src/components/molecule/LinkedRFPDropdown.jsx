@@ -2,7 +2,7 @@ import {
   REPL_INFRASTRUCTURE_COMMITTEE,
   REPL_DEVHUB,
   RFP_INDEXER_QUERY_NAME,
-  TIMELINE_STATUS,
+  RFP_TIMELINE_STATUS,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -13,6 +13,7 @@ const onChange = props.onChange;
 const [selectedRFP, setSelectedRFP] = useState(null);
 const [rfpOptions, setRfpOptions] = useState([]);
 const [searchRFPId, setSearchRfpId] = useState("");
+const [initialStateApplied, setInitialState] = useState(false);
 const QUERYAPI_ENDPOINT = `https://near-queryapi.api.pagoda.co/v1/graphql`;
 const queryName = RFP_INDEXER_QUERY_NAME;
 const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
@@ -44,7 +45,7 @@ const buildWhereClause = () => {
   let where = {
     timeline: {
       _cast: {
-        String: { _ilike: `%${TIMELINE_STATUS.ACCEPTING_SUBMISSIONS}%` },
+        String: { _ilike: `%${RFP_TIMELINE_STATUS.ACCEPTING_SUBMISSIONS}%` },
       },
     },
   };
@@ -102,23 +103,28 @@ useEffect(() => {
 }, [searchRFPId]);
 
 useEffect(() => {
-  if (
-    JSON.stringify(linkedRfp) !== JSON.stringify(selectedRFP) &&
-    rfpOptions.length > 0
-  ) {
-    if (typeof linkedRfp !== "object") {
-      setSelectedRFP(rfpOptions.find((i) => linkedRfp === i.value));
-    } else {
-      setSelectedRFP(linkedRfp);
+  if (JSON.stringify(linkedRfp) !== JSON.stringify(selectedRFP)) {
+    if (rfpOptions.length > 0) {
+      if (typeof linkedRfp !== "object") {
+        setSelectedRFP(rfpOptions.find((i) => linkedRfp === i.value));
+      } else {
+        setSelectedRFP(linkedRfp);
+      }
+      setInitialState(true);
     }
+  } else {
+    setInitialState(true);
   }
 }, [linkedRfp, rfpOptions]);
 
 useEffect(() => {
-  if (JSON.stringify(linkedRfp) !== JSON.stringify(selectedRFP)) {
+  if (
+    JSON.stringify(linkedRfp) !== JSON.stringify(selectedRFP) &&
+    initialStateApplied
+  ) {
     onChange(selectedRFP);
   }
-}, [selectedRFP]);
+}, [selectedRFP, initialStateApplied]);
 
 return (
   <>
