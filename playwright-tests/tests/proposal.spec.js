@@ -1,21 +1,22 @@
-import { test } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
 test.describe("Wallet is connected", () => {
-    test.use({
-      storageState: "playwright-tests/storage-states/wallet-connected.json",
-    });
-    test("should show proposal feed", async ({ page }) => {
-      // Navigate to the proposal feed page using the same pattern as in rfp.spec.js
-      await page.goto('/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=proposals');
+  test.use({
+    storageState: "playwright-tests/storage-states/wallet-connected.json",
+  });
+  test("should show proposal feed", async ({ page }) => {
+    await page.goto(
+      "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=proposals"
+    );
 
-      // Check if the proposal feed is visible
-      const feedSelector = '.proposal-feed';
-      await page.waitForSelector(feedSelector);
-      const feedVisible = await page.isVisible(feedSelector);
-      expect(feedVisible).toBe(true);
+    await expect(await page.locator(".proposal-card").first()).toBeVisible();
+  });
+  test("should create proposal", async ({ page }) => {
+    await page.goto(
+      "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=proposals"
+    );
 
-      // Optionally, check for the existence of proposal items if needed
-      // const proposalItems = await page.$$(feedSelector + ' .proposal-item');
-      // expect(proposalItems.length).toBeGreaterThan(0);
-    });
+    await page.getByRole("button", { name: " Submit Proposal" }).click();
+    await page.waitForTimeout(2000);
+  });
 });
