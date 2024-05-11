@@ -6,7 +6,7 @@ import {
   RFP_IMAGE,
   PROPOSAL_INDEXER_QUERY_NAME,
   REPL_RPC_URL,
-} from "@/includes//common";
+} from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 href || (href = () => {});
@@ -26,6 +26,7 @@ if (!author) {
 }
 let editProposalData = null;
 let draftProposalData = null;
+const draftKey = "INFRA_PROPOSAL_EDIT";
 
 const rfpLabelOptions = Near.view(
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
@@ -733,7 +734,8 @@ const onSubmit = ({ isDraft, isCancel }) => {
   const linkedProposalsIds = linkedProposals.map((item) => item.value) ?? [];
   const body = {
     proposal_body_version: "V0",
-    linked_rfp: linkedRfp,
+    linked_rfp: linkedRfp?.value,
+    category: "Infrastructure Committee",
     name: title,
     description: description,
     summary: summary,
@@ -741,6 +743,7 @@ const onSubmit = ({ isDraft, isCancel }) => {
     requested_sponsorship_usd_amount: requestedSponsorshipAmount,
     requested_sponsorship_paid_in_currency: requestedSponsorshipToken.value,
     receiver_account: receiverAccount,
+    requested_sponsor: "infrastructure-committee.near",
     timeline: isCancel
       ? {
           status: "CANCELLED",

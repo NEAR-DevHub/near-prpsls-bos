@@ -3,7 +3,7 @@ import {
   REPL_DEVHUB,
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_RPC_URL,
-  TIMELINE_STATUS,
+  RFP_TIMELINE_STATUS,
   RFP_IMAGE,
 } from "@/includes/common";
 
@@ -374,7 +374,8 @@ return (
     </div>
     <div className="card no-border rounded-0 full-width-div px-3 px-lg-0">
       <div className="container-xl py-4">
-        {snapshot.timeline.status === TIMELINE_STATUS.ACCEPTING_SUBMISSIONS && (
+        {snapshot.timeline.status ===
+          RFP_TIMELINE_STATUS.ACCEPTING_SUBMISSIONS && (
           <div className="accept-submission-info-container p-3 p-sm-4 d-flex flex-wrap flex-sm-nowrap justify-content-between align-items-center gap-2 rounded-2">
             <div style={{ minWidth: "300px" }}>
               <b>This RFP is accepting submissions.</b>
@@ -568,7 +569,12 @@ return (
                 title="All Proposals"
                 ishidden={!snapshot.linked_proposals.length}
               >
-                {/* TODO: Show linked proposals */}
+                <Widget
+                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LinkedProposals`}
+                  props={{
+                    linkedProposalIds: [snapshot.linked_proposals],
+                  }}
+                />
               </SidePanelItem>
             </div>
           </div>
