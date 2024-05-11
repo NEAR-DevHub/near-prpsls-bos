@@ -968,7 +968,7 @@ const LinkRFPComponent = useMemo(() => {
   return (
     <div className="d-flex flex-column gap-1">
       <Widget
-        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LinkedRfpDropdown`}
+        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LinkedRFPDropdown`}
         props={{
           onChange: setLinkedRfp,
           linkedRfp: linkedRfp,
