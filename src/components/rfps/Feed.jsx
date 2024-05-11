@@ -5,7 +5,7 @@ import {
   REPL_NEAR,
   RFP_IMAGE,
   RFP_INDEXER_QUERY_NAME,
-} from "@/includes//common";
+} from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 href || (href = () => {});
@@ -518,7 +518,7 @@ const FeedPage = () => {
                   label: (
                     <div className="d-flex gap-2 align-items-center">
                       <div>
-                        <i class="bi bi-plus-circle-fill"></i>
+                        <i className="bi bi-plus-circle-fill"></i>
                       </div>
                       Create RFP
                     </div>
@@ -539,7 +539,7 @@ const FeedPage = () => {
               <div className="bg-blue text-sm mt-2 p-3 rounded-3">
                 <p className="d-flex gap-3 align-items-center mb-0">
                   <div>
-                    <i class="bi bi-info-circle"></i>
+                    <i className="bi bi-info-circle"></i>
                   </div>
                   <div>
                     <span className="fw-bold">

@@ -1,4 +1,4 @@
-import { REPL_DEVHUB } from "@/includes//common";
+import { REPL_DEVHUB } from "@/includes/common";
 const availableOptions = props.availableOptions;
 const options = (availableOptions ?? []).map((i) => {
   return { label: i.title, value: i.value };

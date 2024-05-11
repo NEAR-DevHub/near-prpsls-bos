@@ -1,4 +1,4 @@
-import { TIMELINE_STATUS } from "@/includes//common";
+import { TIMELINE_STATUS } from "@/includes/common";
 const timelineStatus = props.timelineStatus;
 const size = props.size ?? "md";
 

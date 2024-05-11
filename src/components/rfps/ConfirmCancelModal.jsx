@@ -1,4 +1,4 @@
-import { REPL_DEVHUB } from "@/includes//common";
+import { REPL_DEVHUB } from "@/includes/common";
 
 const isOpen = props.isOpen;
 const onCancelClick = props.onCancelClick;

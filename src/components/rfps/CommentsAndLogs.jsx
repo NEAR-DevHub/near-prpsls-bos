@@ -1,4 +1,4 @@
-import { REPL_INFRASTRUCTURE_COMMITTEE, REPL_DEVHUB } from "@/includes//common";
+import { REPL_INFRASTRUCTURE_COMMITTEE, REPL_DEVHUB } from "@/includes/common";
 
 const snapshotHistory = props.snapshotHistory;
 
@@ -142,9 +142,15 @@ const Comment = ({ commentItem }) => {
   };
   const content = JSON.parse(Social.get(item.path, blockHeight) ?? "null");
   const link = `https://near.social/${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=rfp&id=${props.id}&accountId=${accountId}&blockHeight=${blockHeight}`;
-  const hightlightComment =
-    parseInt(props.blockHeight ?? "") === blockHeight &&
-    props.accountId === accountId;
+  function getHighlightCommentStyle() {
+    const highlightComment =
+      parseInt(props.blockHeight ?? "") === blockHeight &&
+      props.accountId === accountId;
+
+    return {
+      border: highlightComment ? "2px solid black" : "",
+    };
+  }
 
   return (
     <div style={{ zIndex: 99, background: "white" }}>
@@ -158,7 +164,7 @@ const Comment = ({ commentItem }) => {
           />
         </div>
         <CommentContainer
-          style={{ border: hightlightComment ? "2px solid black" : "" }}
+          style={getHighlightCommentStyle()}
           className="rounded-2 flex-1"
         >
           <Header className="d-flex gap-3 align-items-center p-2 px-3">

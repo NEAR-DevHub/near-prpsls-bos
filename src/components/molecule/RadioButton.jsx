@@ -14,14 +14,14 @@ const RadioButton = ({ value, isChecked, label, onClick, disabled }) => {
   return (
     <div className="d-flex gap-2 align-items-center">
       <input
-        class="form-check-input"
+        className="form-check-input"
         type="radio"
         disabled={disabled}
         value={value}
         checked={checked}
         onChange={(e) => setChecked(e.target.checked)}
       />
-      <label class="form-check-label text-sm">{label}</label>
+      <label className="form-check-label text-sm">{label}</label>
     </div>
   );
 };

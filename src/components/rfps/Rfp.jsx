@@ -5,7 +5,7 @@ import {
   REPL_RPC_URL,
   TIMELINE_STATUS,
   RFP_IMAGE,
-} from "@/includes//common";
+} from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`) || {
   href: () => {},
@@ -388,7 +388,7 @@ return (
                 props={{
                   label: (
                     <div className="d-flex align-items-center gap-2">
-                      <i class="bi bi-plus-circle"></i>Submit Proposal
+                      <i className="bi bi-plus-circle"></i>Submit Proposal
                     </div>
                   ),
                   classNames: { root: "blue-btn" },
@@ -557,7 +557,12 @@ return (
                 title="Selected Proposal"
                 ishidden={true}
               ></SidePanelItem>
-              <SidePanelItem title="All Proposals"></SidePanelItem>
+              <SidePanelItem
+                title="All Proposals"
+                ishidden={!snapshot.linked_proposals.length}
+              >
+                {/* TODO: Show linked proposals */}
+              </SidePanelItem>
             </div>
           </div>
         </div>

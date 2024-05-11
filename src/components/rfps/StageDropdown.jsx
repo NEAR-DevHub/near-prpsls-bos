@@ -1,4 +1,4 @@
-import { REPL_DEVHUB, TIMELINE_STATUS } from "@/includes//common";
+import { REPL_DEVHUB, TIMELINE_STATUS } from "@/includes/common";
 const setSelected = props.onStateChange ?? (() => {});
 
 const timelineStatusArray = Object.entries(TIMELINE_STATUS).map(

@@ -1,4 +1,4 @@
-import { REPL_DEVHUB } from "@/includes//common";
+import { REPL_DEVHUB } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 href || (href = () => {});
@@ -117,7 +117,7 @@ return (
                   setSelectedOptions(updatedOptions);
                 }}
               >
-                <i class="bi bi-trash3-fill"></i>
+                <i className="bi bi-trash3-fill"></i>
               </div>
             )}
           </div>

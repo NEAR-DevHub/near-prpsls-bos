@@ -1,4 +1,4 @@
-import { REPL_DEVHUB, REPL_INFRASTRUCTURE_COMMITTEE } from "@/includes//common";
+import { REPL_DEVHUB, REPL_INFRASTRUCTURE_COMMITTEE } from "@/includes/common";
 const page = props.page;
 
 const [showMenu, setShowMenu] = useState(false);

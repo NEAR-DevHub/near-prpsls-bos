@@ -35,21 +35,21 @@ useEffect(() => {
 
 return (
   <div>
-    <div class="dropdown w-100">
+    <div className="dropdown w-100">
       <StyledDropdown>
         <button
-          class="btn drop-btn text-truncate dropdown-toggle bg-white border rounded-2"
+          className="btn drop-btn text-truncate dropdown-toggle bg-white border rounded-2"
           type="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
           {label} {selected && label && ": "} {selected.label}
         </button>
-        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start px-2 shadow">
+        <ul className="dropdown-menu dropdown-menu-end dropdown-menu-lg-start px-2 shadow">
           {options.map((item) => (
             <li
               style={{ borderRadius: "5px" }}
-              class="dropdown-item cursor-pointer link-underline link-underline-opacity-0"
+              className="dropdown-item cursor-pointer link-underline link-underline-opacity-0"
               onClick={() => {
                 if (selected.label !== item.label) {
                   setSelected(item);

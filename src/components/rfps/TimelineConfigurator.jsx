@@ -1,4 +1,4 @@
-import { TIMELINE_STATUS } from "@/includes//common";
+import { TIMELINE_STATUS } from "@/includes/common";
 
 const stepsArray = [1, 2, 3];
 const timeline = props.timeline;
@@ -160,7 +160,7 @@ return (
                     className="d-flex justify-content-center align-items-center"
                     style={{ height: "120%" }}
                   >
-                    <i class="bi bi-check"></i>
+                    <i className="bi bi-check"></i>
                   </div>
                 )}
               </div>

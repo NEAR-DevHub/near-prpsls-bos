@@ -5,7 +5,7 @@ import {
   REPL_RPC_URL,
   RFP_IMAGE,
   TIMELINE_STATUS,
-} from "@/includes//common";
+} from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 
@@ -491,7 +491,7 @@ useEffect(() => {
 
 const LoadingButtonSpinner = (
   <span
-    class="submit-rfp-loading-indicator spinner-border spinner-border-sm"
+    className="submit-rfp-loading-indicator spinner-border spinner-border-sm"
     role="status"
     aria-hidden="true"
   ></span>
@@ -575,9 +575,9 @@ const CollapsibleContainer = ({ title, children, noPaddingTop }) => {
           }
         >
           {!collapseState[title] ? (
-            <i class="bi bi-chevron-up h4"></i>
+            <i className="bi bi-chevron-up h4"></i>
           ) : (
-            <i class="bi bi-chevron-down h4"></i>
+            <i className="bi bi-chevron-down h4"></i>
           )}
         </div>
       </div>
@@ -826,7 +826,7 @@ if (showRFPPage) {
                           },
                           label: (
                             <div className="d-flex align-items-center gap-1">
-                              <i class="bi bi-trash3"></i> Cancel RFP
+                              <i className="bi bi-trash3"></i> Cancel RFP
                             </div>
                           ),
                           onClick: () => setCancelModal(true), // TODO
