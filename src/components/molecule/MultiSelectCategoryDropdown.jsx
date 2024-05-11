@@ -16,7 +16,7 @@ useEffect(() => {
   if (JSON.stringify(selectedOptions) !== JSON.stringify(selected)) {
     if ((selected ?? []).some((i) => !i.value)) {
       setSelectedOptions(
-        selected.map((i) => (availableOptions ?? []).find((t) => t.value === i))
+        selected.map((i) => availableOptions.find((t) => t.value === i))
       );
     } else {
       setSelectedOptions(selected);
