@@ -8,7 +8,8 @@ export const RFP_IMAGE =
 
 export const RFP_INDEXER_QUERY_NAME =
   "polyprogrammist_near_devhub_rfps_linked_rfps_with_latest_snapshot";
-export const PROPOSAL_INDEXER_QUERY_NAME = "";
+export const PROPOSAL_INDEXER_QUERY_NAME =
+  "polyprogrammist_near_devhub_proposals_sierra_proposals_with_latest_snapshot";
 export const TIMELINE_STATUS = {
   ACCEPTING_SUBMISSIONS: "ACCEPTING_SUBMISSIONS",
   EVALUATION: "EVALUATION",

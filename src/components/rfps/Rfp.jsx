@@ -383,18 +383,25 @@ return (
               </p>
             </div>
             <div style={{ minWidth: "fit-content" }}>
-              <Widget
-                src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
-                props={{
-                  label: (
-                    <div className="d-flex align-items-center gap-2">
-                      <i className="bi bi-plus-circle"></i>Submit Proposal
-                    </div>
-                  ),
-                  classNames: { root: "blue-btn" },
-                  onClick: () => setReviewModal(true),
-                }}
-              />
+              <Link
+                to={href({
+                  widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+                  params: { page: "create-proposal", rfp_id: rfp.id },
+                })}
+              >
+                <Widget
+                  src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
+                  props={{
+                    label: (
+                      <div className="d-flex align-items-center gap-2">
+                        <i className="bi bi-plus-circle"></i>Submit Proposal
+                      </div>
+                    ),
+                    classNames: { root: "blue-btn" },
+                    onClick: () => setReviewModal(true),
+                  }}
+                />
+              </Link>
             </div>
           </div>
         )}
