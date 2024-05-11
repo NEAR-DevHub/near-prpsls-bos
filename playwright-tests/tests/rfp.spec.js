@@ -11,15 +11,16 @@ test.describe("Wallet is connected", () => {
     );
 
     await expect(await page.locator(".content-container")).toContainText("RFP");
-    await expect(
-      await page.locator(".rfp-item-container").first()
-    ).toContainText("Submission Deadline");
+    await expect(await page.locator(".rfp-card").first()).toContainText(
+      "Submission Deadline"
+    );
 
     await page
       .getByPlaceholder("Search by content")
       .fill("baysyeir77feroiyvbadfa");
-    await expect(await page.locator(".rfp-item-container")).not.toBeAttached();
-    await expect(await page.locator(".rfp-item-container").count()).toEqual(0);
+    await expect(await page.locator(".rfp-card").first()).not.toBeAttached();
+    await expect(await page.locator(".rfp-card").count()).toEqual(0);
+    await pauseIfVideoRecording(page);
   });
   test("create RFP button should be hidden for a non admin account", async ({
     page,
@@ -28,9 +29,9 @@ test.describe("Wallet is connected", () => {
       "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfps"
     );
     await expect(await page.locator(".content-container")).toContainText("RFP");
-    await expect(
-      await page.locator(".rfp-item-container").first()
-    ).toContainText("Submission Deadline");
+    await expect(await page.locator(".rfp-card").first()).toContainText(
+      "Submission Deadline"
+    );
 
     await expect(
       await page.getByPlaceholder("Search by content")
