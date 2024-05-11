@@ -1,4 +1,4 @@
-import { REPL_INFRASTRUCTURE_COMMITTEE } from "@/includes//common";
+import { REPL_INFRASTRUCTURE_COMMITTEE } from "@/includes/common";
 
 const Theme = styled.div`
   position: fixed;

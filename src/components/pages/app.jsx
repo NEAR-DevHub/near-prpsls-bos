@@ -1,4 +1,4 @@
-import { REPL_DEVHUB, REPL_INFRASTRUCTURE_COMMITTEE } from "@/includes//common";
+import { REPL_DEVHUB, REPL_INFRASTRUCTURE_COMMITTEE } from "@/includes/common";
 
 /**
  * This is the main entry point for the RFP application.

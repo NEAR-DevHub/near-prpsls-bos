@@ -1,4 +1,4 @@
-import { REPL_DEVHUB, REPL_INFRASTRUCTURE_COMMITTEE } from "@/includes//common";
+import { REPL_DEVHUB, REPL_INFRASTRUCTURE_COMMITTEE } from "@/includes/common";
 const page = props.page;
 
 const [showMenu, setShowMenu] = useState(false);
@@ -11,14 +11,6 @@ const Logo = () => {
   const Wrapper = styled.div`
     .text-lg {
       font-size: 22px;
-    }
-    @media screen and (max-width: 768px) {
-      img {
-        width: 90px;
-        height: 12px;
-        transform: scale(1.5);
-        margin-left: 1rem;
-      }
     }
 
     a:hover {
