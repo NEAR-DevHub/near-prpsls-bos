@@ -38,9 +38,11 @@ return (
               }}
             />
             <div className="d-flex flex-column" style={{ maxWidth: 250 }}>
-              <LinkProfile account={item.snapshot.name}>
+              <Link
+                href={`/near/widget/ProfilePage?accountId=${item.snapshot.name}`}
+              >
                 <b className="text-truncate">{item.snapshot.name}</b>
-              </LinkProfile>
+              </Link>
               <div className="text-sm text-muted">
                 created on {readableDate(item.snapshot.timestamp / 1000000)}
               </div>
