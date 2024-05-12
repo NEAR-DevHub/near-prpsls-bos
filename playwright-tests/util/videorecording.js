@@ -5,4 +5,4 @@ export async function pauseIfVideoRecording(page) {
   } else {
     await page.waitForTimeout(100);
   }
-};
+}
