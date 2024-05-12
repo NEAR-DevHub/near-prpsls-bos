@@ -5,6 +5,7 @@ import {
   REPL_RPC_URL,
   RFP_TIMELINE_STATUS,
   RFP_IMAGE,
+  PROPOSAL_TIMELINE_STATUS,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`) || {
@@ -572,7 +573,8 @@ return (
                 <Widget
                   src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LinkedProposals`}
                   props={{
-                    linkedProposalIds: [snapshot.linked_proposals],
+                    linkedProposalIds: snapshot.linked_proposals,
+                    hideStatuses: [PROPOSAL_TIMELINE_STATUS.CANCELED],
                   }}
                 />
               </SidePanelItem>

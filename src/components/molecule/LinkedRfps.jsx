@@ -2,42 +2,33 @@ import {
   REPL_INFRASTRUCTURE_COMMITTEE,
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_DEVHUB,
+  RFP_IMAGE,
 } from "@/includes/common";
 
 const { readableDate } = VM.require(
   `${REPL_DEVHUB}/widget/core.lib.common`
 ) || { readableDate: () => {} };
 
-const linkedProposalIds = props.linkedProposalIds ?? [];
-const linkedProposalsData = [];
-const hideStatuses = props.hideStatuses ?? [];
+const linkedRfpIds = props.linkedRfpIds ?? [];
+const linkedRfpsData = [];
 
-linkedProposalIds.map((item) => {
-  const data = Near.view(
-    REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
-    "get_proposal",
-    {
-      proposal_id: item,
-    }
-  );
-  if (data !== null && !hideStatuses.includes(data.snapshot.timeline.status)) {
-    linkedProposalsData.push(data);
+linkedRfpIds.map((item) => {
+  const data = Near.view(REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT, "get_rfp", {
+    rfp_id: item,
+  });
+  if (data !== null) {
+    linkedRfpsData.push(data);
   }
 });
 
 return (
   <div className="d-flex flex-column gap-3">
-    {linkedProposalsData.map((item) => {
-      const link = `https://near.org/${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=proposal&id=${item.id}`;
+    {linkedRfpsData.map((item) => {
+      const link = `https://near.org/${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=rfp&id=${item.id}`;
       return (
         <a href={link} target="_blank" rel="noopener noreferrer">
           <div className="d-flex gap-2">
-            <Widget
-              src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.Profile`}
-              props={{
-                accountId: item.snapshot.editor_id,
-              }}
-            />
+            <img src={RFP_IMAGE} height={40} width={40} />
             <div className="d-flex flex-column" style={{ maxWidth: 250 }}>
               <Link
                 href={`/near/widget/ProfilePage?accountId=${item.snapshot.name}`}
