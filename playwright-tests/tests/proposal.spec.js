@@ -18,15 +18,18 @@ test.describe("Wallet is connected", () => {
     );
 
     await page.getByRole("button", { name: " Submit Proposal" }).click();
+    await page.getByText("Select Category").click();
+    await expect(await page.getByText("Indexers")).toBeVisible();
+
+    await pauseIfVideoRecording(page);
     await page.getByText("Search RFP").click();
     await page.getByText("# 1 : Testing linked proposals").click();
     await expect(
       await page.getByRole("link", { name: "# 1 : Testing linked proposals" })
     ).toBeVisible();
 
-    await page.getByText("Select Category").click();
-    await page.getByText("Indexers").click();
-    await expect(page.locator(".badge")).toHaveText("Indexers");
+    await expect(await page.getByText("Indexers")).not.toBeVisible();
+    await expect(page.locator(".badge")).toHaveText("Data Lakes");
 
     await page.getByRole("textbox").first().fill("The title");
 
@@ -51,9 +54,9 @@ test.describe("Wallet is connected", () => {
     await expect(transactionText).toEqual(
       JSON.stringify(
         {
-          labels: ["Indexers"],
+          labels: [],
           body: {
-            proposal_body_version: "V0",
+            proposal_body_version: "V1",
             linked_rfp: 1,
             category: "Infrastructure Committee",
             name: "The title",
