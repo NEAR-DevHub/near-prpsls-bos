@@ -823,7 +823,7 @@ return (
                 className="pt-4"
               >
                 <Widget
-                  src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.ComposeComment`}
+                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.ComposeComment`}
                   props={{
                     ...props,
                     item: item,
