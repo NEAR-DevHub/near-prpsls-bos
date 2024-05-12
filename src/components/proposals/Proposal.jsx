@@ -6,6 +6,7 @@ import {
   RFP_IMAGE,
   PROPOSAL_INDEXER_QUERY_NAME,
   REPL_RPC_URL,
+  PROPOSAL_TIMELINE_STATUS,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -23,17 +24,6 @@ const accountId = context.accountId;
   accountId: string
   blockHeight:number
   */
-
-const PROPOSAL_TIMELINE_STATUS = {
-  DRAFT: "DRAFT",
-  REVIEW: "REVIEW",
-  APPROVED: "APPROVED",
-  REJECTED: "REJECTED",
-  CANCELED: "CANCELLED",
-  APPROVED_CONDITIONALLY: "APPROVED_CONDITIONALLY",
-  PAYMENT_PROCESSING: "PAYMENT_PROCESSING",
-  FUNDED: "FUNDED",
-};
 
 const DecisionStage = [
   PROPOSAL_TIMELINE_STATUS.APPROVED,
@@ -860,7 +850,12 @@ return (
                 title={"Linked RFPs " + `(${snapshot.linked_rfp})`}
                 ishidden={!snapshot.linked_rfp}
               >
-                dzfdfds
+                <Widget
+                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LinkedRfps`}
+                  props={{
+                    linkedRfpIds: [snapshot.linked_rfp],
+                  }}
+                />
               </SidePanelItem>
               <SidePanelItem
                 title={
