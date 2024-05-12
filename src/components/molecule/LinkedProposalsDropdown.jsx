@@ -2,6 +2,7 @@ import {
   REPL_INFRASTRUCTURE_COMMITTEE,
   REPL_DEVHUB,
   PROPOSAL_INDEXER_QUERY_NAME,
+  fetchGraphQL,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -12,7 +13,7 @@ const onChange = props.onChange;
 const [selectedProposals, setSelectedProposals] = useState(linkedProposals);
 const [proposalsOptions, setProposalsOptions] = useState([]);
 const [searchProposalId, setSearchProposalId] = useState("");
-const QUERYAPI_ENDPOINT = `https://near-queryapi.api.pagoda.co/v1/graphql`;
+
 const queryName = PROPOSAL_INDEXER_QUERY_NAME;
 const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
 ${queryName}(
@@ -64,18 +65,6 @@ const buildWhereClause = () => {
 
   return where;
 };
-
-function fetchGraphQL(operationsDoc, operationName, variables) {
-  return asyncFetch(QUERYAPI_ENDPOINT, {
-    method: "POST",
-    headers: { "x-hasura-role": `polyprogrammist_near` },
-    body: JSON.stringify({
-      query: operationsDoc,
-      variables: variables,
-      operationName: operationName,
-    }),
-  });
-}
 
 const fetchProposals = () => {
   const FETCH_LIMIT = 30;

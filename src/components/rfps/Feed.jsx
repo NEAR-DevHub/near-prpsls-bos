@@ -5,6 +5,7 @@ import {
   REPL_NEAR,
   RFP_IMAGE,
   RFP_INDEXER_QUERY_NAME,
+  fetchGraphQL,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -229,8 +230,6 @@ const getRfp = (rfp_id) => {
 };
 
 const FeedPage = () => {
-  const QUERYAPI_ENDPOINT = `https://near-queryapi.api.pagoda.co/v1/graphql`;
-
   State.init({
     data: [],
     cachedItems: {},
@@ -273,18 +272,6 @@ const FeedPage = () => {
       }
     }
   }`;
-
-  function fetchGraphQL(operationsDoc, operationName, variables) {
-    return asyncFetch(QUERYAPI_ENDPOINT, {
-      method: "POST",
-      headers: { "x-hasura-role": `polyprogrammist_near` },
-      body: JSON.stringify({
-        query: operationsDoc,
-        variables: variables,
-        operationName: operationName,
-      }),
-    });
-  }
 
   function separateNumberAndText(str) {
     const numberRegex = /\d+/;

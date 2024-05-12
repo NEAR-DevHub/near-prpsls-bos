@@ -12,6 +12,7 @@ const linkedProposalIds = props.linkedProposalIds ?? [];
 const linkedProposalsData = [];
 const hideStatuses = props.hideStatuses ?? [];
 
+// using contract instead of indexer, since indexer doesn't return timestamp
 linkedProposalIds.map((item) => {
   const data = Near.view(
     REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
@@ -25,8 +26,16 @@ linkedProposalIds.map((item) => {
   }
 });
 
+const Container = styled.div`
+  a {
+    &:hover {
+      text-decoration: none !important;
+    }
+  }
+`;
+
 return (
-  <div className="d-flex flex-column gap-3">
+  <Container className="d-flex flex-column gap-3">
     {linkedProposalsData.map((item) => {
       const link = `https://near.org/${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=proposal&id=${item.id}`;
       return (
@@ -47,10 +56,18 @@ return (
               <div className="text-sm text-muted">
                 created on {readableDate(item.snapshot.timestamp / 1000000)}
               </div>
+              <div style={{ width: "fit-content" }} className="mt-1">
+                <Widget
+                  src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.StatusTag`}
+                  props={{
+                    timelineStatus: item.snapshot.timeline.status,
+                  }}
+                />
+              </div>
             </div>
           </div>
         </a>
       );
     })}
-  </div>
+  </Container>
 );

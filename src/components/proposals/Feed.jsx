@@ -5,6 +5,7 @@ import {
   REPL_NEAR,
   RFP_IMAGE,
   PROPOSAL_INDEXER_QUERY_NAME,
+  fetchGraphQL,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -117,6 +118,9 @@ const FeedItem = ({ proposal, index }) => {
     blockHeight: blockHeight,
   };
 
+  const isLinked = typeof proposal.linked_rfp === "number";
+  const rfpData = null;
+
   return (
     <a
       href={href({
@@ -156,6 +160,25 @@ const FeedItem = ({ proposal, index }) => {
                 }}
               />
             </div>
+            {isLinked && (
+              <div className="text-sm text-muted">
+                In response to RFP :
+                <a
+                  className="text-decoration-underline flex-1"
+                  href={href({
+                    widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+                    params: {
+                      page: "rfp",
+                      id: rfpData.id,
+                    },
+                  })}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {rfpData.name}
+                </a>
+              </div>
+            )}
             <div className="d-flex gap-2 align-items-center flex-wrap flex-sm-nowrap text-sm w-100">
               <div>#{proposal.proposal_id} ･ </div>
               <div className="text-truncate">
@@ -214,8 +237,6 @@ const getProposal = (proposal_id) => {
 };
 
 const FeedPage = () => {
-  const QUERYAPI_ENDPOINT = `https://near-queryapi.api.pagoda.co/v1/graphql`;
-
   State.init({
     data: [],
     cachedItems: {},
@@ -247,6 +268,7 @@ const FeedPage = () => {
       ts
       timeline
       views
+      linked_rfp
     }
     ${queryName}_aggregate(
       order_by: {proposal_id: desc}
@@ -257,18 +279,6 @@ const FeedPage = () => {
       }
     }
   }`;
-
-  function fetchGraphQL(operationsDoc, operationName, variables) {
-    return asyncFetch(QUERYAPI_ENDPOINT, {
-      method: "POST",
-      headers: { "x-hasura-role": `polyprogrammist_near` },
-      body: JSON.stringify({
-        query: operationsDoc,
-        variables: variables,
-        operationName: operationName,
-      }),
-    });
-  }
 
   function separateNumberAndText(str) {
     const numberRegex = /\d+/;
