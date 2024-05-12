@@ -1,4 +1,4 @@
-export const pauseIfVideoRecording = async (page) => {
+export async function pauseIfVideoRecording(page) {
   let isVideoRecorded = (await page.video()) ? true : false;
   if (isVideoRecorded) {
     await page.waitForTimeout(500);
