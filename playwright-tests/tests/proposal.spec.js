@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { pauseIfVideoRecording } from "../util/videorecording";
 
 test.describe("Wallet is connected", () => {
   test.use({
@@ -73,6 +74,6 @@ test.describe("Wallet is connected", () => {
       )
     );
 
-    await page.waitForTimeout(2000);
+    await pauseIfVideoRecording(page);
   });
 });
