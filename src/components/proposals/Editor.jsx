@@ -384,6 +384,15 @@ useEffect(() => {
   showProposalPage,
 ]);
 
+// set RFP labels
+useEffect(() => {
+  if (linkedRfp) {
+    Near.asyncView(REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT, "get_rfp", {
+      rfp_id: linkedRfp.value ?? linkedRfp,
+    }).then((i) => setLabels(i.snapshot.labels));
+  }
+}, [linkedRfp]);
+
 useEffect(() => {
   if (
     editProposalData &&
@@ -733,7 +742,7 @@ const onSubmit = ({ isDraft, isCancel }) => {
   console.log("submitting transaction");
   const linkedProposalsIds = linkedProposals.map((item) => item.value) ?? [];
   const body = {
-    proposal_body_version: "V0",
+    proposal_body_version: "V1",
     linked_rfp: linkedRfp?.value,
     category: "Infrastructure Committee",
     name: title,
@@ -758,7 +767,10 @@ const onSubmit = ({ isDraft, isCancel }) => {
           reviewer_completed_attestation: false,
         },
   };
-  const args = { labels: (labels ?? []).map((i) => i.value), body: body };
+  const args = {
+    labels: linkedRfp ? [] : (labels ?? []).map((i) => i.value),
+    body: body,
+  };
   if (isEditPage) {
     args["id"] = editProposalData.id;
   }
@@ -831,12 +843,12 @@ const CategoryDropdown = useMemo(() => {
       props={{
         selected: labels,
         onChange: (v) => setLabels(v),
-        disabled: false,
+        disabled: linkedRfp, // when RFP is linked, labels are disabled
         availableOptions: rfpLabelOptions,
       }}
     />
   );
-}, [draftProposalData]);
+}, [draftProposalData, linkedRfp, labels]);
 
 const TitleComponent = useMemo(() => {
   return (
@@ -882,7 +894,7 @@ const SummaryComponent = useMemo(() => {
 const DescriptionComponent = useMemo(() => {
   return (
     <Widget
-      src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Compose`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.Compose`}
       props={{
         data: description,
         onChange: setDescription,

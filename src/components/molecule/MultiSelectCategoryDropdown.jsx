@@ -92,7 +92,7 @@ const Container = styled.div`
 `;
 
 const handleOptionClick = (option) => {
-  if (!selectedOptions.some((item) => item.value === v.value)) {
+  if (!selectedOptions.some((item) => item.value === option.value)) {
     setSelectedOptions([...selectedOptions, option]);
   }
   setIsOpen(false);
