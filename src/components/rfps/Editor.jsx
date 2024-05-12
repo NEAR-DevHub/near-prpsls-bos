@@ -644,10 +644,10 @@ const SummaryComponent = useMemo(() => {
 const DescriptionComponent = useMemo(() => {
   return (
     <Widget
-      src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Compose`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.Compose`}
       props={{
         data: description,
-        onChange: (v) => setDescription(v),
+        onChange: setDescription,
         autocompleteEnabled: true,
         autoFocus: false,
       }}
