@@ -3,6 +3,7 @@ import {
   REPL_DEVHUB,
   RFP_INDEXER_QUERY_NAME,
   RFP_TIMELINE_STATUS,
+  fetchGraphQL,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -14,7 +15,7 @@ const [selectedRFP, setSelectedRFP] = useState(null);
 const [rfpOptions, setRfpOptions] = useState([]);
 const [searchRFPId, setSearchRfpId] = useState("");
 const [initialStateApplied, setInitialState] = useState(false);
-const QUERYAPI_ENDPOINT = `https://near-queryapi.api.pagoda.co/v1/graphql`;
+
 const queryName = RFP_INDEXER_QUERY_NAME;
 const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
   ${queryName}(
@@ -61,18 +62,6 @@ const buildWhereClause = () => {
 
   return where;
 };
-
-function fetchGraphQL(operationsDoc, operationName, variables) {
-  return asyncFetch(QUERYAPI_ENDPOINT, {
-    method: "POST",
-    headers: { "x-hasura-role": `polyprogrammist_near` },
-    body: JSON.stringify({
-      query: operationsDoc,
-      variables: variables,
-      operationName: operationName,
-    }),
-  });
-}
 
 const fetchRfps = () => {
   const FETCH_LIMIT = 30;

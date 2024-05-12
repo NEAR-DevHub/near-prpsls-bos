@@ -21,8 +21,16 @@ linkedRfpIds.map((item) => {
   }
 });
 
+const Container = styled.div`
+  a {
+    &:hover {
+      text-decoration: none !important;
+    }
+  }
+`;
+
 return (
-  <div className="d-flex flex-column gap-3">
+  <Container className="d-flex flex-column gap-3">
     {linkedRfpsData.map((item) => {
       const link = `https://near.org/${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=rfp&id=${item.id}`;
       return (
@@ -43,5 +51,5 @@ return (
         </a>
       );
     })}
-  </div>
+  </Container>
 );

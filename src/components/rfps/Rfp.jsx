@@ -6,6 +6,8 @@ import {
   RFP_TIMELINE_STATUS,
   RFP_IMAGE,
   PROPOSAL_TIMELINE_STATUS,
+  PROPOSAL_INDEXER_QUERY_NAME,
+  fetchGraphQL,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`) || {
@@ -329,6 +331,51 @@ const createdDate =
   rfp.snapshot_history?.[rfp.snapshot_history.length - 1]?.timestamp ??
   snapshot.timestamp;
 
+const [approvedProposals, setApprovedProposals] = useState([]);
+
+function fetchApprovedRfpProposals() {
+  const queryName = PROPOSAL_INDEXER_QUERY_NAME;
+  const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
+    ${queryName}(
+      offset: $offset
+      limit: $limit
+      order_by: {proposal_id: desc}
+      where: $where
+    ) {
+      author_id
+      name
+    }
+  }`;
+
+  const FETCH_LIMIT = 50;
+  const variables = {
+    limit: FETCH_LIMIT,
+    offset,
+    where: {
+      proposal_id: { _in: rfp.linked_proposals },
+      timeline: {
+        _cast: {
+          String: {
+            _ilike: `%${PROPOSAL_TIMELINE_STATUS.APPROVED}%`,
+            _ilike: `%${PROPOSAL_TIMELINE_STATUS.APPROVED_CONDITIONALLY}%`,
+            _ilike: `%${PROPOSAL_TIMELINE_STATUS.PAYMENT_PROCESSING}%`,
+            _ilike: `%${PROPOSAL_TIMELINE_STATUS.FUNDED}%`,
+          },
+        },
+      },
+    },
+  };
+  fetchGraphQL(query, "GetLatestSnapshot", variables).then(async (result) => {
+    if (result.status === 200) {
+      if (result.body.data) {
+        const data = result.body.data?.[queryName];
+        setApprovedProposals(data);
+      }
+    }
+  });
+}
+
+fetchApprovedRfpProposals();
 return (
   <Container className="d-flex flex-column gap-2 w-100 mt-4">
     <div className="d-flex px-3 px-lg-0 justify-content-between">
@@ -563,11 +610,28 @@ return (
                 />
               </SidePanelItem>
               <SidePanelItem
-                title="Selected Proposal"
-                ishidden={true}
-              ></SidePanelItem>
+                title={
+                  "Selected Proposal" + " (" + approvedProposals.length + ")"
+                }
+                ishidden={!approvedProposals.length}
+              >
+                <Widget
+                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LinkedProposals`}
+                  props={{
+                    linkedProposalIds: (approvedProposals ?? []).map(
+                      (i) => i.proposal_id
+                    ),
+                    showStatus: true,
+                  }}
+                />
+              </SidePanelItem>
               <SidePanelItem
-                title="All Proposals"
+                title={
+                  "All Proposals" +
+                  " (" +
+                  snapshot.linked_proposals.length +
+                  ")"
+                }
                 ishidden={!snapshot.linked_proposals.length}
               >
                 <Widget
@@ -575,6 +639,9 @@ return (
                   props={{
                     linkedProposalIds: snapshot.linked_proposals,
                     hideStatuses: [PROPOSAL_TIMELINE_STATUS.CANCELED],
+                    showStatus:
+                      snapshot.timeline.status ===
+                      RFP_TIMELINE_STATUS.EVALUATION,
                   }}
                 />
               </SidePanelItem>
