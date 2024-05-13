@@ -11,6 +11,7 @@ const { readableDate } = VM.require(
 const linkedProposalIds = props.linkedProposalIds ?? [];
 const linkedProposalsData = [];
 const hideStatuses = props.hideStatuses ?? [];
+const showStatus = props.showStatus ?? false;
 
 // using contract instead of indexer, since indexer doesn't return timestamp
 linkedProposalIds.map((item) => {
@@ -56,14 +57,16 @@ return (
               <div className="text-sm text-muted">
                 created on {readableDate(item.snapshot.timestamp / 1000000)}
               </div>
-              <div style={{ width: "fit-content" }} className="mt-1">
-                <Widget
-                  src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.StatusTag`}
-                  props={{
-                    timelineStatus: item.snapshot.timeline.status,
-                  }}
-                />
-              </div>
+              {showStatus && (
+                <div style={{ width: "fit-content" }} className="mt-1">
+                  <Widget
+                    src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.StatusTag`}
+                    props={{
+                      timelineStatus: item.snapshot.timeline.status,
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </a>

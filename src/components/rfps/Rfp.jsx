@@ -342,8 +342,7 @@ function fetchApprovedRfpProposals() {
       order_by: {proposal_id: desc}
       where: $where
     ) {
-      author_id
-      name
+      proposal_id
     }
   }`;
 
@@ -621,7 +620,7 @@ return (
                     linkedProposalIds: (approvedProposals ?? []).map(
                       (i) => i.proposal_id
                     ),
-                    showStatus: true,
+                    showStatus: false,
                   }}
                 />
               </SidePanelItem>
