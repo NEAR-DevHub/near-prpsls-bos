@@ -440,7 +440,7 @@ const isModerator = Near.view(
 
 const editProposal = ({ timeline }) => {
   const body = {
-    proposal_body_version: "V0",
+    proposal_body_version: "V1",
     name: snapshot.name,
     description: snapshot.description,
     category: snapshot.category,
@@ -452,6 +452,7 @@ const editProposal = ({ timeline }) => {
     receiver_account: snapshot.receiver_account,
     requested_sponsor: snapshot.requested_sponsor,
     timeline: timeline,
+    supervisor: supervisor ?? snapshot.supervisor,
   };
   const args = { labels: snapshot.labels, body: body, id: proposal.id };
 
@@ -805,7 +806,7 @@ return (
               </div>
               <div className="border-bottom pb-4 mt-4">
                 <Widget
-                  src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.CommentsAndLogs`}
+                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.proposals.CommentsAndLogs`}
                   props={{
                     ...props,
                     id: proposal.id,
