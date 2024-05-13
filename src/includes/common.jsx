@@ -43,3 +43,9 @@ export function fetchGraphQL(operationsDoc, operationName, variables) {
     }),
   });
 }
+
+export const CANCEL_RFP_OPTIONS = {
+  CANCEL_PROPOSALS: "CANCEL_PROPOSALS",
+  UNLINK_PROPOSALS: "UNLINK_PROPOSALSS",
+  NONE: "NONE",
+};
