@@ -7,6 +7,7 @@ import {
   PROPOSAL_INDEXER_QUERY_NAME,
   REPL_RPC_URL,
   PROPOSAL_TIMELINE_STATUS,
+  parseJSON,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -287,6 +288,7 @@ if (timestamp && proposal) {
 }
 
 const { snapshot } = proposal;
+snapshot.timeline = parseJSON(snapshot.timeline);
 
 const authorId = proposal.author_id;
 const blockHeight = parseInt(proposal.social_db_post_block_height);
