@@ -8,6 +8,8 @@ import {
   PROPOSAL_TIMELINE_STATUS,
   PROPOSAL_INDEXER_QUERY_NAME,
   fetchGraphQL,
+  RFP_INDEXER_QUERY_NAME,
+  parseJSON,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`) || {
@@ -284,6 +286,7 @@ if (timestamp && rfp) {
 }
 
 const { snapshot } = rfp;
+snapshot.timeline = parseJSON(snapshot.timeline);
 
 const authorId = rfp.author_id;
 const blockHeight = parseInt(rfp.social_db_post_block_height);
@@ -404,7 +407,6 @@ return (
       </div>
     </div>
     <div className="d-flex flex-wrap flex-md-nowrap px-3 px-lg-0 gap-2 align-items-center text-sm pb-3 w-100">
-      {/* TODO */}
       <Widget
         src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.StatusTag`}
         props={{
@@ -559,7 +561,7 @@ return (
                 </RfpContainer>
               </div>
               <div className="border-bottom pb-4 mt-4">
-                <Widget
+                {/* <Widget
                   src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.CommentsAndLogs`}
                   props={{
                     ...props,
@@ -567,7 +569,7 @@ return (
                     item: item,
                     snapshotHistory: [...rfp.snapshot_history, snapshot],
                   }}
-                />
+                /> */}
               </div>
               <div
                 style={{

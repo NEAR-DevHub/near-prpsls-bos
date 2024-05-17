@@ -6,6 +6,7 @@ import {
   RFP_IMAGE,
   RFP_TIMELINE_STATUS,
   CANCEL_RFP_OPTIONS,
+  parseJSON,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -344,7 +345,7 @@ useEffect(() => {
       setSummary(snapshot.summary);
       setDescription(snapshot.description);
       setSubmissionDeadline(getDate(snapshot.submission_deadline));
-      setTimeline(snapshot.timeline);
+      setTimeline(parseJSON(snapshot.timeline));
       if (isEditPage) {
         setConsent({ toc: true, coc: true });
       }

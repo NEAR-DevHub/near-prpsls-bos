@@ -49,3 +49,15 @@ export const CANCEL_RFP_OPTIONS = {
   UNLINK_PROPOSALS: "UNLINK_PROPOSALSS",
   NONE: "NONE",
 };
+
+export function parseJSON(json) {
+  if (typeof json === "string") {
+    try {
+      return JSON.parse(json);
+    } catch (error) {
+      return json;
+    }
+  } else {
+    return json;
+  }
+}

@@ -6,6 +6,7 @@ import {
   RFP_IMAGE,
   PROPOSAL_INDEXER_QUERY_NAME,
   fetchGraphQL,
+  parseJSON,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -109,6 +110,7 @@ const rfpLabelOptions = Near.view(
 
 const FeedItem = ({ proposal, index }) => {
   const accountId = proposal.author_id;
+  proposal.timeline = parseJSON(proposal.timeline);
   const profile = Social.get(`${accountId}/profile/**`, "final");
   // We will have to get the proposal from the contract to get the block height.
   const blockHeight = parseInt(proposal.social_db_post_block_height);
