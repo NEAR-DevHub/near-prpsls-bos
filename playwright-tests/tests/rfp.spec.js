@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { pauseIfVideoRecording } from "../util/videorecording";
+import { mockRpcRequest } from "../util/rpcmock";
 
 test.describe("Wallet is connected", () => {
   test.use({
@@ -50,6 +51,25 @@ test.describe("Wallet is connected with admin account", () => {
   test("admin should be able see the create RFP button and fill the form", async ({
     page,
   }) => {
+    await mockRpcRequest(
+      page,
+      {
+        method_name: "get_global_labels",
+      },
+      [
+        {
+          value: "Data Lakes",
+          title: "Data Lakes",
+          color: [0, 255, 0],
+        },
+        {
+          value: "Explorers",
+          title: "Explorers",
+          color: [0, 255, 255],
+        },
+      ]
+    );
+
     await page.goto(
       "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfps"
     );
