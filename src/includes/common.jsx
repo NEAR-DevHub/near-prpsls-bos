@@ -7,10 +7,10 @@ export const RFP_IMAGE =
   "https://ipfs.near.social/ipfs/bafkreicbygt4kajytlxij24jj6tkg2ppc2dw3dlqhkermkjjfgdfnlizzy";
 
 export const RFP_INDEXER_QUERY_NAME =
-  "polyprogrammist_near_devhub_rfps_linked_rfps_with_latest_snapshot";
+  "polyprogrammist_near_devhub_objects_rfps_with_latest_snapshot";
 
 export const PROPOSAL_INDEXER_QUERY_NAME =
-  "polyprogrammist_near_devhub_proposals_sierra_proposals_with_latest_snapshot";
+  "polyprogrammist_near_devhub_objects_proposals_with_latest_snapshot";
 
 export const RFP_TIMELINE_STATUS = {
   ACCEPTING_SUBMISSIONS: "ACCEPTING_SUBMISSIONS",
