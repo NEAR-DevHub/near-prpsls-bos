@@ -54,12 +54,11 @@ return (
       {editModerators ? (
         <>
           <Widget
-            src={`${REPL_DEVHUB}/widget/devhub.components.molecule.ListEditor`}
+            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.admin.AccountsEditor`}
             props={{
               data: {
                 maxLength: 100,
                 placeholder: "member.near",
-                prefix: "member",
                 list: moderators,
               },
               setList: setModerators,
