@@ -4,7 +4,8 @@ import {
   REPL_DEVHUB,
 } from "@/includes/common";
 
-const proposalId = props.id;
+const proposalId = props.proposalId;
+const rfpId = props.rfpId;
 const draftKey = "INFRA_COMMENT_DRAFT" + proposalId;
 let draftComment = "";
 
@@ -24,7 +25,7 @@ const ComposeEmbeddCSS = `
   }
 `;
 
-const notifyAccountId = props.notifyAccountId;
+const notifyAccountIds = props.notifyAccountIds ?? [];
 const accountId = context.accountId;
 const item = props.item;
 const [allowGetDraft, setAllowGetDraft] = useState(true);
@@ -154,14 +155,24 @@ function composeData() {
     path: `${accountId}/post/comment`,
   });
 
-  if (notifyAccountId && notifyAccountId !== context.accountId) {
-    notifications.push({
-      key: notifyAccountId,
-      value: {
-        type: "devhub/reply",
-        item,
-        proposal: proposalId,
-      },
+  if (notifyAccountIds.length > 0) {
+    notifyAccountIds.map((account) => {
+      if (account !== context.accountId) {
+        notifications.push({
+          key: account,
+          value: proposalId
+            ? {
+                type: "devhub/reply",
+                item,
+                proposal: proposalId,
+              }
+            : {
+                type: "devhub/reply",
+                item,
+                rfpId: rfpId,
+              },
+        });
+      }
     });
   }
 

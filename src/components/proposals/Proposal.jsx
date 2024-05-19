@@ -8,6 +8,7 @@ import {
   REPL_RPC_URL,
   PROPOSAL_TIMELINE_STATUS,
   parseJSON,
+  isNumber,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -269,7 +270,62 @@ const proposal = Near.view(
   }
 );
 
-if (!proposal) {
+const [snapshotHistory, setSnapshotHistory] = useState([]);
+
+const queryName = PROPOSAL_INDEXER_QUERY_NAME;
+const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
+  ${queryName}(
+    offset: $offset
+    limit: $limit
+    order_by: {proposal_id: desc}
+    where: $where
+  ) {
+    editor_id
+    name
+    summary
+    description
+    ts
+    proposal_id
+    timeline
+    labels
+    linked_proposals
+    linked_rfp
+    requested_sponsorship_usd_amount
+    requested_sponsorship_paid_in_currency
+    receiver_account
+    requested_sponsor
+    supervisor
+  }
+}`;
+
+const fetchSnapshotHistory = () => {
+  const variables = {
+    where: { proposal_id: { _eq: id } },
+  };
+  fetchGraphQL(query, "GetLatestSnapshot", variables).then(async (result) => {
+    if (result.status === 200) {
+      if (result.body.data) {
+        const data = result.body.data?.[queryName];
+        const history = data.map((item) => {
+          const proposalData = {
+            ...item,
+            timestamp: item.ts,
+            timeline: parseJSON(item.timeline),
+          };
+          delete proposalData.ts;
+          return proposalData;
+        });
+        setSnapshotHistory(history);
+      }
+    }
+  });
+};
+
+useEffect(() => {
+  fetchSnapshotHistory();
+}, [id]);
+
+if (!proposal || !snapshotHistory.length) {
   return (
     <div
       style={{ height: "50vh" }}
@@ -283,7 +339,7 @@ if (!proposal) {
 }
 if (timestamp && proposal) {
   proposal.snapshot =
-    proposal.snapshot_history.find((item) => item.timestamp === timestamp) ??
+    snapshotHistory.find((item) => item.timestamp === timestamp) ??
     proposal.snapshot;
 }
 
@@ -454,9 +510,14 @@ const editProposal = ({ timeline }) => {
     receiver_account: snapshot.receiver_account,
     requested_sponsor: snapshot.requested_sponsor,
     timeline: timeline,
+    linked_rfp: snapshot.linked_rfp,
     supervisor: supervisor ?? snapshot.supervisor,
   };
-  const args = { labels: snapshot.labels, body: body, id: proposal.id };
+  const args = {
+    labels: snapshot.linked_rfp ? [] : snapshot.labels,
+    body: body,
+    id: proposal.id,
+  };
 
   Near.call([
     {
@@ -565,9 +626,7 @@ const link = href({
   },
 });
 
-const createdDate =
-  proposal.snapshot_history?.[proposal.snapshot_history.length - 1]
-    ?.timestamp ?? snapshot.timestamp;
+const createdDate = snapshotHistory[0]?.timestamp ?? snapshot.timestamp;
 
 return (
   <Container className="d-flex flex-column gap-2 w-100 mt-4">
@@ -781,11 +840,11 @@ return (
 
                     <div className="d-flex gap-2 align-items-center mt-4">
                       <Widget
-                        src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.LikeButton`}
+                        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LikeButton`}
                         props={{
                           item,
                           proposalId: proposal.id,
-                          notifyAccountId: authorId,
+                          notifyAccountIds: [authorId],
                         }}
                       />
                       <Widget
@@ -813,7 +872,7 @@ return (
                     ...props,
                     id: proposal.id,
                     item: item,
-                    snapshotHistory: [...proposal.snapshot_history, snapshot],
+                    snapshotHistory: snapshotHistory,
                   }}
                 />
               </div>
@@ -830,8 +889,8 @@ return (
                   props={{
                     ...props,
                     item: item,
-                    notifyAccountId: authorId,
-                    id: proposal.id,
+                    notifyAccountIds: [authorId],
+                    proposalId: proposal.id,
                   }}
                 />
               </div>
@@ -850,8 +909,8 @@ return (
                 />
               </SidePanelItem>
               <SidePanelItem
-                title={"Linked RFPs " + `(${snapshot.linked_rfp})`}
-                ishidden={!snapshot.linked_rfp}
+                title={"Linked RFP"}
+                ishidden={!isNumber(snapshot.linked_rfp)}
               >
                 <Widget
                   src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LinkedRfps`}

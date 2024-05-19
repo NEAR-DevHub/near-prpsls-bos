@@ -7,6 +7,8 @@ import {
   PROPOSAL_INDEXER_QUERY_NAME,
   fetchGraphQL,
   parseJSON,
+  RFP_FEED_INDEXER_QUERY_NAME,
+  isNumber,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -120,8 +122,8 @@ const FeedItem = ({ proposal, index }) => {
     blockHeight: blockHeight,
   };
 
-  const isLinked = typeof proposal.linked_rfp === "number";
-  const rfpData = null;
+  const isLinked = isNumber(proposal.linked_rfp);
+  const rfpData = proposal.rfpData;
 
   return (
     <a
@@ -162,8 +164,9 @@ const FeedItem = ({ proposal, index }) => {
                 }}
               />
             </div>
-            {isLinked && (
-              <div className="text-sm text-muted">
+            {isLinked && rfpData && (
+              <div className="text-sm text-muted d-flex gap-1 align-items-center">
+                <i class="bi bi-link-45deg"></i>
                 In response to RFP :
                 <a
                   className="text-decoration-underline flex-1"
@@ -171,7 +174,7 @@ const FeedItem = ({ proposal, index }) => {
                     widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
                     params: {
                       page: "rfp",
-                      id: rfpData.id,
+                      id: rfpData.rfp_id,
                     },
                   })}
                   target="_blank"
@@ -282,6 +285,19 @@ const FeedPage = () => {
     }
   }`;
 
+  const rfpQueryName = RFP_FEED_INDEXER_QUERY_NAME;
+  const rfpQuery = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${rfpQueryName}_bool_exp = {}) {
+    ${rfpQueryName}(
+      offset: $offset
+      limit: $limit
+      order_by: {rfp_id: desc}
+      where: $where
+    ) {
+      name
+      rfp_id
+    }
+  }`;
+
   function separateNumberAndText(str) {
     const numberRegex = /\d+/;
 
@@ -351,9 +367,22 @@ const FeedPage = () => {
         if (result.body.data) {
           const data = result.body.data?.[queryName];
           const totalResult = result.body.data?.[`${queryName}_aggregate`];
-          State.update({ aggregatedCount: totalResult.aggregate.count });
-          // Parse timeline
-          fetchBlockHeights(data, offset);
+          const promises = data.map((item) => {
+            if (isNumber(item.linked_rfp)) {
+              return fetchGraphQL(rfpQuery, "GetLatestSnapshot", {}).then(
+                (result) => {
+                  const rfpData = result.body.data?.[rfpQueryName];
+                  return { ...item, rfpData: rfpData[0] };
+                }
+              );
+            } else {
+              return Promise.resolve(item);
+            }
+          });
+          Promise.all(promises).then((res) => {
+            State.update({ aggregatedCount: totalResult.aggregate.count });
+            fetchBlockHeights(res, offset);
+          });
         }
       }
     });

@@ -1,7 +1,7 @@
 import {
   REPL_INFRASTRUCTURE_COMMITTEE,
   PROPOSAL_INDEXER_QUERY_NAME,
-  RFP_INDEXER_QUERY_NAME,
+  RFP_FEED_INDEXER_QUERY_NAME,
 } from "@/includes/common";
 
 /**
@@ -49,7 +49,7 @@ ${proposalQueryName}(
 }
 }`;
 
-const rfpQueryName = RFP_INDEXER_QUERY_NAME;
+const rfpQueryName = RFP_FEED_INDEXER_QUERY_NAME;
 const rfpQuery = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${rfpQueryName}_bool_exp = {}) {
 ${rfpQueryName}(
   offset: $offset

@@ -6,6 +6,9 @@ import {
   RFP_IMAGE,
   PROPOSAL_INDEXER_QUERY_NAME,
   REPL_RPC_URL,
+  RFP_TIMELINE_STATUS,
+  parseJSON,
+  isNumber,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -281,6 +284,14 @@ if (allowDraft) {
   draftProposalData = Storage.privateGet(draftKey);
 }
 
+const isModerator = Near.view(
+  REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
+  "is_allowed_to_write_rfps",
+  {
+    editor: context.accountId,
+  }
+);
+
 const memoizedDraftData = useMemo(
   () => ({
     id: editProposalData.id ?? null,
@@ -327,7 +338,7 @@ useEffect(() => {
           ...JSON.parse(draftProposalData).snapshot,
         };
       }
-      if (!linkedRfp) {
+      if (!isNumber(linkedRfp)) {
         setLinkedRfp(snapshot.linked_rfp);
       }
       setLabels(snapshot.labels ?? []);
@@ -384,12 +395,21 @@ useEffect(() => {
   showProposalPage,
 ]);
 
-// set RFP labels
+// set RFP labels, disable link rfp change when linked rfp is past accepting stage
+const [disabledLinkRFP, setDisableLinkRFP] = useState(false);
+
 useEffect(() => {
   if (linkedRfp) {
     Near.asyncView(REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT, "get_rfp", {
       rfp_id: linkedRfp.value ?? linkedRfp,
-    }).then((i) => setLabels(i.snapshot.labels));
+    }).then((i) => {
+      const timeline = parseJSON(i.snapshot.timeline);
+      setDisableLinkRFP(
+        !isModerator &&
+          timeline.status !== RFP_TIMELINE_STATUS.ACCEPTING_SUBMISSIONS
+      );
+      setLabels(i.snapshot.labels);
+    });
   }
 }, [linkedRfp]);
 
@@ -744,7 +764,7 @@ const onSubmit = ({ isDraft, isCancel }) => {
   const body = {
     proposal_body_version: "V1",
     linked_rfp: linkedRfp?.value,
-    category: "Infrastructure Committee",
+    category: "DevDAO Operations",
     name: title,
     description: description,
     summary: summary,
@@ -984,11 +1004,12 @@ const LinkRFPComponent = useMemo(() => {
         props={{
           onChange: setLinkedRfp,
           linkedRfp: linkedRfp,
+          disabled: disabledLinkRFP,
         }}
       />
     </div>
   );
-}, [draftProposalData]);
+}, [draftProposalData, disabledLinkRFP]);
 
 const LinkedProposalsComponent = useMemo(() => {
   return (
