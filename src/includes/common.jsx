@@ -6,8 +6,11 @@ export const REPL_NEAR = "near";
 export const RFP_IMAGE =
   "https://ipfs.near.social/ipfs/bafkreicbygt4kajytlxij24jj6tkg2ppc2dw3dlqhkermkjjfgdfnlizzy";
 
-export const RFP_INDEXER_QUERY_NAME =
+export const RFP_FEED_INDEXER_QUERY_NAME =
   "polyprogrammist_near_devhub_objects_rfps_with_latest_snapshot";
+
+export const RFP_INDEXER_QUERY_NAME =
+  "polyprogrammist_near_devhub_objects_rfp_snapshots";
 
 export const PROPOSAL_INDEXER_QUERY_NAME =
   "polyprogrammist_near_devhub_objects_proposals_with_latest_snapshot";
@@ -32,7 +35,7 @@ export const PROPOSAL_TIMELINE_STATUS = {
 
 const QUERYAPI_ENDPOINT = `https://near-queryapi.api.pagoda.co/v1/graphql`;
 
-export function fetchGraphQL(operationsDoc, operationName, variables) {
+export async function fetchGraphQL(operationsDoc, operationName, variables) {
   return asyncFetch(QUERYAPI_ENDPOINT, {
     method: "POST",
     headers: { "x-hasura-role": `polyprogrammist_near` },
@@ -60,4 +63,8 @@ export function parseJSON(json) {
   } else {
     return json;
   }
+}
+
+export function isNumber(value) {
+  return typeof value === "number";
 }

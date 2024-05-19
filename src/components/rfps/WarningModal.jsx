@@ -124,21 +124,18 @@ return (
       <ModalBackdrop />
       <ModalDialog className="card">
         <ModalHeader>
-          <h5 className="mb-0">Confirm proposal cancellation</h5>
+          <h5 className="mb-0">Warning: No approved proposal found!</h5>
         </ModalHeader>
         <ModalContent>
-          If you cancel this proposal, the status will change to Cancelled and
-          indicate to sponsors that this proposal is no longer active or
-          relevant. Comments are still open, but you cannot reopen this proposal
-          or make additional changes.
-          <br /> Are you sure you want to proceed?
+          You haven't approved any proposals linked to the RFP. Please approve a
+          proposal to proceed to the proposal selection phase.
         </ModalContent>
         <div className="d-flex gap-2 align-items-center justify-content-end mt-2">
           <Widget
             src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
             props={{
               classNames: { root: "btn-outline-secondary" },
-              label: "Okay",
+              label: "Dismiss",
               onClick: onConfirmClick,
             }}
           />

@@ -7,6 +7,7 @@ import {
   PROPOSAL_INDEXER_QUERY_NAME,
   REPL_RPC_URL,
   PROPOSAL_TIMELINE_STATUS,
+  isNumber,
 } from "@/includes/common";
 
 const snapshotHistory = props.snapshotHistory;
@@ -289,6 +290,25 @@ const AccountProfile = ({ accountId }) => {
   );
 };
 
+const LinkToRfp = ({ id }) => {
+  return (
+    <a
+      className="text-decoration-underline flex-1"
+      href={href({
+        widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+        params: {
+          page: "rfp",
+          id: id,
+        },
+      })}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      #{id}
+    </a>
+  );
+};
+
 const parseProposalKeyAndValue = (key, modifiedValue, originalValue) => {
   switch (key) {
     case "name":
@@ -306,8 +326,15 @@ const parseProposalKeyAndValue = (key, modifiedValue, originalValue) => {
       );
     case "linked_proposals":
       return <span>updated linked proposals</span>;
-    case "linked_rfp":
-      return <span>updated linked RFP</span>;
+    case "linked_rfp": {
+      const isUnlinked = isNumber(originalValue) && !isNumber(modifiedValue);
+      const actionText = isUnlinked ? "unlinked the RFP" : "linked an RFP";
+      return (
+        <span>
+          {actionText} <LinkToRfp id={originalValue ?? modifiedValue} />
+        </span>
+      );
+    }
     case "requested_sponsorship_usd_amount":
       return (
         <span>

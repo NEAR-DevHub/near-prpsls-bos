@@ -276,6 +276,31 @@ const AccountProfile = ({ accountId }) => {
   );
 };
 
+function symmetricDifference(arr1, arr2) {
+  const diffA = arr1.filter((item) => !arr2.includes(item));
+  const diffB = arr2.filter((item) => !arr1.includes(item));
+  return [...diffA, ...diffB];
+}
+
+const LinkToProposal = ({ id }) => {
+  return (
+    <a
+      className="text-decoration-underline flex-1"
+      href={href({
+        widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+        params: {
+          page: "proposal",
+          id: id,
+        },
+      })}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      #{id}
+    </a>
+  );
+};
+
 const parseProposalKeyAndValue = (key, modifiedValue, originalValue) => {
   switch (key) {
     case "name":
@@ -285,9 +310,24 @@ const parseProposalKeyAndValue = (key, modifiedValue, originalValue) => {
       return <span>changed {key}</span>;
     case "labels":
       return <span>changed labels to {(modifiedValue ?? []).join(", ")}</span>;
-    // TODO
-    case "linked_proposals":
-      return <span>updated linked proposals</span>;
+    case "linked_proposals": {
+      const newProposals = modifiedValue || [];
+      const oldProposals = originalValue || [];
+      const difference = symmetricDifference(oldProposals, newProposals).join(
+        ","
+      );
+
+      const action =
+        oldProposals.length < newProposals.length ? "linked" : "unlinked";
+      const actionText =
+        action === "linked" ? "linked a proposal" : "unlinked a proposal";
+
+      return (
+        <span>
+          {actionText} of ID <LinkToProposal id={difference} />
+        </span>
+      );
+    }
     case "timeline": {
       const modifiedKeys = Object.keys(modifiedValue);
       const originalKeys = Object.keys(originalValue);

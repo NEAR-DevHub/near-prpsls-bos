@@ -1,22 +1,24 @@
 import {
   REPL_INFRASTRUCTURE_COMMITTEE,
   REPL_DEVHUB,
-  RFP_INDEXER_QUERY_NAME,
+  RFP_FEED_INDEXER_QUERY_NAME,
   RFP_TIMELINE_STATUS,
   fetchGraphQL,
+  parseJSON,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 href || (href = () => {});
 
-const linkedRfp = props.linkedRfp;
-const onChange = props.onChange;
+const { linkedRfp, onChange, disabled } = props;
+
 const [selectedRFP, setSelectedRFP] = useState(null);
-const [rfpOptions, setRfpOptions] = useState([]);
+const [acceptingRfpsOptions, setAcceptingRfpsOption] = useState([]);
+const [allRfpOptions, setAllRfpOptions] = useState([]);
 const [searchRFPId, setSearchRfpId] = useState("");
 const [initialStateApplied, setInitialState] = useState(false);
 
-const queryName = RFP_INDEXER_QUERY_NAME;
+const queryName = RFP_FEED_INDEXER_QUERY_NAME;
 const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
   ${queryName}(
     offset: $offset
@@ -26,6 +28,7 @@ const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $wher
   ) {
     name
     rfp_id
+    timeline
   }
   }`;
 
@@ -43,13 +46,7 @@ function separateNumberAndText(str) {
 
 const buildWhereClause = () => {
   // show only accepting submissions stage rfps
-  let where = {
-    timeline: {
-      _cast: {
-        String: { _ilike: `%${RFP_TIMELINE_STATUS.ACCEPTING_SUBMISSIONS}%` },
-      },
-    },
-  };
+  let where = {};
   const { number, text } = separateNumberAndText(searchRFPId);
 
   if (number) {
@@ -75,13 +72,24 @@ const fetchRfps = () => {
       if (result.body.data) {
         const rfpsData = result.body.data?.[queryName];
         const data = [];
+        const acceptingData = [];
         for (const prop of rfpsData) {
+          const timeline = parseJSON(prop.timeline);
+          const label = "# " + prop.rfp_id + " : " + prop.name;
+          const value = prop.rfp_id;
+          if (timeline.status === RFP_TIMELINE_STATUS.ACCEPTING_SUBMISSIONS) {
+            acceptingData.push({
+              label,
+              value,
+            });
+          }
           data.push({
-            label: "# " + prop.rfp_id + " : " + prop.name,
-            value: prop.rfp_id,
+            label,
+            value,
           });
         }
-        setRfpOptions(data);
+        setAcceptingRfpsOption(acceptingData);
+        setAllRfpOptions(data);
       }
     }
   });
@@ -93,9 +101,9 @@ useEffect(() => {
 
 useEffect(() => {
   if (JSON.stringify(linkedRfp) !== JSON.stringify(selectedRFP)) {
-    if (rfpOptions.length > 0) {
+    if (allRfpOptions.length > 0) {
       if (typeof linkedRfp !== "object") {
-        setSelectedRFP(rfpOptions.find((i) => linkedRfp === i.value));
+        setSelectedRFP(allRfpOptions.find((i) => linkedRfp === i.value));
       } else {
         setSelectedRFP(linkedRfp);
       }
@@ -104,7 +112,7 @@ useEffect(() => {
   } else {
     setInitialState(true);
   }
-}, [linkedRfp, rfpOptions]);
+}, [linkedRfp, allRfpOptions]);
 
 useEffect(() => {
   if (
@@ -133,25 +141,27 @@ return (
         >
           {selectedRFP.label}
         </a>
-        <div
-          className="cursor-pointer"
-          onClick={() => {
-            setSelectedRFP(null);
-          }}
-        >
-          <i className="bi bi-trash3-fill"></i>
-        </div>
+        {!disabled && (
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              setSelectedRFP(null);
+            }}
+          >
+            <i className="bi bi-trash3-fill"></i>
+          </div>
+        )}
       </div>
     )}
-
     <Widget
-      src={`${REPL_DEVHUB}/widget/devhub.components.molecule.DropDownWithSearch`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.DropDownWithSearch`}
       props={{
+        disabled: disabled,
         selectedValue: "",
         onChange: (v) => {
           setSelectedRFP(v);
         },
-        options: rfpOptions,
+        options: acceptingRfpsOptions,
         showSearch: true,
         searchInputPlaceholder: "Search by Id",
         defaultLabel: "Search RFP",

@@ -4,7 +4,7 @@ import {
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_NEAR,
   RFP_IMAGE,
-  RFP_INDEXER_QUERY_NAME,
+  RFP_FEED_INDEXER_QUERY_NAME,
   fetchGraphQL,
 } from "@/includes/common";
 
@@ -243,7 +243,7 @@ const FeedPage = () => {
     currentlyDisplaying: 0,
   });
 
-  const queryName = RFP_INDEXER_QUERY_NAME;
+  const queryName = RFP_FEED_INDEXER_QUERY_NAME;
   const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
     ${queryName}(
       offset: $offset
