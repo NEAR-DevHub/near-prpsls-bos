@@ -340,6 +340,7 @@ useEffect(() => {
           ...JSON.parse(draftRfpData).snapshot,
         };
       }
+      setRfpId(data.id);
       setLabels(snapshot.labels);
       setTitle(snapshot.name);
       setSummary(snapshot.summary);
@@ -388,7 +389,7 @@ useEffect(() => {
 ]);
 
 function fetchApprovedRfpProposals() {
-  const queryName = PROPOSAL_INDEXER_QUERY_NAME;
+  const queryName = PROPOSAL_FEED_INDEXER_QUERY_NAME;
   const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
     ${queryName}(
       offset: $offset
@@ -591,7 +592,7 @@ const onCancelRFP = (value) => {
       contractName: REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
       methodName: "cancel_rfp",
       args: {
-        id: rfpId.id,
+        id: rfpId,
         proposals_to_cancel:
           value === CANCEL_RFP_OPTIONS.CANCEL_PROPOSALS
             ? editRfpData.snapshot.linked_proposals

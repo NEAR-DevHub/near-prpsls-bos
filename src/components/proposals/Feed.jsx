@@ -4,7 +4,7 @@ import {
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_NEAR,
   RFP_IMAGE,
-  PROPOSAL_INDEXER_QUERY_NAME,
+  PROPOSAL_FEED_INDEXER_QUERY_NAME,
   fetchGraphQL,
   parseJSON,
   RFP_FEED_INDEXER_QUERY_NAME,
@@ -255,7 +255,7 @@ const FeedPage = () => {
     currentlyDisplaying: 0,
   });
 
-  const queryName = PROPOSAL_INDEXER_QUERY_NAME;
+  const queryName = PROPOSAL_FEED_INDEXER_QUERY_NAME;
   const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
     ${queryName}(
       offset: $offset

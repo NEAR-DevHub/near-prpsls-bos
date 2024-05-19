@@ -12,9 +12,11 @@ export const RFP_FEED_INDEXER_QUERY_NAME =
 export const RFP_INDEXER_QUERY_NAME =
   "polyprogrammist_near_devhub_objects_rfp_snapshots";
 
-export const PROPOSAL_INDEXER_QUERY_NAME =
+export const PROPOSAL_FEED_INDEXER_QUERY_NAME =
   "polyprogrammist_near_devhub_objects_proposals_with_latest_snapshot";
 
+export const PROPOSAL_QUERY_NAME =
+  "polyprogrammist_near_devhub_objects_proposal_snapshots";
 export const RFP_TIMELINE_STATUS = {
   ACCEPTING_SUBMISSIONS: "ACCEPTING_SUBMISSIONS",
   EVALUATION: "EVALUATION",
