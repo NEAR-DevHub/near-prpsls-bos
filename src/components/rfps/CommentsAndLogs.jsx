@@ -1,6 +1,11 @@
-import { REPL_INFRASTRUCTURE_COMMITTEE, REPL_DEVHUB } from "@/includes/common";
+import {
+  REPL_INFRASTRUCTURE_COMMITTEE,
+  REPL_DEVHUB,
+  RFP_TIMELINE_STATUS,
+} from "@/includes/common";
 
 const snapshotHistory = props.snapshotHistory;
+const approvedProposals = props.approvedProposals ?? [];
 
 const Wrapper = styled.div`
   position: relative;
@@ -234,6 +239,26 @@ function parseTimelineKeyAndValue(timeline, originalValue, modifiedValue) {
   const newValue = modifiedValue[timeline];
   switch (timeline) {
     case "status":
+      if (newValue === RFP_TIMELINE_STATUS.PROPOSAL_SELECTED) {
+        return (
+          <span className="inline-flex">
+            moved RFP to{" "}
+            <Widget
+              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.StatusTag`}
+              props={{
+                timelineStatus: newValue,
+              }}
+            />
+            , proposals selected are{" "}
+            {approvedProposals.map((i, index) => (
+              <span>
+                <LinkToProposal id={i.proposal_id}> #{i.name}</LinkToProposal>
+                {index < approvedProposals.length - 1 && ", "}
+              </span>
+            ))}
+          </span>
+        );
+      }
       return (
         oldValue !== newValue && (
           <span className="inline-flex">
@@ -282,7 +307,7 @@ function symmetricDifference(arr1, arr2) {
   return [...diffA, ...diffB];
 }
 
-const LinkToProposal = ({ id }) => {
+const LinkToProposal = ({ id, children }) => {
   return (
     <a
       className="text-decoration-underline flex-1"
@@ -296,7 +321,7 @@ const LinkToProposal = ({ id }) => {
       target="_blank"
       rel="noopener noreferrer"
     >
-      #{id}
+      {children}
     </a>
   );
 };
@@ -324,7 +349,8 @@ const parseProposalKeyAndValue = (key, modifiedValue, originalValue) => {
 
       return (
         <span>
-          {actionText} of ID <LinkToProposal id={difference} />
+          {actionText} of ID{" "}
+          <LinkToProposal id={difference}> #{difference}</LinkToProposal>
         </span>
       );
     }

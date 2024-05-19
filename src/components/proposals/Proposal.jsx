@@ -4,9 +4,9 @@ import {
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_NEAR,
   RFP_IMAGE,
-  PROPOSAL_INDEXER_QUERY_NAME,
   REPL_RPC_URL,
   PROPOSAL_TIMELINE_STATUS,
+  PROPOSAL_QUERY_NAME,
   parseJSON,
   isNumber,
 } from "@/includes/common";
@@ -272,7 +272,7 @@ const proposal = Near.view(
 
 const [snapshotHistory, setSnapshotHistory] = useState([]);
 
-const queryName = PROPOSAL_INDEXER_QUERY_NAME;
+const queryName = PROPOSAL_QUERY_NAME;
 const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
   ${queryName}(
     offset: $offset

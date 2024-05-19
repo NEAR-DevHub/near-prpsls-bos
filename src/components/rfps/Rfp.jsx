@@ -6,7 +6,7 @@ import {
   RFP_TIMELINE_STATUS,
   RFP_IMAGE,
   PROPOSAL_TIMELINE_STATUS,
-  PROPOSAL_INDEXER_QUERY_NAME,
+  PROPOSAL_FEED_INDEXER_QUERY_NAME,
   fetchGraphQL,
   RFP_INDEXER_QUERY_NAME,
   parseJSON,
@@ -385,7 +385,7 @@ const createdDate = snapshotHistory[0].timestamp ?? snapshot.timestamp;
 const [approvedProposals, setApprovedProposals] = useState([]);
 
 function fetchApprovedRfpProposals() {
-  const queryName = PROPOSAL_INDEXER_QUERY_NAME;
+  const queryName = PROPOSAL_FEED_INDEXER_QUERY_NAME;
   const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
     ${queryName}(
       offset: $offset
@@ -394,6 +394,7 @@ function fetchApprovedRfpProposals() {
       where: $where
     ) {
       proposal_id
+      name
     }
   }`;
 
@@ -628,6 +629,7 @@ return (
                     ...props,
                     id: rfp.id,
                     item: item,
+                    approvedProposals: approvedProposals,
                     snapshotHistory: snapshotHistory,
                   }}
                 />
