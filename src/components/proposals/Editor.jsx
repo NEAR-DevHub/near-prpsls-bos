@@ -766,7 +766,7 @@ const onSubmit = ({ isDraft, isCancel }) => {
   const body = {
     proposal_body_version: "V1",
     linked_rfp: linkedRfp?.value,
-    category: "DevDAO Operations",
+    category: "Infrastructure Committee",
     name: title,
     description: description,
     summary: summary,
