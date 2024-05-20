@@ -246,7 +246,6 @@ async function getSuggestedProposals(id) {
     }),
   })
     .then((res) => {
-      console.log(res);
       const proposals =
         res?.data?.[
           proposalQueryName
