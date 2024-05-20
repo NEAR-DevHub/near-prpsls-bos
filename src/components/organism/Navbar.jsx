@@ -1,4 +1,8 @@
-import { REPL_DEVHUB, REPL_INFRASTRUCTURE_COMMITTEE } from "@/includes/common";
+import {
+  REPL_DEVHUB,
+  REPL_INFRASTRUCTURE_COMMITTEE,
+  REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
+} from "@/includes/common";
 const page = props.page;
 
 const [showMenu, setShowMenu] = useState(false);
@@ -110,11 +114,6 @@ const MobileMenu = styled.button`
 
 let links = [
   {
-    title: "Admin",
-    href: "admin",
-    links: [],
-  },
-  {
     title: "Proposals",
     href: "proposals",
     links: [],
@@ -130,6 +129,25 @@ let links = [
     links: [],
   },
 ];
+
+const isModerator = Near.view(
+  REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
+  "is_allowed_to_write_rfps",
+  {
+    editor: context.accountId,
+  }
+);
+
+if (isModerator) {
+  links = [
+    {
+      title: "Admin",
+      href: "admin",
+      links: [],
+    },
+    ...links,
+  ];
+}
 
 const MobileNav = styled.div`
   display: none;
