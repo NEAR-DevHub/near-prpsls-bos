@@ -16,13 +16,6 @@ test.describe("Wallet is connected", () => {
       "About"
     );
 
-    const adminHeaderLink = await page.getByRole("link", { name: "Admin" });
-    await expect(adminHeaderLink).toBeVisible();
-    await adminHeaderLink.click();
-    await expect(await page.locator(".content-container")).toContainText(
-      "Admin"
-    );
-
     const proposalsHeaderLink = await page.getByRole("link", {
       name: "Proposals",
     });
@@ -36,5 +29,29 @@ test.describe("Wallet is connected", () => {
     await expect(rfpsHeaderLink).toBeVisible();
     await rfpsHeaderLink.click();
     await expect(await page.locator(".content-container")).toContainText("RFP");
+
+    await expect(
+      await page.getByRole("link", { name: "Admin" })
+    ).not.toBeAttached();
+  });
+});
+
+test.describe("Wallet is connected as admin", () => {
+  test.use({
+    storageState: "playwright-tests/storage-states/wallet-connected-admin.json",
+  });
+  test("should go to homepage and click admin header links", async ({
+    page,
+  }) => {
+    await page.goto(
+      "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app"
+    );
+
+    const adminHeaderLink = await page.getByRole("link", { name: "Admin" });
+    await expect(adminHeaderLink).toBeVisible();
+    await adminHeaderLink.click();
+    await expect(
+      await page.getByRole("tab", { name: "Moderators" })
+    ).toBeVisible();
   });
 });
