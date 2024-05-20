@@ -7,6 +7,7 @@ import {
   RFP_TIMELINE_STATUS,
   CANCEL_RFP_OPTIONS,
   parseJSON,
+  PROPOSALS_APPROVED_STATUS_ARRAY,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -399,6 +400,7 @@ function fetchApprovedRfpProposals() {
     ) {
       author_id
       name
+      timeline
     }
   }`;
 
@@ -407,24 +409,21 @@ function fetchApprovedRfpProposals() {
     limit: FETCH_LIMIT,
     offset,
     where: {
-      proposal_id: { _in: rfp.linked_proposals },
-      timeline: {
-        _cast: {
-          String: {
-            _ilike: `%${PROPOSAL_TIMELINE_STATUS.APPROVED}%`,
-            _ilike: `%${PROPOSAL_TIMELINE_STATUS.APPROVED_CONDITIONALLY}%`,
-            _ilike: `%${PROPOSAL_TIMELINE_STATUS.PAYMENT_PROCESSING}%`,
-            _ilike: `%${PROPOSAL_TIMELINE_STATUS.FUNDED}%`,
-          },
-        },
-      },
+      proposal_id: { _in: editRfpData.snapshot.linked_proposals },
     },
   };
   fetchGraphQL(query, "GetLatestSnapshot", variables).then(async (result) => {
     if (result.status === 200) {
       if (result.body.data) {
         const data = result.body.data?.[queryName];
-        setApprovedProposals(data);
+        const approved = [];
+        data.map((item) => {
+          const timeline = parseJSON(item.timeline);
+          if (PROPOSALS_APPROVED_STATUS_ARRAY.includes(timeline.status)) {
+            approved.push(item);
+          }
+        });
+        setApprovedProposals(approved);
       }
     }
   });

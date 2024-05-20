@@ -4,6 +4,9 @@ import {
   RFP_TIMELINE_STATUS,
 } from "@/includes/common";
 
+const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
+href || (href = () => {});
+
 const snapshotHistory = props.snapshotHistory;
 const approvedProposals = props.approvedProposals ?? [];
 
@@ -30,15 +33,11 @@ const Wrapper = styled.div`
   }
 
   .inline-flex {
-    display: inline-flex !important;
+    display: -webkit-inline-box !important;
     align-items: center !important;
     gap: 0.25rem !important;
-  }
-
-  @media screen and (max-width: 768px) {
-    .inline-flex {
-      display: -webkit-inline-box !important;
-    }
+    margin-right: 2px;
+    flex-wrap: wrap;
   }
 `;
 
@@ -249,10 +248,13 @@ function parseTimelineKeyAndValue(timeline, originalValue, modifiedValue) {
                 timelineStatus: newValue,
               }}
             />
-            , proposals selected are{" "}
+            ･ selected proposal(s) are{" "}
             {approvedProposals.map((i, index) => (
               <span>
-                <LinkToProposal id={i.proposal_id}> #{i.name}</LinkToProposal>
+                <LinkToProposal id={i.proposal_id}>
+                  {" "}
+                  #{i.proposal_id} {i.name}
+                </LinkToProposal>
                 {index < approvedProposals.length - 1 && ", "}
               </span>
             ))}
@@ -342,10 +344,10 @@ const parseProposalKeyAndValue = (key, modifiedValue, originalValue) => {
         ","
       );
 
-      const action =
-        oldProposals.length < newProposals.length ? "linked" : "unlinked";
-      const actionText =
-        action === "linked" ? "linked a proposal" : "unlinked a proposal";
+      const isUnlinked = oldProposals.length > newProposals.length;
+      const actionText = isUnlinked
+        ? "unlinked a proposal"
+        : "linked a proposal";
 
       return (
         <span>

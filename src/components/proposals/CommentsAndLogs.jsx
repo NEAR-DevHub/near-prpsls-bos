@@ -9,6 +9,8 @@ import {
   PROPOSAL_TIMELINE_STATUS,
   isNumber,
 } from "@/includes/common";
+const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
+href || (href = () => {});
 
 const snapshotHistory = props.snapshotHistory;
 
@@ -328,10 +330,11 @@ const parseProposalKeyAndValue = (key, modifiedValue, originalValue) => {
       return <span>updated linked proposals</span>;
     case "linked_rfp": {
       const isUnlinked = isNumber(originalValue) && !isNumber(modifiedValue);
-      const actionText = isUnlinked ? "unlinked the RFP" : "linked an RFP";
+      const actionText = isUnlinked ? "unlinked" : "linked";
       return (
         <span>
-          {actionText} <LinkToRfp id={originalValue ?? modifiedValue} />
+          {actionText} an RFP of ID{" "}
+          <LinkToRfp id={originalValue ?? modifiedValue} />
         </span>
       );
     }

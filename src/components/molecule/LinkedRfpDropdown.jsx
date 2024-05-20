@@ -1,4 +1,5 @@
 import {
+  REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_INFRASTRUCTURE_COMMITTEE,
   REPL_DEVHUB,
   RFP_FEED_INDEXER_QUERY_NAME,
@@ -11,6 +12,14 @@ const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 href || (href = () => {});
 
 const { linkedRfp, onChange, disabled } = props;
+
+const isModerator = Near.view(
+  REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
+  "is_allowed_to_write_rfps",
+  {
+    editor: context.accountId,
+  }
+);
 
 const [selectedRFP, setSelectedRFP] = useState(null);
 const [acceptingRfpsOptions, setAcceptingRfpsOption] = useState([]);
@@ -161,7 +170,7 @@ return (
         onChange: (v) => {
           setSelectedRFP(v);
         },
-        options: acceptingRfpsOptions,
+        options: isModerator ? allRfpOptions : acceptingRfpsOptions,
         showSearch: true,
         searchInputPlaceholder: "Search by Id",
         defaultLabel: "Search RFP",

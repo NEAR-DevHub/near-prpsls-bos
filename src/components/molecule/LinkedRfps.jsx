@@ -38,11 +38,7 @@ return (
           <div className="d-flex gap-2">
             <img src={RFP_IMAGE} height={40} width={40} />
             <div className="d-flex flex-column" style={{ maxWidth: 250 }}>
-              <Link
-                href={`/near/widget/ProfilePage?accountId=${item.snapshot.name}`}
-              >
-                <b className="text-truncate">{item.snapshot.name}</b>
-              </Link>
+              <b className="text-truncate">{item.snapshot.name}</b>
               <div className="text-sm text-muted">
                 created on {readableDate(item.snapshot.timestamp / 1000000)}
               </div>
