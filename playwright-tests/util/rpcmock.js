@@ -1,9 +1,12 @@
-export async function mockRpcRequest(
+export const MOCK_RPC_URL = "https://rpc.mainnet.near.org";
+
+export async function mockRpcRequest({
   page,
   filterParams = {},
-  mockedResult = {}
-) {
-  await page.route("https://rpc.mainnet.near.org", async (route, request) => {
+  mockedResult = {},
+  modifyOriginalResultFunction = null,
+}) {
+  await page.route(MOCK_RPC_URL, async (route, request) => {
     const postData = request.postDataJSON();
 
     const filterParamsKeys = Object.keys(filterParams);
@@ -12,6 +15,15 @@ export async function mockRpcRequest(
         (param) => postData.params[param] === filterParams[param]
       ).length === filterParamsKeys.length
     ) {
+      const json = await route.fetch().then((r) => r.json());
+
+      if (modifyOriginalResultFunction) {
+        const originalResult = JSON.parse(
+          new TextDecoder().decode(new Uint8Array(json.result.result))
+        );
+        mockedResult = await modifyOriginalResultFunction(originalResult);
+      }
+
       const mockedResponse = {
         jsonrpc: "2.0",
         id: "dontcare",

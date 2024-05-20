@@ -53,12 +53,12 @@ test.describe("Wallet is connected with admin account", () => {
   test("admin should be able see the create RFP button and fill the form", async ({
     page,
   }) => {
-    await mockRpcRequest(
+    await mockRpcRequest({
       page,
-      {
+      filterParams: {
         method_name: "get_global_labels",
       },
-      [
+      mockedResult: [
         {
           value: "Data Lakes",
           title: "Data Lakes",
@@ -69,8 +69,8 @@ test.describe("Wallet is connected with admin account", () => {
           title: "Explorers",
           color: [0, 255, 255],
         },
-      ]
-    );
+      ],
+    });
 
     await page.goto(
       "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfps"
@@ -125,6 +125,19 @@ test.describe("Wallet is connected with admin account", () => {
     await pauseIfVideoRecording(page);
   });
   test("should cancel RFP", async ({ page }) => {
+    await mockRpcRequest({
+      page,
+      filterParams: {
+        method_name: "get_rfp",
+      },
+      modifyOriginalResultFunction: async (originalResult) => {
+        console.log(JSON.stringify(originalResult, null, 1));
+        originalResult.snapshot.timeline.status = "ACCEPTING_SUBMISSIONS";
+        originalResult.snapshot.linked_proposals = [2, 3];
+        return originalResult;
+      },
+    });
+
     await page.goto(
       "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfp&id=1"
     );
@@ -143,7 +156,7 @@ test.describe("Wallet is connected with admin account", () => {
       JSON.stringify(
         {
           id: 1,
-          proposals_to_cancel: [2],
+          proposals_to_cancel: [2, 3],
           proposals_to_unlink: [],
         },
         null,
