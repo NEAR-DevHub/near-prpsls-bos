@@ -431,19 +431,6 @@ function fetchApprovedRfpProposals() {
 
 fetchApprovedRfpProposals();
 
-// if proposal selected timeline is selected and no approved proposals exist, show warning
-useEffect(() => {
-  if (timeline.status === RFP_TIMELINE_STATUS.PROPOSAL_SELECTED) {
-    if (Array.isArray(approvedProposals) && !approvedProposals.length) {
-      setWarningModal(true);
-    }
-  }
-
-  if (timeline.status === RFP_TIMELINE_STATUS.CANCELLED) {
-    setCancelModal(true);
-  }
-}, [timeline, approvedProposals]);
-
 const InputContainer = ({ heading, description, children }) => {
   return (
     <div className="d-flex flex-column gap-1 gap-sm-2 w-100">
@@ -966,7 +953,24 @@ if (showRFPPage) {
                   src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.TimelineConfigurator`}
                   props={{
                     timeline: timeline,
-                    setTimeline: setTimeline,
+                    setTimeline: (v) => {
+                      if (editRfpData.snapshot.timeline.status === v.status) {
+                        return;
+                      }
+                      // if proposal selected timeline is selected and no approved proposals exist, show warning
+                      if (
+                        v.status === RFP_TIMELINE_STATUS.PROPOSAL_SELECTED &&
+                        Array.isArray(approvedProposals) &&
+                        !approvedProposals.length
+                      ) {
+                        setWarningModal(true);
+                      }
+
+                      if (v.status === RFP_TIMELINE_STATUS.CANCELLED) {
+                        setCancelModal(true);
+                      }
+                      setTimeline(v);
+                    },
                     disabled: false,
                   }}
                 />
