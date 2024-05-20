@@ -1,4 +1,4 @@
-import { TIMELINE_STATUS } from "@/includes/common";
+import { RFP_TIMELINE_STATUS } from "@/includes/common";
 
 const stepsArray = [1, 2, 3];
 const timeline = props.timeline;
@@ -8,24 +8,24 @@ const setTimeline = props.setTimeline ?? (() => {});
 const TimelineStatusOptions = [
   {
     label: "Accepting Submissions",
-    value: { status: TIMELINE_STATUS.ACCEPTING_SUBMISSIONS },
+    value: { status: RFP_TIMELINE_STATUS.ACCEPTING_SUBMISSIONS },
   },
   {
     label: "Evaluation",
     value: {
-      status: TIMELINE_STATUS.EVALUATION,
+      status: RFP_TIMELINE_STATUS.EVALUATION,
     },
   },
   {
     label: "Proposal Selected",
     value: {
-      status: TIMELINE_STATUS.PROPOSAL_SELECTED,
+      status: RFP_TIMELINE_STATUS.PROPOSAL_SELECTED,
     },
   },
   {
     label: "Cancelled",
     value: {
-      status: TIMELINE_STATUS.CANCELLED,
+      status: RFP_TIMELINE_STATUS.CANCELLED,
     },
   },
 ];
@@ -93,8 +93,8 @@ const TimelineItems = ({ title, children, value, values }) => {
   // cancelled
   if (
     statusIndex === 2 &&
-    (values ?? []).includes(TIMELINE_STATUS.CANCELLED) &&
-    timeline.status === TIMELINE_STATUS.CANCELLED
+    (values ?? []).includes(RFP_TIMELINE_STATUS.CANCELLED) &&
+    timeline.status === RFP_TIMELINE_STATUS.CANCELLED
   ) {
     color = "#F4F4F4";
   }
@@ -144,8 +144,8 @@ return (
           const current = statusIndex === indexOfCurrentItem;
           const completed =
             statusIndex > indexOfCurrentItem ||
-            timeline.status === TIMELINE_STATUS.PROPOSAL_SELECTED ||
-            timeline.status === TIMELINE_STATUS.CANCELLED;
+            timeline.status === RFP_TIMELINE_STATUS.PROPOSAL_SELECTED ||
+            timeline.status === RFP_TIMELINE_STATUS.CANCELLED;
           return (
             <div className="d-flex flex-column align-items-center gap-1">
               <div
@@ -180,11 +180,14 @@ return (
       <div className="d-flex flex-column gap-3">
         <TimelineItems
           title="1) Accepting Submissions"
-          value={TIMELINE_STATUS.ACCEPTING_SUBMISSIONS}
+          value={RFP_TIMELINE_STATUS.ACCEPTING_SUBMISSIONS}
         >
           <div>During this stage, the RFP is still open for submissions.</div>
         </TimelineItems>
-        <TimelineItems title="2) Evaluation" value={TIMELINE_STATUS.EVALUATION}>
+        <TimelineItems
+          title="2) Evaluation"
+          value={RFP_TIMELINE_STATUS.EVALUATION}
+        >
           <div>
             This RFP is closed for submissions. All submitted proposals are
             under review.
@@ -193,8 +196,8 @@ return (
         <TimelineItems
           title="3) Decision"
           values={[
-            TIMELINE_STATUS.PROPOSAL_SELECTED,
-            TIMELINE_STATUS.CANCELLED,
+            RFP_TIMELINE_STATUS.PROPOSAL_SELECTED,
+            RFP_TIMELINE_STATUS.CANCELLED,
           ]}
         >
           <div className="d-flex flex-column gap-2">
@@ -206,11 +209,11 @@ return (
                 label: <div className="fw-bold">Proposal Selected</div>,
                 disabled: disabled,
                 isChecked:
-                  timeline.status === TIMELINE_STATUS.PROPOSAL_SELECTED,
+                  timeline.status === RFP_TIMELINE_STATUS.PROPOSAL_SELECTED,
                 onClick: (v) => {
                   if (v) {
                     setTimeline({
-                      status: TIMELINE_STATUS.PROPOSAL_SELECTED,
+                      status: RFP_TIMELINE_STATUS.PROPOSAL_SELECTED,
                     });
                   }
                 },
@@ -222,11 +225,11 @@ return (
                 value: "",
                 disabled: disabled,
                 label: <div className="fw-bold">RFP Cancelled</div>,
-                isChecked: timeline.status === TIMELINE_STATUS.CANCELLED,
+                isChecked: timeline.status === RFP_TIMELINE_STATUS.CANCELLED,
                 onClick: (v) => {
                   if (v) {
                     setTimeline({
-                      status: TIMELINE_STATUS.CANCELLED,
+                      status: RFP_TIMELINE_STATUS.CANCELLED,
                     });
                   }
                 },

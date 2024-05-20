@@ -4,12 +4,15 @@ import {
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_RPC_URL,
   RFP_IMAGE,
-  TIMELINE_STATUS,
+  RFP_TIMELINE_STATUS,
+  CANCEL_RFP_OPTIONS,
+  parseJSON,
+  PROPOSALS_APPROVED_STATUS_ARRAY,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 
-const draftKey = "RFP_EDIT";
+const draftKey = "INFRA_RFP_EDIT";
 href || (href = () => {});
 
 const { id, timestamp } = props;
@@ -292,9 +295,11 @@ const [rfpIdsArray, setRfpIdsArray] = useState(null);
 const [isTxnCreated, setCreateTxn] = useState(false);
 const [oldRfpData, setOldRfpData] = useState(null);
 const [isCancelModalOpen, setCancelModal] = useState(false);
+const [isWarningModalOpen, setWarningModal] = useState(false);
 
+const [approvedProposals, setApprovedProposals] = useState(null);
 const [timeline, setTimeline] = useState({
-  status: TIMELINE_STATUS.ACCEPTING_SUBMISSIONS,
+  status: RFP_TIMELINE_STATUS.ACCEPTING_SUBMISSIONS,
 });
 
 if (allowDraft) {
@@ -336,12 +341,13 @@ useEffect(() => {
           ...JSON.parse(draftRfpData).snapshot,
         };
       }
+      setRfpId(data.id);
       setLabels(snapshot.labels);
       setTitle(snapshot.name);
       setSummary(snapshot.summary);
       setDescription(snapshot.description);
       setSubmissionDeadline(getDate(snapshot.submission_deadline));
-      setTimeline(snapshot.timeline);
+      setTimeline(parseJSON(snapshot.timeline));
       if (isEditPage) {
         setConsent({ toc: true, coc: true });
       }
@@ -382,6 +388,48 @@ useEffect(() => {
   isTxnCreated,
   showRFPPage,
 ]);
+
+function fetchApprovedRfpProposals() {
+  const queryName = PROPOSAL_FEED_INDEXER_QUERY_NAME;
+  const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
+    ${queryName}(
+      offset: $offset
+      limit: $limit
+      order_by: {proposal_id: desc}
+      where: $where
+    ) {
+      author_id
+      name
+      timeline
+    }
+  }`;
+
+  const FETCH_LIMIT = 50;
+  const variables = {
+    limit: FETCH_LIMIT,
+    offset,
+    where: {
+      proposal_id: { _in: editRfpData.snapshot.linked_proposals },
+    },
+  };
+  fetchGraphQL(query, "GetLatestSnapshot", variables).then(async (result) => {
+    if (result.status === 200) {
+      if (result.body.data) {
+        const data = result.body.data?.[queryName];
+        const approved = [];
+        data.map((item) => {
+          const timeline = parseJSON(item.timeline);
+          if (PROPOSALS_APPROVED_STATUS_ARRAY.includes(timeline.status)) {
+            approved.push(item);
+          }
+        });
+        setApprovedProposals(approved);
+      }
+    }
+  });
+}
+
+fetchApprovedRfpProposals();
 
 const InputContainer = ({ heading, description, children }) => {
   return (
@@ -522,14 +570,24 @@ const onSubmit = () => {
   ]);
 };
 
-const onTimelineChange = ({ timeline }) => {
+const onCancelRFP = (value) => {
   setCreateTxn(true);
 
   Near.call([
     {
       contractName: REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
-      methodName: "edit_rfp_timeline",
-      args: { id: rfpId.id, timeline: timeline },
+      methodName: "cancel_rfp",
+      args: {
+        id: rfpId,
+        proposals_to_cancel:
+          value === CANCEL_RFP_OPTIONS.CANCEL_PROPOSALS
+            ? editRfpData.snapshot.linked_proposals
+            : [],
+        proposals_to_unlink:
+          value === CANCEL_RFP_OPTIONS.UNLINK_PROPOSALS
+            ? editRfpData.snapshot.linked_proposals
+            : [],
+      },
       gas: 270000000000000,
     },
   ]);
@@ -644,10 +702,10 @@ const SummaryComponent = useMemo(() => {
 const DescriptionComponent = useMemo(() => {
   return (
     <Widget
-      src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Compose`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.Compose`}
       props={{
         data: description,
-        onChange: (v) => setDescription(v),
+        onChange: setDescription,
         autocompleteEnabled: true,
         autoFocus: false,
       }}
@@ -748,13 +806,24 @@ if (showRFPPage) {
         src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.ConfirmCancelModal`}
         props={{
           isOpen: isCancelModalOpen,
-          onCancelClick: () => setCancelModal(false),
-          onConfirmClick: () => {
+          onCancelClick: () => {
             setCancelModal(false);
-            setTimeline({ status: TIMELINE_STATUS.CANCELLED });
-            onTimelineChange({
-              timeline: { status: TIMELINE_STATUS.CANCELLED },
-            });
+            setTimeline({ status: RFP_TIMELINE_STATUS.EVALUATION });
+          },
+          onConfirmClick: (value) => {
+            setCancelModal(false);
+            onCancelRFP(value);
+          },
+          linkedProposalIds: editRfpData.snapshot.linked_proposals,
+        }}
+      />
+      <Widget
+        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.WarningModal`}
+        props={{
+          isOpen: isWarningModalOpen,
+          onConfirmClick: () => {
+            setWarningModal(false);
+            setTimeline({ status: RFP_TIMELINE_STATUS.EVALUATION });
           },
         }}
       />
@@ -815,72 +884,51 @@ if (showRFPPage) {
                 <InputContainer heading="Final Consent">
                   {ConsentComponent}
                 </InputContainer>
-                <div className="d-flex justify-content-between gap-2 align-items-center">
-                  <div>
-                    {isEditPage && (
-                      <Widget
-                        src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
-                        props={{
-                          classNames: {
-                            root: "btn-outline-danger shadow-none border-0 btn-sm",
-                          },
-                          label: (
-                            <div className="d-flex align-items-center gap-1">
-                              <i className="bi bi-trash3"></i> Cancel RFP
-                            </div>
-                          ),
-                          onClick: () => setCancelModal(true), // TODO
-                        }}
-                      />
-                    )}
-                  </div>
-                  <div className="d-flex gap-2">
-                    <Link
-                      to={
-                        isEditPage
-                          ? href({
-                              widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
-                              params: {
-                                page: "rfp",
-                                id: parseInt(id),
-                              },
-                            })
-                          : href({
-                              widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
-                              params: {
-                                page: "rfps",
-                              },
-                            })
-                      }
-                    >
-                      <Widget
-                        src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
-                        props={{
-                          classNames: {
-                            root: "d-flex h-100 text-muted fw-bold btn-outline shadow-none border-0 btn-sm",
-                          },
-                          label: "Discard Changes",
-                          onClick: cleanDraft,
-                        }}
-                      />
-                    </Link>
+                <div className="d-flex justify-content-end gap-2 align-items-center">
+                  <Link
+                    to={
+                      isEditPage
+                        ? href({
+                            widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+                            params: {
+                              page: "rfp",
+                              id: parseInt(id),
+                            },
+                          })
+                        : href({
+                            widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+                            params: {
+                              page: "rfps",
+                            },
+                          })
+                    }
+                  >
                     <Widget
                       src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
                       props={{
                         classNames: {
-                          root: "d-flex h-100 fw-light-bold btn-outline shadow-none border-1",
+                          root: "d-flex h-100 text-muted fw-bold btn-outline shadow-none border-0 btn-sm",
                         },
-                        label: (
-                          <div className="d-flex align-items-center gap-2">
-                            <div className="circle grey"></div>{" "}
-                            <div>Submit</div>
-                          </div>
-                        ),
-                        onClick: onSubmit,
-                        disabled: disabledSubmitBtn,
+                        label: "Discard Changes",
+                        onClick: cleanDraft,
                       }}
                     />
-                  </div>
+                  </Link>
+                  <Widget
+                    src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
+                    props={{
+                      classNames: {
+                        root: "d-flex h-100 fw-light-bold btn-outline shadow-none border-1",
+                      },
+                      label: (
+                        <div className="d-flex align-items-center gap-2">
+                          <div className="circle grey"></div> <div>Submit</div>
+                        </div>
+                      ),
+                      onClick: onSubmit,
+                      disabled: disabledSubmitBtn,
+                    }}
+                  />
                 </div>
               </div>
             </div>
@@ -905,7 +953,24 @@ if (showRFPPage) {
                   src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.TimelineConfigurator`}
                   props={{
                     timeline: timeline,
-                    setTimeline: setTimeline,
+                    setTimeline: (v) => {
+                      if (editRfpData.snapshot.timeline.status === v.status) {
+                        return;
+                      }
+                      // if proposal selected timeline is selected and no approved proposals exist, show warning
+                      if (
+                        v.status === RFP_TIMELINE_STATUS.PROPOSAL_SELECTED &&
+                        Array.isArray(approvedProposals) &&
+                        !approvedProposals.length
+                      ) {
+                        setWarningModal(true);
+                      }
+
+                      if (v.status === RFP_TIMELINE_STATUS.CANCELLED) {
+                        setCancelModal(true);
+                      }
+                      setTimeline(v);
+                    },
                     disabled: false,
                   }}
                 />

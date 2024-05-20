@@ -1,17 +1,20 @@
-import { REPL_DEVHUB } from "@/includes/common";
+import {
+  REPL_INFRASTRUCTURE_COMMITTEE,
+  REPL_DEVHUB,
+  PROPOSAL_FEED_INDEXER_QUERY_NAME,
+  fetchGraphQL,
+} from "@/includes/common";
+
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 href || (href = () => {});
 
 const linkedProposals = props.linkedProposals;
-const whereClause = props.whereClause;
 const onChange = props.onChange;
 const [selectedProposals, setSelectedProposals] = useState(linkedProposals);
 const [proposalsOptions, setProposalsOptions] = useState([]);
 const [searchProposalId, setSearchProposalId] = useState("");
-// TODO: UPDATE QUERY FOR RFP (AFTER INDEXER IS BUILT)
-const QUERYAPI_ENDPOINT = `https://near-queryapi.api.pagoda.co/v1/graphql`;
-const queryName =
-  "thomasguntenaar_near_devhub_proposals_quebec_proposals_with_latest_snapshot";
+
+const queryName = PROPOSAL_FEED_INDEXER_QUERY_NAME;
 const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
 ${queryName}(
   offset: $offset
@@ -49,7 +52,7 @@ function separateNumberAndText(str) {
 }
 
 const buildWhereClause = () => {
-  let where = whereClause;
+  let where = {};
   const { number, text } = separateNumberAndText(searchProposalId);
 
   if (number) {
@@ -63,18 +66,6 @@ const buildWhereClause = () => {
   return where;
 };
 
-function fetchGraphQL(operationsDoc, operationName, variables) {
-  return asyncFetch(QUERYAPI_ENDPOINT, {
-    method: "POST",
-    headers: { "x-hasura-role": `thomasguntenaar_near` },
-    body: JSON.stringify({
-      query: operationsDoc,
-      variables: variables,
-      operationName: operationName,
-    }),
-  });
-}
-
 const fetchProposals = () => {
   const FETCH_LIMIT = 30;
   const variables = {
@@ -85,10 +76,7 @@ const fetchProposals = () => {
   fetchGraphQL(query, "GetLatestSnapshot", variables).then(async (result) => {
     if (result.status === 200) {
       if (result.body.data) {
-        const proposalsData =
-          result.body.data
-            .thomasguntenaar_near_devhub_proposals_quebec_proposals_with_latest_snapshot;
-
+        const proposalsData = result.body.data?.[queryName];
         const data = [];
         for (const prop of proposalsData) {
           data.push({
@@ -108,46 +96,40 @@ useEffect(() => {
 
 return (
   <>
-    <div
-      className={
-        "d-flex flex-column gap-2 " + (selectedProposals.length > 0 && " mb-2")
-      }
-    >
-      {selectedProposals.map((proposal) => {
-        return (
-          <div className="d-flex gap-2 align-items-center">
-            <a
-              className="text-decoration-underline flex-1"
-              href={href({
-                widgetSrc: `${REPL_DEVHUB}/widget/near-prpsls-bos.components.pages.app`,
-                params: {
-                  page: "proposal",
-                  id: proposal.value,
-                },
-              })}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {proposal.label}
-            </a>
-            <div
-              className="cursor-pointer"
-              onClick={() => {
-                const updatedLinkedProposals = selectedProposals.filter(
-                  (item) => item.value !== proposal.value
-                );
-                setSelectedProposals(updatedLinkedProposals);
-              }}
-            >
-              <i className="bi bi-trash3-fill"></i>
-            </div>
+    {selectedProposals.map((proposal) => {
+      return (
+        <div className="d-flex gap-2 align-items-center">
+          <a
+            className="text-decoration-underline flex-1"
+            href={href({
+              widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+              params: {
+                page: "proposal",
+                id: proposal.value,
+              },
+            })}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {proposal.label}
+          </a>
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              const updatedLinkedProposals = selectedProposals.filter(
+                (item) => item.value !== proposal.value
+              );
+              setSelectedProposals(updatedLinkedProposals);
+            }}
+          >
+            <i className="bi bi-trash3-fill"></i>
           </div>
-        );
-      })}
-    </div>
+        </div>
+      );
+    })}
 
     <Widget
-      src={`${REPL_DEVHUB}/widget/devhub.components.molecule.DropDownWithSearch`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.DropDownWithSearch`}
       props={{
         selectedValue: "",
         onChange: (v) => {

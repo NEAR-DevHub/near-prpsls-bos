@@ -1,7 +1,7 @@
-import { REPL_DEVHUB, TIMELINE_STATUS } from "@/includes/common";
+import { REPL_DEVHUB, RFP_TIMELINE_STATUS } from "@/includes/common";
 const setSelected = props.onStateChange ?? (() => {});
 
-const timelineStatusArray = Object.entries(TIMELINE_STATUS).map(
+const timelineStatusArray = Object.entries(RFP_TIMELINE_STATUS).map(
   ([key, value]) => ({
     label: key
       .split("_")
@@ -10,6 +10,7 @@ const timelineStatusArray = Object.entries(TIMELINE_STATUS).map(
     value,
   })
 );
+timelineStatusArray.push({ label: "None", value: null });
 return (
   <div>
     <Widget

@@ -4,7 +4,8 @@ import {
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_NEAR,
   RFP_IMAGE,
-  RFP_INDEXER_QUERY_NAME,
+  RFP_FEED_INDEXER_QUERY_NAME,
+  fetchGraphQL,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -229,8 +230,6 @@ const getRfp = (rfp_id) => {
 };
 
 const FeedPage = () => {
-  const QUERYAPI_ENDPOINT = `https://near-queryapi.api.pagoda.co/v1/graphql`;
-
   State.init({
     data: [],
     cachedItems: {},
@@ -244,7 +243,7 @@ const FeedPage = () => {
     currentlyDisplaying: 0,
   });
 
-  const queryName = RFP_INDEXER_QUERY_NAME;
+  const queryName = RFP_FEED_INDEXER_QUERY_NAME;
   const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
     ${queryName}(
       offset: $offset
@@ -273,18 +272,6 @@ const FeedPage = () => {
       }
     }
   }`;
-
-  function fetchGraphQL(operationsDoc, operationName, variables) {
-    return asyncFetch(QUERYAPI_ENDPOINT, {
-      method: "POST",
-      headers: { "x-hasura-role": `polyprogrammist_near` },
-      body: JSON.stringify({
-        query: operationsDoc,
-        variables: variables,
-        operationName: operationName,
-      }),
-    });
-  }
 
   function separateNumberAndText(str) {
     const numberRegex = /\d+/;

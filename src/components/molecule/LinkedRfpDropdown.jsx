@@ -1,20 +1,33 @@
 import {
+  REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_INFRASTRUCTURE_COMMITTEE,
   REPL_DEVHUB,
-  RFP_INDEXER_QUERY_NAME,
-  TIMELINE_STATUS,
+  RFP_FEED_INDEXER_QUERY_NAME,
+  RFP_TIMELINE_STATUS,
+  fetchGraphQL,
+  parseJSON,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 href || (href = () => {});
 
-const linkedRfp = props.linkedRfp;
-const onChange = props.onChange;
+const { linkedRfp, onChange, disabled } = props;
+
+const isModerator = Near.view(
+  REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
+  "is_allowed_to_write_rfps",
+  {
+    editor: context.accountId,
+  }
+);
+
 const [selectedRFP, setSelectedRFP] = useState(null);
-const [rfpOptions, setRfpOptions] = useState([]);
+const [acceptingRfpsOptions, setAcceptingRfpsOption] = useState([]);
+const [allRfpOptions, setAllRfpOptions] = useState([]);
 const [searchRFPId, setSearchRfpId] = useState("");
-const QUERYAPI_ENDPOINT = `https://near-queryapi.api.pagoda.co/v1/graphql`;
-const queryName = RFP_INDEXER_QUERY_NAME;
+const [initialStateApplied, setInitialState] = useState(false);
+
+const queryName = RFP_FEED_INDEXER_QUERY_NAME;
 const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
   ${queryName}(
     offset: $offset
@@ -24,6 +37,7 @@ const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $wher
   ) {
     name
     rfp_id
+    timeline
   }
   }`;
 
@@ -41,13 +55,7 @@ function separateNumberAndText(str) {
 
 const buildWhereClause = () => {
   // show only accepting submissions stage rfps
-  let where = {
-    timeline: {
-      _cast: {
-        String: { _ilike: `%${TIMELINE_STATUS.ACCEPTING_SUBMISSIONS}%` },
-      },
-    },
-  };
+  let where = {};
   const { number, text } = separateNumberAndText(searchRFPId);
 
   if (number) {
@@ -61,18 +69,6 @@ const buildWhereClause = () => {
   return where;
 };
 
-function fetchGraphQL(operationsDoc, operationName, variables) {
-  return asyncFetch(QUERYAPI_ENDPOINT, {
-    method: "POST",
-    headers: { "x-hasura-role": `polyprogrammist_near` },
-    body: JSON.stringify({
-      query: operationsDoc,
-      variables: variables,
-      operationName: operationName,
-    }),
-  });
-}
-
 const fetchRfps = () => {
   const FETCH_LIMIT = 30;
   const variables = {
@@ -85,13 +81,24 @@ const fetchRfps = () => {
       if (result.body.data) {
         const rfpsData = result.body.data?.[queryName];
         const data = [];
+        const acceptingData = [];
         for (const prop of rfpsData) {
+          const timeline = parseJSON(prop.timeline);
+          const label = "# " + prop.rfp_id + " : " + prop.name;
+          const value = prop.rfp_id;
+          if (timeline.status === RFP_TIMELINE_STATUS.ACCEPTING_SUBMISSIONS) {
+            acceptingData.push({
+              label,
+              value,
+            });
+          }
           data.push({
-            label: "# " + prop.rfp_id + " : " + prop.name,
-            value: prop.rfp_id,
+            label,
+            value,
           });
         }
-        setRfpOptions(data);
+        setAcceptingRfpsOption(acceptingData);
+        setAllRfpOptions(data);
       }
     }
   });
@@ -102,23 +109,28 @@ useEffect(() => {
 }, [searchRFPId]);
 
 useEffect(() => {
-  if (
-    JSON.stringify(linkedRfp) !== JSON.stringify(selectedRFP) &&
-    rfpOptions.length > 0
-  ) {
-    if (typeof linkedRfp !== "object") {
-      setSelectedRFP(rfpOptions.find((i) => linkedRfp === i.value));
-    } else {
-      setSelectedRFP(linkedRfp);
+  if (JSON.stringify(linkedRfp) !== JSON.stringify(selectedRFP)) {
+    if (allRfpOptions.length > 0) {
+      if (typeof linkedRfp !== "object") {
+        setSelectedRFP(allRfpOptions.find((i) => linkedRfp === i.value));
+      } else {
+        setSelectedRFP(linkedRfp);
+      }
+      setInitialState(true);
     }
+  } else {
+    setInitialState(true);
   }
-}, [linkedRfp, rfpOptions]);
+}, [linkedRfp, allRfpOptions]);
 
 useEffect(() => {
-  if (JSON.stringify(linkedRfp) !== JSON.stringify(selectedRFP)) {
+  if (
+    JSON.stringify(linkedRfp) !== JSON.stringify(selectedRFP) &&
+    initialStateApplied
+  ) {
     onChange(selectedRFP);
   }
-}, [selectedRFP]);
+}, [selectedRFP, initialStateApplied]);
 
 return (
   <>
@@ -138,25 +150,27 @@ return (
         >
           {selectedRFP.label}
         </a>
-        <div
-          className="cursor-pointer"
-          onClick={() => {
-            setSelectedRFP(null);
-          }}
-        >
-          <i className="bi bi-trash3-fill"></i>
-        </div>
+        {!disabled && (
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              setSelectedRFP(null);
+            }}
+          >
+            <i className="bi bi-trash3-fill"></i>
+          </div>
+        )}
       </div>
     )}
-
     <Widget
-      src={`${REPL_DEVHUB}/widget/devhub.components.molecule.DropDownWithSearch`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.DropDownWithSearch`}
       props={{
+        disabled: disabled,
         selectedValue: "",
         onChange: (v) => {
           setSelectedRFP(v);
         },
-        options: rfpOptions,
+        options: isModerator ? allRfpOptions : acceptingRfpsOptions,
         showSearch: true,
         searchInputPlaceholder: "Search by Id",
         defaultLabel: "Search RFP",
