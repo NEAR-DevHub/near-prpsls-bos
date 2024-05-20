@@ -10,7 +10,6 @@ const { readableDate } = VM.require(
 
 const linkedProposalIds = props.linkedProposalIds ?? [];
 const linkedProposalsData = [];
-const hideStatuses = props.hideStatuses ?? [];
 const showStatus = props.showStatus ?? false;
 
 // using contract instead of indexer, since indexer doesn't return timestamp
@@ -22,7 +21,7 @@ linkedProposalIds.map((item) => {
       proposal_id: item,
     }
   );
-  if (data !== null && !hideStatuses.includes(data.snapshot.timeline.status)) {
+  if (data !== null) {
     linkedProposalsData.push(data);
   }
 });

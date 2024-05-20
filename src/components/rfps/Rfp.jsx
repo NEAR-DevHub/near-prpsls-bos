@@ -711,12 +711,9 @@ return (
                   src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LinkedProposals`}
                   props={{
                     linkedProposalIds: snapshot.linked_proposals,
-                    hideStatuses: [PROPOSAL_TIMELINE_STATUS.CANCELED],
                     showStatus:
-                      snapshot.timeline.status ===
-                        RFP_TIMELINE_STATUS.EVALUATION ||
-                      snapshot.timeline.status ===
-                        RFP_TIMELINE_STATUS.ACCEPTING_SUBMISSIONS,
+                      snapshot.timeline.status !==
+                      RFP_TIMELINE_STATUS.PROPOSAL_SELECTED,
                   }}
                 />
               </SidePanelItem>
