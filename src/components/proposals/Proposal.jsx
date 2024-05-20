@@ -873,6 +873,7 @@ return (
                     id: proposal.id,
                     item: item,
                     snapshotHistory: snapshotHistory,
+                    latestSnapshot: snapshot,
                   }}
                 />
               </div>

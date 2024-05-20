@@ -351,7 +351,7 @@ const parseProposalKeyAndValue = (key, modifiedValue, originalValue) => {
 
       return (
         <span>
-          {actionText} of ID{" "}
+          {actionText}{" "}
           <LinkToProposal id={difference}> #{difference}</LinkToProposal>
         </span>
       );
