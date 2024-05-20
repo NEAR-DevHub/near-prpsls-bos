@@ -1,11 +1,14 @@
 import { test, expect } from "@playwright/test";
 import { pauseIfVideoRecording } from "../util/videorecording";
+import { mockRpcRequest } from "../util/rpcmock";
 
 test.describe("Wallet is connected", () => {
   test.use({
     storageState: "playwright-tests/storage-states/wallet-connected.json",
   });
-  test("should open RFPs", async ({ page }) => {
+  test("should open RFPs and also search with a query that has no results", async ({
+    page,
+  }) => {
     await page.goto(
       "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfps"
     );
@@ -50,6 +53,25 @@ test.describe("Wallet is connected with admin account", () => {
   test("admin should be able see the create RFP button and fill the form", async ({
     page,
   }) => {
+    await mockRpcRequest({
+      page,
+      filterParams: {
+        method_name: "get_global_labels",
+      },
+      mockedResult: [
+        {
+          value: "Data Lakes",
+          title: "Data Lakes",
+          color: [0, 255, 0],
+        },
+        {
+          value: "Explorers",
+          title: "Explorers",
+          color: [0, 255, 255],
+        },
+      ],
+    });
+
     await page.goto(
       "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfps"
     );
@@ -95,6 +117,47 @@ test.describe("Wallet is connected with admin account", () => {
               status: "ACCEPTING_SUBMISSIONS",
             },
           },
+        },
+        null,
+        1
+      )
+    );
+    await pauseIfVideoRecording(page);
+  });
+  test("should cancel RFP", async ({ page }) => {
+    await mockRpcRequest({
+      page,
+      filterParams: {
+        method_name: "get_rfp",
+      },
+      modifyOriginalResultFunction: async (originalResult) => {
+        console.log(JSON.stringify(originalResult, null, 1));
+        originalResult.snapshot.timeline.status = "ACCEPTING_SUBMISSIONS";
+        originalResult.snapshot.linked_proposals = [2, 3];
+        return originalResult;
+      },
+    });
+
+    await page.goto(
+      "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfp&id=1"
+    );
+    await page.getByRole("button", { name: "Edit" }).click();
+    await page.getByRole("button", { name: "Accepting Submissions" }).click();
+    await page.getByText("Cancelled", { exact: true }).click();
+    await page.getByRole("radio").first().click();
+    await page.getByRole("button", { name: "Ready to Cancel" }).click();
+
+    const transactionText = JSON.stringify(
+      JSON.parse(await page.locator("div.modal-body code").innerText()),
+      null,
+      1
+    );
+    await expect(transactionText).toEqual(
+      JSON.stringify(
+        {
+          id: 1,
+          proposals_to_cancel: [2, 3],
+          proposals_to_unlink: [],
         },
         null,
         1
