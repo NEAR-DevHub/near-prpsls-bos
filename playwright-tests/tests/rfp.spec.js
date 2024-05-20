@@ -6,7 +6,9 @@ test.describe("Wallet is connected", () => {
   test.use({
     storageState: "playwright-tests/storage-states/wallet-connected.json",
   });
-  test("should open RFPs", async ({ page }) => {
+  test("should open RFPs and also search with a query that has no results", async ({
+    page,
+  }) => {
     await page.goto(
       "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfps"
     );
@@ -115,6 +117,34 @@ test.describe("Wallet is connected with admin account", () => {
               status: "ACCEPTING_SUBMISSIONS",
             },
           },
+        },
+        null,
+        1
+      )
+    );
+    await pauseIfVideoRecording(page);
+  });
+  test("should cancel RFP", async ({ page }) => {
+    await page.goto(
+      "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfp&id=1"
+    );
+    await page.getByRole("button", { name: "Edit" }).click();
+    await page.getByRole("button", { name: "Accepting Submissions" }).click();
+    await page.getByText("Cancelled", { exact: true }).click();
+    await page.getByRole("radio").first().click();
+    await page.getByRole("button", { name: "Ready to Cancel" }).click();
+
+    const transactionText = JSON.stringify(
+      JSON.parse(await page.locator("div.modal-body code").innerText()),
+      null,
+      1
+    );
+    await expect(transactionText).toEqual(
+      JSON.stringify(
+        {
+          id: 1,
+          proposals_to_cancel: [2],
+          proposals_to_unlink: [],
         },
         null,
         1
