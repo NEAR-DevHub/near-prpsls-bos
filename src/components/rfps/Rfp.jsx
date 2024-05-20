@@ -6,8 +6,11 @@ import {
   RFP_TIMELINE_STATUS,
   RFP_IMAGE,
   PROPOSAL_TIMELINE_STATUS,
-  PROPOSAL_INDEXER_QUERY_NAME,
+  PROPOSAL_FEED_INDEXER_QUERY_NAME,
   fetchGraphQL,
+  RFP_INDEXER_QUERY_NAME,
+  parseJSON,
+  PROPOSALS_APPROVED_STATUS_ARRAY,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`) || {
@@ -261,11 +264,61 @@ const LinkProfile = ({ account, children }) => {
   );
 };
 
+const [snapshotHistory, setSnapshotHistory] = useState([]);
+
 const rfp = Near.view(REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT, "get_rfp", {
   rfp_id: parseInt(id),
 });
 
-if (!rfp) {
+const queryName = RFP_INDEXER_QUERY_NAME;
+const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
+  ${queryName}(
+    offset: $offset
+    limit: $limit
+    order_by: {rfp_id: desc}
+    where: $where
+  ) {
+    editor_id
+    name
+    summary
+    description
+    ts
+    rfp_id
+    timeline
+    labels
+    submission_deadline
+    linked_proposals
+  }
+}`;
+
+const fetchSnapshotHistory = () => {
+  const variables = {
+    where: { rfp_id: { _eq: id } },
+  };
+  fetchGraphQL(query, "GetLatestSnapshot", variables).then(async (result) => {
+    if (result.status === 200) {
+      if (result.body.data) {
+        const data = result.body.data?.[queryName];
+        const history = data.map((item) => {
+          const rfpData = {
+            ...item,
+            timestamp: item.ts,
+            timeline: parseJSON(item.timeline),
+          };
+          delete rfpData.ts;
+          return rfpData;
+        });
+        setSnapshotHistory(history);
+      }
+    }
+  });
+};
+
+useEffect(() => {
+  fetchSnapshotHistory();
+}, [id]);
+
+if (!rfp || !snapshotHistory?.length) {
   return (
     <div
       style={{ height: "50vh" }}
@@ -279,11 +332,12 @@ if (!rfp) {
 }
 if (timestamp && rfp) {
   rfp.snapshot =
-    rfp.snapshot_history.find((item) => item.timestamp === timestamp) ??
+    snapshotHistory.find((item) => item.timestamp === timestamp) ??
     rfp.snapshot;
 }
 
 const { snapshot } = rfp;
+snapshot.timeline = parseJSON(snapshot.timeline);
 
 const authorId = rfp.author_id;
 const blockHeight = parseInt(rfp.social_db_post_block_height);
@@ -327,14 +381,12 @@ const link = href({
   },
 });
 
-const createdDate =
-  rfp.snapshot_history?.[rfp.snapshot_history.length - 1]?.timestamp ??
-  snapshot.timestamp;
+const createdDate = snapshotHistory[0].timestamp ?? snapshot.timestamp;
 
 const [approvedProposals, setApprovedProposals] = useState([]);
 
 function fetchApprovedRfpProposals() {
-  const queryName = PROPOSAL_INDEXER_QUERY_NAME;
+  const queryName = PROPOSAL_FEED_INDEXER_QUERY_NAME;
   const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
     ${queryName}(
       offset: $offset
@@ -343,6 +395,8 @@ function fetchApprovedRfpProposals() {
       where: $where
     ) {
       proposal_id
+      name
+      timeline
     }
   }`;
 
@@ -351,30 +405,60 @@ function fetchApprovedRfpProposals() {
     limit: FETCH_LIMIT,
     offset,
     where: {
-      proposal_id: { _in: rfp.linked_proposals },
-      timeline: {
-        _cast: {
-          String: {
-            _ilike: `%${PROPOSAL_TIMELINE_STATUS.APPROVED}%`,
-            _ilike: `%${PROPOSAL_TIMELINE_STATUS.APPROVED_CONDITIONALLY}%`,
-            _ilike: `%${PROPOSAL_TIMELINE_STATUS.PAYMENT_PROCESSING}%`,
-            _ilike: `%${PROPOSAL_TIMELINE_STATUS.FUNDED}%`,
-          },
-        },
-      },
+      proposal_id: { _in: rfp.snapshot.linked_proposals },
     },
   };
   fetchGraphQL(query, "GetLatestSnapshot", variables).then(async (result) => {
     if (result.status === 200) {
       if (result.body.data) {
         const data = result.body.data?.[queryName];
-        setApprovedProposals(data);
+        const approved = [];
+        data.map((item) => {
+          const timeline = parseJSON(item.timeline);
+          if (PROPOSALS_APPROVED_STATUS_ARRAY.includes(timeline.status)) {
+            approved.push(item);
+          }
+        });
+        setApprovedProposals(approved);
       }
     }
   });
 }
 
+const accessControlInfo =
+  Near.view(
+    REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
+    "get_access_control_info"
+  ) ?? null;
+const moderatorList =
+  accessControlInfo?.members_list?.["team:moderators"]?.children;
+
 fetchApprovedRfpProposals();
+
+const SubmitProposalBtn = () => {
+  return (
+    <div style={{ minWidth: "fit-content" }}>
+      <Link
+        to={href({
+          widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+          params: { page: "create-proposal", rfp_id: rfp.id },
+        })}
+      >
+        <Widget
+          src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
+          props={{
+            label: (
+              <div className="d-flex align-items-center gap-2">
+                <i className="bi bi-plus-circle"></i>Submit Proposal
+              </div>
+            ),
+            classNames: { root: "blue-btn" },
+          }}
+        />
+      </Link>
+    </div>
+  );
+};
 return (
   <Container className="d-flex flex-column gap-2 w-100 mt-4">
     <div className="d-flex px-3 px-lg-0 justify-content-between">
@@ -404,7 +488,6 @@ return (
       </div>
     </div>
     <div className="d-flex flex-wrap flex-md-nowrap px-3 px-lg-0 gap-2 align-items-center text-sm pb-3 w-100">
-      {/* TODO */}
       <Widget
         src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.StatusTag`}
         props={{
@@ -430,27 +513,7 @@ return (
                 Click Submit Proposal if you want to submit a proposal.
               </p>
             </div>
-            <div style={{ minWidth: "fit-content" }}>
-              <Link
-                to={href({
-                  widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
-                  params: { page: "create-proposal", rfp_id: rfp.id },
-                })}
-              >
-                <Widget
-                  src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
-                  props={{
-                    label: (
-                      <div className="d-flex align-items-center gap-2">
-                        <i className="bi bi-plus-circle"></i>Submit Proposal
-                      </div>
-                    ),
-                    classNames: { root: "blue-btn" },
-                    onClick: () => setReviewModal(true),
-                  }}
-                />
-              </Link>
-            </div>
+            <SubmitProposalBtn />
           </div>
         )}
         <div className="my-4">
@@ -530,14 +593,14 @@ return (
                       src={`${REPL_DEVHUB}/widget/devhub.components.molecule.MarkdownViewer`}
                       props={{ text: snapshot.description }}
                     />
-                    {/* TODO */}
+
                     <div className="d-flex gap-2 align-items-center mt-4">
                       <Widget
-                        src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.LikeButton`}
+                        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LikeButton`}
                         props={{
                           item,
-                          proposalId: rfp.id,
-                          notifyAccountId: authorId,
+                          rfpId: rfp.id,
+                          notifyAccountIds: moderatorList,
                         }}
                       />
                       <Widget
@@ -565,7 +628,8 @@ return (
                     ...props,
                     id: rfp.id,
                     item: item,
-                    snapshotHistory: [...rfp.snapshot_history, snapshot],
+                    approvedProposals: approvedProposals,
+                    snapshotHistory: snapshotHistory,
                   }}
                 />
               </div>
@@ -582,10 +646,20 @@ return (
                   props={{
                     ...props,
                     item: item,
-                    notifyAccountId: authorId,
-                    id: rfp.id,
+                    notifyAccountIds: moderatorList,
+                    rfpId: rfp.id,
                   }}
                 />
+                {snapshot.timeline.status ===
+                  RFP_TIMELINE_STATUS.ACCEPTING_SUBMISSIONS && (
+                  <div className="accept-submission-info-container mt-3 p-3 p-sm-4 d-flex flex-wrap flex-md-nowrap justify-content-between align-items-center gap-2 rounded-2">
+                    <div style={{ minWidth: "350px" }}>
+                      <b>Want to respond to this RFP? </b> This RFP is accepting
+                      submissions.
+                    </div>
+                    <SubmitProposalBtn />
+                  </div>
+                )}
               </div>
             </div>
             <div
@@ -640,7 +714,9 @@ return (
                     hideStatuses: [PROPOSAL_TIMELINE_STATUS.CANCELED],
                     showStatus:
                       snapshot.timeline.status ===
-                      RFP_TIMELINE_STATUS.EVALUATION,
+                        RFP_TIMELINE_STATUS.EVALUATION ||
+                      snapshot.timeline.status ===
+                        RFP_TIMELINE_STATUS.ACCEPTING_SUBMISSIONS,
                   }}
                 />
               </SidePanelItem>

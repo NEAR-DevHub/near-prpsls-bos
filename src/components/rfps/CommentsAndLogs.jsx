@@ -1,6 +1,14 @@
-import { REPL_INFRASTRUCTURE_COMMITTEE, REPL_DEVHUB } from "@/includes/common";
+import {
+  REPL_INFRASTRUCTURE_COMMITTEE,
+  REPL_DEVHUB,
+  RFP_TIMELINE_STATUS,
+} from "@/includes/common";
+
+const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
+href || (href = () => {});
 
 const snapshotHistory = props.snapshotHistory;
+const approvedProposals = props.approvedProposals ?? [];
 
 const Wrapper = styled.div`
   position: relative;
@@ -25,15 +33,11 @@ const Wrapper = styled.div`
   }
 
   .inline-flex {
-    display: inline-flex !important;
+    display: -webkit-inline-box !important;
     align-items: center !important;
     gap: 0.25rem !important;
-  }
-
-  @media screen and (max-width: 768px) {
-    .inline-flex {
-      display: -webkit-inline-box !important;
-    }
+    margin-right: 2px;
+    flex-wrap: wrap;
   }
 `;
 
@@ -234,6 +238,29 @@ function parseTimelineKeyAndValue(timeline, originalValue, modifiedValue) {
   const newValue = modifiedValue[timeline];
   switch (timeline) {
     case "status":
+      if (newValue === RFP_TIMELINE_STATUS.PROPOSAL_SELECTED) {
+        return (
+          <span className="inline-flex">
+            moved RFP to{" "}
+            <Widget
+              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.StatusTag`}
+              props={{
+                timelineStatus: newValue,
+              }}
+            />
+            ･ selected proposal(s) are{" "}
+            {approvedProposals.map((i, index) => (
+              <span>
+                <LinkToProposal id={i.proposal_id}>
+                  {" "}
+                  #{i.proposal_id} {i.name}
+                </LinkToProposal>
+                {index < approvedProposals.length - 1 && ", "}
+              </span>
+            ))}
+          </span>
+        );
+      }
       return (
         oldValue !== newValue && (
           <span className="inline-flex">
@@ -276,6 +303,31 @@ const AccountProfile = ({ accountId }) => {
   );
 };
 
+function symmetricDifference(arr1, arr2) {
+  const diffA = arr1.filter((item) => !arr2.includes(item));
+  const diffB = arr2.filter((item) => !arr1.includes(item));
+  return [...diffA, ...diffB];
+}
+
+const LinkToProposal = ({ id, children }) => {
+  return (
+    <a
+      className="text-decoration-underline flex-1"
+      href={href({
+        widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+        params: {
+          page: "proposal",
+          id: id,
+        },
+      })}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {children}
+    </a>
+  );
+};
+
 const parseProposalKeyAndValue = (key, modifiedValue, originalValue) => {
   switch (key) {
     case "name":
@@ -285,9 +337,25 @@ const parseProposalKeyAndValue = (key, modifiedValue, originalValue) => {
       return <span>changed {key}</span>;
     case "labels":
       return <span>changed labels to {(modifiedValue ?? []).join(", ")}</span>;
-    // TODO
-    case "linked_proposals":
-      return <span>updated linked proposals</span>;
+    case "linked_proposals": {
+      const newProposals = modifiedValue || [];
+      const oldProposals = originalValue || [];
+      const difference = symmetricDifference(oldProposals, newProposals).join(
+        ","
+      );
+
+      const isUnlinked = oldProposals.length > newProposals.length;
+      const actionText = isUnlinked
+        ? "unlinked a proposal"
+        : "linked a proposal";
+
+      return (
+        <span>
+          {actionText}{" "}
+          <LinkToProposal id={difference}> #{difference}</LinkToProposal>
+        </span>
+      );
+    }
     case "timeline": {
       const modifiedKeys = Object.keys(modifiedValue);
       const originalKeys = Object.keys(originalValue);

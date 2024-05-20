@@ -1,7 +1,7 @@
 import {
   REPL_INFRASTRUCTURE_COMMITTEE,
   REPL_DEVHUB,
-  PROPOSAL_INDEXER_QUERY_NAME,
+  PROPOSAL_FEED_INDEXER_QUERY_NAME,
   fetchGraphQL,
 } from "@/includes/common";
 
@@ -14,7 +14,7 @@ const [selectedProposals, setSelectedProposals] = useState(linkedProposals);
 const [proposalsOptions, setProposalsOptions] = useState([]);
 const [searchProposalId, setSearchProposalId] = useState("");
 
-const queryName = PROPOSAL_INDEXER_QUERY_NAME;
+const queryName = PROPOSAL_FEED_INDEXER_QUERY_NAME;
 const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
 ${queryName}(
   offset: $offset
@@ -129,7 +129,7 @@ return (
     })}
 
     <Widget
-      src={`${REPL_DEVHUB}/widget/devhub.components.molecule.DropDownWithSearch`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.DropDownWithSearch`}
       props={{
         selectedValue: "",
         onChange: (v) => {

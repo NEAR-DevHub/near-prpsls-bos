@@ -4,12 +4,16 @@ import {
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_NEAR,
   RFP_IMAGE,
-  PROPOSAL_INDEXER_QUERY_NAME,
+  PROPOSAL_FEED_INDEXER_QUERY_NAME,
   REPL_RPC_URL,
   PROPOSAL_TIMELINE_STATUS,
+  isNumber,
 } from "@/includes/common";
+const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
+href || (href = () => {});
 
 const snapshotHistory = props.snapshotHistory;
+const latestSnapshot = props.latestSnapshot;
 
 const Wrapper = styled.div`
   position: relative;
@@ -232,28 +236,50 @@ function parseTimelineKeyAndValue(timeline, originalValue, modifiedValue) {
   const oldValue = originalValue[timeline];
   const newValue = modifiedValue[timeline];
   switch (timeline) {
-    case "status":
-      return (
-        oldValue !== newValue && (
+    case "status": {
+      if (
+        (newValue === PROPOSAL_TIMELINE_STATUS.APPROVED ||
+          newValue === PROPOSAL_TIMELINE_STATUS.APPROVED_CONDITIONALLY) &&
+        latestSnapshot.linked_rfp
+      ) {
+        return (
           <span className="inline-flex">
-            moved proposal from{" "}
-            <Widget
-              src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.StatusTag`}
-              props={{
-                timelineStatus: oldValue,
-              }}
-            />
-            to{" "}
+            moved proposal to{" "}
             <Widget
               src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.StatusTag`}
               props={{
                 timelineStatus: newValue,
               }}
             />
-            stage
+            ･ this proposal is selected for RFP{" "}
+            <LinkToRfp id={latestSnapshot.linked_rfp}>
+              #{latestSnapshot.linked_rfp}
+            </LinkToRfp>
           </span>
-        )
-      );
+        );
+      } else
+        return (
+          oldValue !== newValue && (
+            <span className="inline-flex">
+              moved proposal from{" "}
+              <Widget
+                src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.StatusTag`}
+                props={{
+                  timelineStatus: oldValue,
+                }}
+              />
+              to{" "}
+              <Widget
+                src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.StatusTag`}
+                props={{
+                  timelineStatus: newValue,
+                }}
+              />
+              stage
+            </span>
+          )
+        );
+    }
     case "sponsor_requested_review":
       return !oldValue && newValue && <span>completed review</span>;
     case "reviewer_completed_attestation":
@@ -289,6 +315,25 @@ const AccountProfile = ({ accountId }) => {
   );
 };
 
+const LinkToRfp = ({ id, children }) => {
+  return (
+    <a
+      className="text-decoration-underline flex-1"
+      href={href({
+        widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+        params: {
+          page: "rfp",
+          id: id,
+        },
+      })}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {children}
+    </a>
+  );
+};
+
 const parseProposalKeyAndValue = (key, modifiedValue, originalValue) => {
   switch (key) {
     case "name":
@@ -306,8 +351,16 @@ const parseProposalKeyAndValue = (key, modifiedValue, originalValue) => {
       );
     case "linked_proposals":
       return <span>updated linked proposals</span>;
-    case "linked_rfp":
-      return <span>updated linked RFP</span>;
+    case "linked_rfp": {
+      const isUnlinked = isNumber(originalValue) && !isNumber(modifiedValue);
+      const actionText = isUnlinked ? "unlinked" : "linked";
+      const rfpId = originalValue ?? modifiedValue;
+      return (
+        <span>
+          {actionText} an RFP <LinkToRfp id={rfpId}>#{rfpId}</LinkToRfp>
+        </span>
+      );
+    }
     case "requested_sponsorship_usd_amount":
       return (
         <span>

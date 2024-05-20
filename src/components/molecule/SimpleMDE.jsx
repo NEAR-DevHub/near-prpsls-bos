@@ -1,7 +1,7 @@
 import {
   REPL_INFRASTRUCTURE_COMMITTEE,
-  PROPOSAL_INDEXER_QUERY_NAME,
-  RFP_INDEXER_QUERY_NAME,
+  PROPOSAL_FEED_INDEXER_QUERY_NAME,
+  RFP_FEED_INDEXER_QUERY_NAME,
 } from "@/includes/common";
 
 /**
@@ -36,7 +36,7 @@ const showProposalIdAutoComplete = props.showProposalIdAutoComplete ?? false;
 const showRfpIdAutoComplete = props.showRfpIdAutoComplete ?? false;
 const autoFocus = props.autoFocus ?? false;
 
-const proposalQueryName = PROPOSAL_INDEXER_QUERY_NAME;
+const proposalQueryName = PROPOSAL_FEED_INDEXER_QUERY_NAME;
 const proposalQuery = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${proposalQueryName}_bool_exp = {}) {
 ${proposalQueryName}(
   offset: $offset
@@ -49,7 +49,7 @@ ${proposalQueryName}(
 }
 }`;
 
-const rfpQueryName = RFP_INDEXER_QUERY_NAME;
+const rfpQueryName = RFP_FEED_INDEXER_QUERY_NAME;
 const rfpQuery = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${rfpQueryName}_bool_exp = {}) {
 ${rfpQueryName}(
   offset: $offset
@@ -246,7 +246,6 @@ async function getSuggestedProposals(id) {
     }),
   })
     .then((res) => {
-      console.log(res);
       const proposals =
         res?.data?.[
           proposalQueryName
