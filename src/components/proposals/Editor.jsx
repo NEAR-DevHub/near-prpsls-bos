@@ -279,6 +279,7 @@ const [proposalId, setProposalId] = useState(null);
 const [proposalIdsArray, setProposalIdsArray] = useState(null);
 const [isTxnCreated, setCreateTxn] = useState(false);
 const [oldProposalData, setOldProposalData] = useState(null);
+const [supervisor, setSupervisor] = useState(null);
 
 if (allowDraft) {
   draftProposalData = Storage.privateGet(draftKey);
@@ -347,6 +348,7 @@ useEffect(() => {
       setDescription(snapshot.description);
       setReceiverAccount(snapshot.receiver_account);
       setRequestedSponsorshipAmount(snapshot.requested_sponsorship_usd_amount);
+      setSupervisor(snapshot.supervisor);
 
       const token = tokensOptions.find(
         (item) => item.value === snapshot.requested_sponsorship_paid_in_currency
@@ -773,6 +775,7 @@ const onSubmit = ({ isDraft, isCancel }) => {
     requested_sponsorship_paid_in_currency: requestedSponsorshipToken.value,
     receiver_account: receiverAccount,
     requested_sponsor: "infrastructure-committee.near",
+    supervisor: supervisor,
     timeline: isCancel
       ? {
           status: "CANCELLED",
@@ -788,7 +791,7 @@ const onSubmit = ({ isDraft, isCancel }) => {
         },
   };
   const args = {
-    labels: linkedRfp ? [] : (labels ?? []).map((i) => i.value),
+    labels: linkedRfp ? [] : (labels ?? []).map((i) => i.value ?? i),
     body: body,
   };
   if (isEditPage) {
@@ -1082,7 +1085,7 @@ if (showProposalPage) {
   return (
     <Widget
       src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.proposals.Proposal`}
-      props={{ id: proposalId, ...props }}
+      props={{ id: proposalId }}
     />
   );
 } else

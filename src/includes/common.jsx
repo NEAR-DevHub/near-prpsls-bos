@@ -7,16 +7,16 @@ export const RFP_IMAGE =
   "https://ipfs.near.social/ipfs/bafkreicbygt4kajytlxij24jj6tkg2ppc2dw3dlqhkermkjjfgdfnlizzy";
 
 export const RFP_FEED_INDEXER_QUERY_NAME =
-  "polyprogrammist_near_devhub_objects_rfps_with_latest_snapshot";
+  "polyprogrammist_near_devhub_objects_s_rfps_with_latest_snapshot";
 
 export const RFP_INDEXER_QUERY_NAME =
-  "polyprogrammist_near_devhub_objects_rfp_snapshots";
+  "polyprogrammist_near_devhub_objects_s_rfp_snapshots";
 
 export const PROPOSAL_FEED_INDEXER_QUERY_NAME =
-  "polyprogrammist_near_devhub_objects_proposals_with_latest_snapshot";
+  "polyprogrammist_near_devhub_objects_s_proposals_with_latest_snapshot";
 
 export const PROPOSAL_QUERY_NAME =
-  "polyprogrammist_near_devhub_objects_proposal_snapshots";
+  "polyprogrammist_near_devhub_objects_s_proposal_snapshots";
 export const RFP_TIMELINE_STATUS = {
   ACCEPTING_SUBMISSIONS: "ACCEPTING_SUBMISSIONS",
   EVALUATION: "EVALUATION",
@@ -70,3 +70,10 @@ export function parseJSON(json) {
 export function isNumber(value) {
   return typeof value === "number";
 }
+
+export const PROPOSALS_APPROVED_STATUS_ARRAY = [
+  PROPOSAL_TIMELINE_STATUS.APPROVED,
+  PROPOSAL_TIMELINE_STATUS.APPROVED_CONDITIONALLY,
+  PROPOSAL_TIMELINE_STATUS.PAYMENT_PROCESSING,
+  PROPOSAL_TIMELINE_STATUS.FUNDED,
+];
