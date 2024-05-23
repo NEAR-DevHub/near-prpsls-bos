@@ -15,6 +15,9 @@ const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 const draftKey = "INFRA_RFP_EDIT";
 href || (href = () => {});
 
+const { getGlobalLabels } = VM.require(
+  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.core.lib.contract`
+) || { getGlobalLabels: () => {} };
 const { id, timestamp } = props;
 
 const isEditPage = typeof id === "string";
@@ -24,11 +27,7 @@ const FundingDocs =
 const ToCDocs = "";
 const CoCDocs = "";
 
-const rfpLabelOptions = Near.view(
-  REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
-  "get_global_labels"
-);
-
+const rfpLabelOptions = getGlobalLabels();
 const isAllowedToWriteRfp = Near.view(
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   "is_allowed_to_write_rfps",
@@ -42,6 +41,7 @@ if (!author || !isAllowedToWriteRfp) {
     <Widget src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.LoginScreen`} />
   );
 }
+
 let editRfpData = null;
 let draftRfpData = null;
 
@@ -270,11 +270,14 @@ const Heading = styled.div`
 
 function getTimestamp(date) {
   // in nanoseconds
-  return Math.floor(new Date(date).getTime() * 1000000).toString();
+  const parsedDate = date ? new Date(date) : new Date();
+  return Math.floor(parsedDate.getTime() * 1000000).toString();
 }
 
 function getDate(timestamp) {
-  return new Date(parseFloat(timestamp / 1000000)).toISOString().split("T")[0];
+  const stamp =
+    !timestamp || timestamp === "0" || timestamp === "NaN" ? null : timestamp;
+  return new Date(parseFloat(stamp / 1000000)).toISOString().split("T")[0];
 }
 
 const [labels, setLabels] = useState([]);
@@ -352,15 +355,18 @@ useEffect(() => {
         setConsent({ toc: true, coc: true });
       }
     }
-    setLoading(false);
   }
 }, [editRfpData, draftRfpData, allowDraft]);
 
+// show loader until LS data is set in state
 useEffect(() => {
-  if (draftRfpData) {
+  const handler = setTimeout(() => {
     setAllowDraft(false);
-  }
-}, [draftRfpData]);
+    setLoading(false);
+  }, 200);
+
+  return () => clearTimeout(handler);
+}, []);
 
 useEffect(() => {
   if (showRFPPage) {
@@ -845,8 +851,8 @@ if (showRFPPage) {
                   heading="Category"
                   description={
                     <>
-                      Select the category to help users quickly understand the
-                      nature of the need. Need guidance? See{" "}
+                      Select the relevant categories to help users quickly
+                      understand the nature of the need. Need guidance? See{" "}
                       <a
                         href={FundingDocs}
                         className="text-decoration-underline no-space"

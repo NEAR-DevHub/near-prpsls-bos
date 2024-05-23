@@ -14,6 +14,10 @@ import {
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 href || (href = () => {});
 
+const { getGlobalLabels } = VM.require(
+  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.core.lib.contract`
+) || { getGlobalLabels: () => {} };
+
 const { id, timestamp, rfp_id } = props;
 
 const isEditPage = typeof id === "string";
@@ -31,10 +35,7 @@ let editProposalData = null;
 let draftProposalData = null;
 const draftKey = "INFRA_PROPOSAL_EDIT";
 
-const rfpLabelOptions = Near.view(
-  REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
-  "get_global_labels"
-);
+const rfpLabelOptions = getGlobalLabels();
 
 if (isEditPage) {
   editProposalData = Near.view(
@@ -358,15 +359,18 @@ useEffect(() => {
         setConsent({ toc: true, coc: true });
       }
     }
-    setLoading(false);
   }
 }, [editProposalData, draftProposalData, allowDraft]);
 
+// show loader until LS data is set in state
 useEffect(() => {
-  if (draftProposalData) {
+  const handler = setTimeout(() => {
     setAllowDraft(false);
-  }
-}, [draftProposalData]);
+    setLoading(false);
+  }, 500);
+
+  return () => clearTimeout(handler);
+}, []);
 
 useEffect(() => {
   if (showProposalPage) {
@@ -1147,7 +1151,7 @@ if (showProposalPage) {
                   heading="Category"
                   description={
                     <>
-                      Select the category that best aligns with your
+                      Select the relevant categories that best align with your
                       contribution to the NEAR developer community. Need
                       guidance? See{" "}
                       <a

@@ -15,6 +15,10 @@ const { readableDate } = VM.require(
   `${REPL_DEVHUB}/widget/core.lib.common`
 ) || { readableDate: () => {} };
 
+const { getGlobalLabels } = VM.require(
+  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.core.lib.contract`
+) || { getGlobalLabels: () => {} };
+
 const Container = styled.div`
   .full-width-div {
     width: 100vw;
@@ -109,10 +113,7 @@ const Heading = styled.div`
   }
 `;
 
-const rfpLabelOptions = Near.view(
-  REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
-  "get_global_labels"
-);
+const rfpLabelOptions = getGlobalLabels();
 
 const FeedItem = ({ rfp, index }) => {
   const accountId = rfp.author_id;
