@@ -4,7 +4,7 @@ const options =
   (availableOptions ?? []).map((i) => {
     return { label: i.title, value: i.value };
   }) ?? [];
-options.push({ label: "None", value: null });
+options.unshift({ label: "All", value: null });
 const setSelected = props.onStateChange ?? (() => {});
 
 return (

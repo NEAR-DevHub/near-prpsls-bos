@@ -71,10 +71,11 @@ function getDifferentKeysWithValues(obj1, obj2) {
       if (key !== "editor_id" && obj2.hasOwnProperty(key)) {
         const value1 = obj1[key];
         const value2 = obj2[key];
-
-        if (typeof value1 === "object" && typeof value2 === "object") {
-          return JSON.stringify(value1) !== JSON.stringify(value2);
-        } else if (Array.isArray(value1) && Array.isArray(value2)) {
+        if (Array.isArray(value1) && Array.isArray(value2)) {
+          const sortedValue1 = [...value1].sort();
+          const sortedValue2 = [...value2].sort();
+          return JSON.stringify(sortedValue1) !== JSON.stringify(sortedValue2);
+        } else if (typeof value1 === "object" && typeof value2 === "object") {
           return JSON.stringify(value1) !== JSON.stringify(value2);
         } else {
           return value1 !== value2;
@@ -141,7 +142,10 @@ function sortTimelineAndComments() {
   });
 }
 
-sortTimelineAndComments();
+if ((snapshotHistory ?? []).length > 0) {
+  sortTimelineAndComments();
+}
+
 const Comment = ({ commentItem }) => {
   const { accountId, blockHeight } = commentItem;
   const item = {

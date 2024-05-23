@@ -10,7 +10,7 @@ const timelineStatusArray = Object.entries(RFP_TIMELINE_STATUS).map(
     value,
   })
 );
-timelineStatusArray.push({ label: "None", value: null });
+timelineStatusArray.unshift({ label: "All", value: null });
 return (
   <div>
     <Widget
