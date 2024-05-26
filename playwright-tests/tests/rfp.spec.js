@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { pauseIfVideoRecording } from "../util/videorecording";
 import { mockRpcRequest } from "../util/rpcmock";
+import { setupRPCResponsesForDontAskAgain } from "../util/dontaskagain";
+import { setDontAskAgainCacheValues } from "../util/cache";
 
 test.describe("Wallet is connected", () => {
   test.use({
@@ -203,7 +205,6 @@ test.describe("Wallet is connected with admin account", () => {
 
     await pauseIfVideoRecording(page);
     await page.getByRole("button", { name: "Submit" }).click();
-    await page.waitForTimeout(2000);
 
     const transactionText = JSON.stringify(
       JSON.parse(await page.locator("div.modal-body code").innerText()),
@@ -229,6 +230,39 @@ test.describe("Wallet is connected with admin account", () => {
         null,
         1
       )
+    );
+  });
+});
+
+test.describe("Admin with don't ask again enabled", () => {
+  test.use({
+    storageState:
+      "playwright-tests/storage-states/wallet-connected-admin-dont-ask-again.json",
+  });
+  test("should edit RFP", async ({ page }) => {
+    await setupRPCResponsesForDontAskAgain(page);
+    await page.goto(
+      "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfp&id=1"
+    );
+    await setDontAskAgainCacheValues({
+      page,
+      widgetSrc:
+        "infrastructure-committee.near/widget/near-prpsls-bos.components.rfps.Editor",
+      methodName: "edit_rfp",
+    });
+
+    await page.getByRole("button", { name: "Edit" }).click();
+
+    const descriptionArea = await page
+      .frameLocator("iframe")
+      .locator(".CodeMirror textarea");
+    await descriptionArea.fill("The edited RFP description");
+    await descriptionArea.blur();
+
+    await pauseIfVideoRecording(page);
+    await page.getByRole("button", { name: "Submit" }).click();
+    await expect(page.locator(".toast-header")).toHaveText(
+      "Sending transaction"
     );
   });
 });
