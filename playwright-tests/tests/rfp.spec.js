@@ -165,4 +165,70 @@ test.describe("Wallet is connected with admin account", () => {
     );
     await pauseIfVideoRecording(page);
   });
+  test("should edit RFP", async ({ page }) => {
+    await mockRpcRequest({
+      page,
+      filterParams: {
+        method_name: "get_rfp",
+      },
+      modifyOriginalResultFunction: async (originalResult) => {
+        console.log(JSON.stringify(originalResult, null, 1));
+        originalResult.snapshot.timeline.status = "ACCEPTING_SUBMISSIONS";
+        originalResult.snapshot.linked_proposals = [2, 3];
+        return originalResult;
+      },
+    });
+
+    await page.goto(
+      "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfp&id=1"
+    );
+    await page.getByRole("button", { name: "Edit" }).click();
+
+    await page.locator(".badge .bi-trash3-fill").click();
+    await page.getByText("Select Category").click();
+    await page.getByText("Explorers").click();
+
+    await expect(page.locator(".badge")).toHaveText("Explorers");
+    await page
+      .locator('input[type="text"]')
+      .pressSequentially("test edited title");
+    await page.locator('input[type="date"]').pressSequentially("01052030");
+    await page
+      .locator('textarea[type="text"]')
+      .pressSequentially("the edited rfp summary");
+    await page
+      .frameLocator("iframe")
+      .locator(".CodeMirror textarea")
+      .pressSequentially("The edited RFP description");
+
+    await pauseIfVideoRecording(page);
+    await page.getByRole("button", { name: "Submit" }).click();
+    await page.waitForTimeout(2000);
+
+    const transactionText = JSON.stringify(
+      JSON.parse(await page.locator("div.modal-body code").innerText()),
+      null,
+      1
+    );
+    await expect(transactionText).toEqual(
+      JSON.stringify(
+        {
+          labels: ["Explorers"],
+          body: {
+            rfp_body_version: "V0",
+            name: "test edited titletest",
+            description: "test",
+            summary: "the edited rfp summarytest",
+            submission_deadline: "1893801600000000000",
+            timeline: {
+              status: "ACCEPTING_SUBMISSIONS",
+            },
+          },
+          id: 1,
+        },
+        null,
+        1
+      )
+    );
+  });
 });
