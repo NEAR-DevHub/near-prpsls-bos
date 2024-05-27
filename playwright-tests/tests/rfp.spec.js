@@ -261,8 +261,8 @@ test.describe("Admin with don't ask again enabled", () => {
 
     await pauseIfVideoRecording(page);
     await page.getByRole("button", { name: "Submit" }).click();
-    await expect(page.locator(".toast-header")).toHaveText(
-      "Sending transaction"
-    );
+    const transactionToast = await page.locator(".toast-header");
+    await expect(transactionToast).toHaveText("Sending transaction");
+    await expect(transactionToast).not.toBeAttached();
   });
 });

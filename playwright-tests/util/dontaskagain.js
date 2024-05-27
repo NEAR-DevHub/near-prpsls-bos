@@ -46,11 +46,14 @@ export async function setupRPCResponsesForDontAskAgain(page) {
   ).components;
 
   let transaction_completed = false;
+  let last_receiver_id;
+  let lastViewedAccessKey;
 
   await page.route("https://rpc.mainnet.near.org/", async (route) => {
     const request = await route.request();
 
     const requestPostData = request.postDataJSON();
+    console.log(JSON.stringify(requestPostData));
     if (
       requestPostData.params &&
       requestPostData.params.account_id === "social.near" &&
