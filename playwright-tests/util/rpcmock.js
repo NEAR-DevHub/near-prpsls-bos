@@ -40,7 +40,7 @@ export async function mockRpcRequest({
         body: JSON.stringify(mockedResponse),
       });
     } else {
-      route.continue();
+      route.fallback();
     }
   });
 }

@@ -1,7 +1,10 @@
 import { test, expect } from "@playwright/test";
 import { pauseIfVideoRecording } from "../util/videorecording";
 import { mockRpcRequest } from "../util/rpcmock";
-import { setupRPCResponsesForDontAskAgain } from "../util/dontaskagain";
+import {
+  setupRPCResponsesForDontAskAgain,
+  transactionCompleted,
+} from "../util/dontaskagain";
 import { setDontAskAgainCacheValues } from "../util/cache";
 
 test.describe("Wallet is connected", () => {
@@ -240,7 +243,25 @@ test.describe("Admin with don't ask again enabled", () => {
       "playwright-tests/storage-states/wallet-connected-admin-dont-ask-again.json",
   });
   test("should edit RFP", async ({ page }) => {
+    const theNewDescription = "The edited RFP description";
     await setupRPCResponsesForDontAskAgain(page);
+    await mockRpcRequest({
+      page,
+      filterParams: {
+        method_name: "get_rfp",
+      },
+      modifyOriginalResultFunction: async (originalResult) => {
+        if (transactionCompleted) {
+          originalResult.snapshot.description = theNewDescription;
+          originalResult.snapshot.timestamp = (
+            BigInt(new Date().getTime()) * BigInt(1_000_000)
+          ).toString();
+          originalResult.snapshot.block_height += "1";
+        }
+
+        return originalResult;
+      },
+    });
     await page.goto(
       "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfp&id=1"
     );
@@ -256,7 +277,7 @@ test.describe("Admin with don't ask again enabled", () => {
     const descriptionArea = await page
       .frameLocator("iframe")
       .locator(".CodeMirror textarea");
-    await descriptionArea.fill("The edited RFP description");
+    await descriptionArea.fill(theNewDescription);
     await descriptionArea.blur();
 
     await pauseIfVideoRecording(page);
@@ -264,5 +285,11 @@ test.describe("Admin with don't ask again enabled", () => {
     const transactionToast = await page.locator(".toast-header");
     await expect(transactionToast).toHaveText("Sending transaction");
     await expect(transactionToast).not.toBeAttached();
+    const descriptionMarkdownElement = await page.locator(
+      "div[data-component='devhub.near/widget/devhub.components.molecule.MarkdownViewer']"
+    );
+    await descriptionMarkdownElement.scrollIntoViewIfNeeded();
+    await expect(descriptionMarkdownElement).toHaveText(theNewDescription);
+    await pauseIfVideoRecording(page);
   });
 });

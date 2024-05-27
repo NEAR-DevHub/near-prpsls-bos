@@ -1,3 +1,7 @@
+import { MOCK_RPC_URL } from "./rpcmock";
+
+export const BOS_LOADER_URL = "http://localhost:3030";
+
 const access_keys = [
   {
     access_key: {
@@ -40,20 +44,18 @@ const access_keys = [
   },
 ];
 
+export let transactionCompleted = false;
+export let lastReceiverId;
+export let lastViewedAccessKey;
+
 export async function setupRPCResponsesForDontAskAgain(page) {
-  const devComponents = (
-    await fetch("http://localhost:3030").then((r) => r.json())
-  ).components;
+  const devComponents = (await fetch(BOS_LOADER_URL).then((r) => r.json()))
+    .components;
 
-  let transaction_completed = false;
-  let last_receiver_id;
-  let lastViewedAccessKey;
-
-  await page.route("https://rpc.mainnet.near.org/", async (route) => {
+  await page.route(MOCK_RPC_URL, async (route) => {
     const request = await route.request();
 
     const requestPostData = request.postDataJSON();
-    console.log(JSON.stringify(requestPostData));
     if (
       requestPostData.params &&
       requestPostData.params.account_id === "social.near" &&
@@ -64,7 +66,7 @@ export async function setupRPCResponsesForDontAskAgain(page) {
       ).keys[0];
 
       const response = await route.fetch({
-        url: "https://rpc.mainnet.near.org/",
+        url: MOCK_RPC_URL,
       });
       const json = await response.json();
 
@@ -102,8 +104,8 @@ export async function setupRPCResponsesForDontAskAgain(page) {
 
       await route.fulfill({ response, json });
     } else if (requestPostData.method == "broadcast_tx_commit") {
-      transaction_completed = false;
-      last_receiver_id =
+      transactionCompleted = false;
+      lastReceiverId =
         lastViewedAccessKey.access_key.permission.FunctionCall.receiver_id;
       await page.waitForTimeout(1000);
 
@@ -115,7 +117,7 @@ export async function setupRPCResponsesForDontAskAgain(page) {
               SuccessValue: "",
             },
             transaction: {
-              receiver_id: last_receiver_id,
+              receiver_id: lastReceiverId,
             },
             transaction_outcome: {
               proof: [],
@@ -137,9 +139,9 @@ export async function setupRPCResponsesForDontAskAgain(page) {
           },
         },
       });
-      transaction_completed = true;
+      transactionCompleted = true;
     } else {
-      await route.continue();
+      route.fallback();
     }
   });
 }
