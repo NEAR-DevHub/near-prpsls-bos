@@ -4,7 +4,7 @@ on:
     branches: [main]
 jobs:
   deploy-mainnet:
-    uses: bos-cli-rs/bos-cli-rs/.github/workflows/deploy-mainnet.yml@master
+    uses: bos-cli-rs/bos-cli-rs/.github/workflows/deploy-mainnet.yml@main
     with:
       deploy-account-address: ${{ vars.NEAR_SOCIAL_ACCOUNT_ID }}
       signer-account-address: ${{ vars.NEAR_SOCIAL_ACCOUNT_ID }}
