@@ -5,6 +5,7 @@ on:
 jobs:
   deploy-mainnet:
     uses: bos-cli-rs/bos-cli-rs/.github/workflows/deploy-mainnet.yml@main
+    environment: infrastructure-committee.near
     with:
       deploy-account-address: ${{ vars.NEAR_SOCIAL_ACCOUNT_ID }}
       signer-account-address: ${{ vars.NEAR_SOCIAL_ACCOUNT_ID }}
