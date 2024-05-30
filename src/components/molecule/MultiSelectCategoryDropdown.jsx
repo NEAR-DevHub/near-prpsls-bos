@@ -3,7 +3,8 @@ import { REPL_DEVHUB } from "@/includes/common";
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 href || (href = () => {});
 
-const { selected, onChange, disabled, availableOptions, hideDropdown } = props;
+const { selected, onChange, disabled, availableOptions, hideDropdown, label } =
+  props;
 
 const [selectedOptions, setSelectedOptions] = useState([]);
 const [isOpen, setIsOpen] = useState(false);
@@ -147,7 +148,9 @@ return (
             }
             onClick={!disabled && toggleDropdown}
           >
-            <div className={`selected-option`}>Select Category</div>
+            <div className={`selected-option`}>
+              {label ?? "Select Category"}
+            </div>
           </div>
 
           {isOpen && (
