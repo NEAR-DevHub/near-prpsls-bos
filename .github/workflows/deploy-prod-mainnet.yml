@@ -11,6 +11,8 @@ jobs:
       target-account-id: ${{ vars.NEAR_SOCIAL_ACCOUNT_ID }}
       signer-public-key: ${{ vars.NEAR_SOCIAL_ACCOUNT_PUBLIC_KEY }}
       signer-private-key: ${{ secrets.NEAR_SOCIAL_ACCOUNT_PRIVATE_KEY }}
+    steps:
+    - run: echo "DONE"
       
   deploy-mainnet:
     needs: [vars]
