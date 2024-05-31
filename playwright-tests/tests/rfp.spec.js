@@ -289,11 +289,9 @@ test.describe("Admin with don't ask again enabled", () => {
     const transactionToast = await page.locator(".toast-header");
     await expect(transactionToast).toHaveText("Sending transaction");
     await expect(transactionToast).not.toBeAttached();
-    const descriptionMarkdownElement = await page.locator(
-      "div[data-component='devhub.near/widget/devhub.components.molecule.MarkdownViewer']"
-    );
-    await descriptionMarkdownElement.scrollIntoViewIfNeeded();
-    await expect(descriptionMarkdownElement).toHaveText(theNewDescription);
+    // check for navigation modal
+    const navigationModal = await page.getByText("Your RFP has been successfully edited");
+    await expect(navigationModal).toBeVisible();
     await pauseIfVideoRecording(page);
   });
 });
