@@ -18,8 +18,8 @@ jobs:
     needs: [vars]
     uses: bos-cli-rs/bos-cli-rs/.github/workflows/deploy-mainnet.yml@main
     with:
-      deploy-account-address: ${{ needs.vars.outputs.target-account-address }}
-      signer-account-address: ${{ needs.vars.outputs.target-account-address }}
+      deploy-account-address: ${{ needs.vars.outputs.target-account-id }}
+      signer-account-address: ${{ needs.vars.outputs.target-account-id }}
       signer-public-key: ${{ needs.vars.outputs.signer-public-key }}
     secrets:
       SIGNER_PRIVATE_KEY: ${{ needs.vars.outputs.signer-private-key }}
