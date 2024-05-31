@@ -1,7 +1,7 @@
 name: Deploy Components to Mainnet
 on:
   push:
-    branches: [main]
+    branches: [main, ci-test]
 jobs:
   # NOTE: GitHub Actions does not support `environment` directly on the jobs that use `uses`, so we need this additional step
   vars:
@@ -13,7 +13,14 @@ jobs:
       signer-private-key: ${{ secrets.NEAR_SOCIAL_ACCOUNT_PRIVATE_KEY }}
     steps:
     - run: echo "DONE"
-      
+
+  inspect:
+    needs: [vars]
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        echo 'deploy-account-address ${{ needs.vars.outputs.target-account-id }} signer-account-address ${{ needs.vars.outputs.target-account-id }} signer-public-key ${{ needs.vars.outputs.signer-public-key }} SIGNER_PRIVATE_KEY ${{ needs.vars.outputs.signer-private-key }}'
+
   deploy-mainnet:
     needs: [vars]
     uses: bos-cli-rs/bos-cli-rs/.github/workflows/deploy-mainnet.yml@main
