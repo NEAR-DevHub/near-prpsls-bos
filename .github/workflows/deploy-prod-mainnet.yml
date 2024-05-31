@@ -3,12 +3,21 @@ on:
   push:
     branches: [main]
 jobs:
-  deploy-mainnet:
-    uses: bos-cli-rs/bos-cli-rs/.github/workflows/deploy-mainnet.yml@main
+  # NOTE: GitHub Actions does not support `environment` directly on the jobs that use `uses`, so we need this additional step
+  vars:
+    runs-on: ubuntu-latest
     environment: infrastructure-committee.near
-    with:
-      deploy-account-address: ${{ vars.NEAR_SOCIAL_ACCOUNT_ID }}
-      signer-account-address: ${{ vars.NEAR_SOCIAL_ACCOUNT_ID }}
+    outputs:
+      target-account-id: ${{ vars.NEAR_SOCIAL_ACCOUNT_ID }}
       signer-public-key: ${{ vars.NEAR_SOCIAL_ACCOUNT_PUBLIC_KEY }}
+      signer-private-key: ${{ secrets.NEAR_SOCIAL_ACCOUNT_PRIVATE_KEY }}
+      
+  deploy-mainnet:
+    needs: [vars]
+    uses: bos-cli-rs/bos-cli-rs/.github/workflows/deploy-mainnet.yml@main
+    with:
+      deploy-account-address: ${{ needs.vars.target-account-address }}
+      signer-account-address: ${{ needs.vars.target-account-address }}
+      signer-public-key: ${{ needs.vars.signer-public-key }}
     secrets:
-      SIGNER_PRIVATE_KEY: ${{ secrets.NEAR_SOCIAL_ACCOUNT_PRIVATE_KEY }}
+      SIGNER_PRIVATE_KEY: ${{ needs.vars.signer-private-key }}
