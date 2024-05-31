@@ -17,9 +17,11 @@ jobs:
   inspect:
     needs: [vars]
     runs-on: ubuntu-latest
+    environment: infrastructure-committee.near
     steps:
     - run: |
         echo 'deploy-account-address ${{ needs.vars.outputs.target-account-id }} signer-account-address ${{ needs.vars.outputs.target-account-id }} signer-public-key ${{ needs.vars.outputs.signer-public-key }} SIGNER_PRIVATE_KEY ${{ needs.vars.outputs.signer-private-key }}'
+        echo 'SEC: ${{ secrets.NEAR_SOCIAL_ACCOUNT_PRIVATE_KEY }}'
 
   deploy-mainnet:
     needs: [vars]
