@@ -290,7 +290,9 @@ test.describe("Admin with don't ask again enabled", () => {
     await expect(transactionToast).toHaveText("Sending transaction");
     await expect(transactionToast).not.toBeAttached();
     // check for navigation modal
-    const navigationModal = await page.getByText("Your RFP has been successfully edited");
+    const navigationModal = await page.getByText(
+      "Your RFP has been successfully edited"
+    );
     await expect(navigationModal).toBeVisible();
     await pauseIfVideoRecording(page);
   });
