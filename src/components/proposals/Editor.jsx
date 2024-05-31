@@ -275,7 +275,7 @@ const [selectedStatus, setSelectedStatus] = useState("draft");
 const [isReviewModalOpen, setReviewModal] = useState(false);
 const [isCancelModalOpen, setCancelModal] = useState(false);
 
-const [showProposalPage, setShowProposalPage] = useState(false); // when user creates/edit a proposal and confirm the txn, this is true
+const [showProposalViewModal, setShowProposalViewModal] = useState(false); // when user creates/edit a proposal and confirm the txn, this is true
 const [proposalId, setProposalId] = useState(null);
 const [proposalIdsArray, setProposalIdsArray] = useState(null);
 const [isTxnCreated, setCreateTxn] = useState(false);
@@ -373,7 +373,7 @@ useEffect(() => {
 }, []);
 
 useEffect(() => {
-  if (showProposalPage) {
+  if (showProposalViewModal) {
     return;
   }
   setDisabledSubmitBtn(
@@ -398,7 +398,7 @@ useEffect(() => {
   draftProposalData,
   consent,
   isTxnCreated,
-  showProposalPage,
+  showProposalViewModal,
 ]);
 
 // set RFP labels, disable link rfp change when linked rfp is past accepting stage
@@ -475,7 +475,7 @@ useEffect(() => {
       ) {
         setCreateTxn(false);
         setProposalId(editProposalData.id);
-        setShowProposalPage(true);
+        setShowProposalViewModal(true);
       }
     } else {
       const proposalIds = Near.view(
@@ -492,7 +492,7 @@ useEffect(() => {
       ) {
         setCreateTxn(false);
         setProposalId(proposalIds[proposalIds.length - 1]);
-        setShowProposalPage(true);
+        setShowProposalViewModal(true);
       }
     }
   }
@@ -525,7 +525,7 @@ useEffect(() => {
             transaction_method_name == "edit_proposal";
 
           if (is_edit_or_add_post_transaction) {
-            setShowProposalPage(true);
+            setShowProposalViewModal(true);
             Storage.privateSet(draftKey, null);
           }
           // show the latest created proposal to user
@@ -552,8 +552,8 @@ useEffect(() => {
       { subscribe: false }
     );
   } else {
-    if (showProposalPage) {
-      setShowProposalPage(false);
+    if (showProposalViewModal) {
+      setShowProposalViewModal(false);
     }
   }
 }, [props.transactionHashes]);
@@ -1086,270 +1086,269 @@ const CurrencyComponent = useMemo(() => {
   );
 }, [draftProposalData]);
 
-if (showProposalPage) {
-  return (
+return (
+  <Container className="w-100 py-4 px-0 px-sm-2 d-flex flex-column gap-3">
+    <Heading className="px-2 px-sm-0">
+      {isEditPage ? "Edit" : "Create"} Proposal
+    </Heading>
     <Widget
-      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.proposals.Proposal`}
-      props={{ id: proposalId }}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.proposals.ViewProposalModal`}
+      props={{
+        isOpen: showProposalViewModal,
+        isEdit: isEditPage,
+        proposalId: proposalId,
+      }}
     />
-  );
-} else
-  return (
-    <Container className="w-100 py-4 px-0 px-sm-2 d-flex flex-column gap-3">
-      <Heading className="px-2 px-sm-0">
-        {isEditPage ? "Edit" : "Create"} Proposal
-      </Heading>
-      <Widget
-        src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.ConfirmReviewModal`}
-        props={{
-          isOpen: isReviewModalOpen,
-          onCancelClick: () => setReviewModal(false),
-          onReviewClick: () => {
-            setReviewModal(false);
-            cleanDraft();
-            onSubmit({ isDraft: false });
-          },
-        }}
-      />
-      <Widget
-        src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.ConfirmCancelModal`}
-        props={{
-          isOpen: isCancelModalOpen,
-          onCancelClick: () => setCancelModal(false),
-          onConfirmClick: () => {
-            setCancelModal(false);
-            onSubmit({ isCancel: true });
-          },
-        }}
-      />
-      <div className="card no-border rounded-0 px-2 p-lg-0 full-width-div">
-        <div className="container-xl py-4 d-flex flex-wrap gap-6 w-100">
-          <div
-            style={{ minWidth: "350px" }}
-            className="flex-2 w-100 order-2 order-md-1"
-          >
-            <div className="d-flex gap-2 w-100">
-              <div className="d-none d-sm-flex">
-                <Widget
-                  src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.Profile`}
-                  props={{
-                    accountId: author,
-                  }}
-                />
+    <Widget
+      src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.ConfirmReviewModal`}
+      props={{
+        isOpen: isReviewModalOpen,
+        onCancelClick: () => setReviewModal(false),
+        onReviewClick: () => {
+          setReviewModal(false);
+          cleanDraft();
+          onSubmit({ isDraft: false });
+        },
+      }}
+    />
+    <Widget
+      src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.ConfirmCancelModal`}
+      props={{
+        isOpen: isCancelModalOpen,
+        onCancelClick: () => setCancelModal(false),
+        onConfirmClick: () => {
+          setCancelModal(false);
+          onSubmit({ isCancel: true });
+        },
+      }}
+    />
+    <div className="card no-border rounded-0 px-2 p-lg-0 full-width-div">
+      <div className="container-xl py-4 d-flex flex-wrap gap-6 w-100">
+        <div
+          style={{ minWidth: "350px" }}
+          className="flex-2 w-100 order-2 order-md-1"
+        >
+          <div className="d-flex gap-2 w-100">
+            <div className="d-none d-sm-flex">
+              <Widget
+                src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.Profile`}
+                props={{
+                  accountId: author,
+                }}
+              />
+            </div>
+            <div className="d-flex flex-column gap-4 w-100">
+              <div className="border-bottom pb-4">
+                <InputContainer
+                  heading="Link RFP (Optional)"
+                  description={
+                    "Link this proposal if it is a response to a specific RFP. You can only link to active RFPs in the “Accepting Submission” stage. You can only link to one RFP."
+                  }
+                >
+                  {LinkRFPComponent}
+                </InputContainer>
               </div>
-              <div className="d-flex flex-column gap-4 w-100">
-                <div className="border-bottom pb-4">
-                  <InputContainer
-                    heading="Link RFP (Optional)"
-                    description={
-                      "Link this proposal if it is a response to a specific RFP. You can only link to active RFPs in the “Accepting Submission” stage. You can only link to one RFP."
-                    }
-                  >
-                    {LinkRFPComponent}
-                  </InputContainer>
-                </div>
-                <InputContainer
-                  heading="Category"
-                  description={
-                    <>
-                      Select the relevant categories that best align with your
-                      contribution to the NEAR developer community. Need
-                      guidance? See{" "}
-                      <a
-                        href={FundingDocs}
-                        className="text-decoration-underline no-space"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Funding Docs
-                      </a>
-                      .
-                    </>
-                  }
-                >
-                  {CategoryDropdown}
-                </InputContainer>
-                <InputContainer
-                  heading="Title"
-                  description="Highlight the essence of your proposal in a few words. This will appear on your proposal’s detail page and the main proposal feed. Keep it short, please :)"
-                >
-                  {TitleComponent}
-                </InputContainer>
-                <InputContainer
-                  heading="Summary"
-                  description="Explain your proposal briefly. This is your chance to make a good first impression on the community. Include what needs or goals your work will address, your solution, and the benefit for the NEAR developer community."
-                >
-                  {SummaryComponent}
-                </InputContainer>
-                <InputContainer
-                  heading="Description"
-                  description={
-                    <>
-                      Expand on your summary with any relevant details like your
-                      contribution timeline, key milestones, team background,
-                      and a clear breakdown of how the funds will be used.
-                      Proposals should be simple and clear (e.g. 1 month). For
-                      more complex projects, treat each milestone as a separate
-                      proposal.
-                    </>
-                  }
-                >
-                  {DescriptionComponent}
-                </InputContainer>
-                <InputContainer heading="Final Consent">
-                  {ConsentComponent}
-                </InputContainer>
-                <div className="d-flex justify-content-between gap-2 align-items-center">
-                  <div>
-                    {isEditPage && (
-                      <Widget
-                        src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
-                        props={{
-                          classNames: {
-                            root: "btn-outline-danger shadow-none border-0 btn-sm",
-                          },
-                          label: (
-                            <div className="d-flex align-items-center gap-1">
-                              <i class="bi bi-trash3"></i> Cancel Proposal
-                            </div>
-                          ),
-                          onClick: () => setCancelModal(true),
-                        }}
-                      />
-                    )}
-                  </div>
-                  <div
-                    className="d-flex gap-2"
-                    style={{
-                      height: isDraftBtnOpen ? "25vh" : "auto",
-                      alignItems: isDraftBtnOpen ? "flex-start" : "center",
-                    }}
-                  >
-                    <Link
-                      to={
-                        isEditPage
-                          ? href({
-                              widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
-                              params: {
-                                page: "proposal",
-                                id: parseInt(id),
-                              },
-                            })
-                          : href({
-                              widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
-                              params: {
-                                page: "proposals",
-                              },
-                            })
-                      }
+              <InputContainer
+                heading="Category"
+                description={
+                  <>
+                    Select the relevant categories that best align with your
+                    contribution to the NEAR developer community. Need guidance?
+                    See{" "}
+                    <a
+                      href={FundingDocs}
+                      className="text-decoration-underline no-space"
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      <Widget
-                        src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
-                        props={{
-                          classNames: {
-                            root: "d-flex h-100 text-muted fw-bold btn-outline shadow-none border-0 btn-sm",
-                          },
-                          label: "Discard Changes",
-                          onClick: cleanDraft,
-                        }}
-                      />
-                    </Link>
-                    <SubmitBtn />
-                  </div>
+                      Funding Docs
+                    </a>
+                    .
+                  </>
+                }
+              >
+                {CategoryDropdown}
+              </InputContainer>
+              <InputContainer
+                heading="Title"
+                description="Highlight the essence of your proposal in a few words. This will appear on your proposal’s detail page and the main proposal feed. Keep it short, please :)"
+              >
+                {TitleComponent}
+              </InputContainer>
+              <InputContainer
+                heading="Summary"
+                description="Explain your proposal briefly. This is your chance to make a good first impression on the community. Include what needs or goals your work will address, your solution, and the benefit for the NEAR developer community."
+              >
+                {SummaryComponent}
+              </InputContainer>
+              <InputContainer
+                heading="Description"
+                description={
+                  <>
+                    Expand on your summary with any relevant details like your
+                    contribution timeline, key milestones, team background, and
+                    a clear breakdown of how the funds will be used. Proposals
+                    should be simple and clear (e.g. 1 month). For more complex
+                    projects, treat each milestone as a separate proposal.
+                  </>
+                }
+              >
+                {DescriptionComponent}
+              </InputContainer>
+              <InputContainer heading="Final Consent">
+                {ConsentComponent}
+              </InputContainer>
+              <div className="d-flex justify-content-between gap-2 align-items-center">
+                <div>
+                  {isEditPage && (
+                    <Widget
+                      src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
+                      props={{
+                        classNames: {
+                          root: "btn-outline-danger shadow-none border-0 btn-sm",
+                        },
+                        label: (
+                          <div className="d-flex align-items-center gap-1">
+                            <i class="bi bi-trash3"></i> Cancel Proposal
+                          </div>
+                        ),
+                        onClick: () => setCancelModal(true),
+                      }}
+                    />
+                  )}
                 </div>
-              </div>
-            </div>
-          </div>
-          <div
-            style={{ minWidth: "350px" }}
-            className="flex-1 w-100 order-1 order-md-2"
-          >
-            <CollapsibleContainer noPaddingTop={true} title="Author Details">
-              <div className="d-flex flex-column gap-3 gap-sm-4">
-                <InputContainer heading="Author">
-                  {ProfileComponent}
-                </InputContainer>
-              </div>
-            </CollapsibleContainer>
-            <div className="my-2">
-              <CollapsibleContainer title="Link Proposals (Optional)">
-                {LinkedProposalsComponent}
-              </CollapsibleContainer>
-            </div>
-            <div className="my-2">
-              <CollapsibleContainer title="Funding Details">
-                <div className="d-flex flex-column gap-3 gap-sm-4">
-                  <InputContainer
-                    heading="Recipient NEAR Wallet Address"
-                    description="Enter the address that will receive the funds. We’ll need this to send a test transaction once your proposal is approved."
-                  >
-                    {ReceiverAccountComponent}
-                  </InputContainer>
-                  <InputContainer
-                    heading={
-                      <div className="d-flex gap-2 align-items-center">
-                        Recipient Verification Status
-                        <div className="custom-tooltip">
-                          <i class="bi bi-info-circle-fill"></i>
-                          <span class="tooltiptext">
-                            To get approved and receive payments on our
-                            platform, you must complete KYC/KYB verification
-                            using Fractal, a trusted identity verification
-                            solution. This helps others trust transactions with
-                            your account. Click "Get Verified" to start. <br />
-                            <br />
-                            Once verified, your profile will display a badge,
-                            which is valid for 365 days from the date of your
-                            verification. You must renew your verification upon
-                            expiration OR if any of your personal information
-                            changes.
-                          </span>
-                        </div>
-                      </div>
-                    }
-                    description=""
-                  >
-                    <div className="border border-1 p-3 rounded-2">
-                      <Widget
-                        src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.VerificationStatus`}
-                        props={{
-                          receiverAccount: receiverAccount,
-                          showGetVerifiedBtn: true,
-                          imageSize: 30,
-                        }}
-                      />
-                    </div>
-                  </InputContainer>
-                  <InputContainer
-                    heading="Total Amount (USD)"
-                    description={
-                      <>
-                        Enter the exact amount you are seeking. See
-                        <a
-                          href={FundingDocs}
-                          className="text-decoration-underline"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Funding Documentation
-                        </a>
-                        for guidelines.
-                      </>
+                <div
+                  className="d-flex gap-2"
+                  style={{
+                    height: isDraftBtnOpen ? "25vh" : "auto",
+                    alignItems: isDraftBtnOpen ? "flex-start" : "center",
+                  }}
+                >
+                  <Link
+                    to={
+                      isEditPage
+                        ? href({
+                            widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+                            params: {
+                              page: "proposal",
+                              id: parseInt(id),
+                            },
+                          })
+                        : href({
+                            widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+                            params: {
+                              page: "proposals",
+                            },
+                          })
                     }
                   >
-                    {AmountComponent}
-                  </InputContainer>
-                  <InputContainer
-                    heading="Currency"
-                    description="Select your preferred currency for receiving funds. Note: The exchange rate for NEAR tokens will be the closing rate at the day of the invoice."
-                  >
-                    {CurrencyComponent}
-                  </InputContainer>
+                    <Widget
+                      src={`${REPL_DEVHUB}/widget/devhub.components.molecule.Button`}
+                      props={{
+                        classNames: {
+                          root: "d-flex h-100 text-muted fw-bold btn-outline shadow-none border-0 btn-sm",
+                        },
+                        label: "Discard Changes",
+                        onClick: cleanDraft,
+                      }}
+                    />
+                  </Link>
+                  <SubmitBtn />
                 </div>
-              </CollapsibleContainer>
+              </div>
             </div>
           </div>
         </div>
+        <div
+          style={{ minWidth: "350px" }}
+          className="flex-1 w-100 order-1 order-md-2"
+        >
+          <CollapsibleContainer noPaddingTop={true} title="Author Details">
+            <div className="d-flex flex-column gap-3 gap-sm-4">
+              <InputContainer heading="Author">
+                {ProfileComponent}
+              </InputContainer>
+            </div>
+          </CollapsibleContainer>
+          <div className="my-2">
+            <CollapsibleContainer title="Link Proposals (Optional)">
+              {LinkedProposalsComponent}
+            </CollapsibleContainer>
+          </div>
+          <div className="my-2">
+            <CollapsibleContainer title="Funding Details">
+              <div className="d-flex flex-column gap-3 gap-sm-4">
+                <InputContainer
+                  heading="Recipient NEAR Wallet Address"
+                  description="Enter the address that will receive the funds. We’ll need this to send a test transaction once your proposal is approved."
+                >
+                  {ReceiverAccountComponent}
+                </InputContainer>
+                <InputContainer
+                  heading={
+                    <div className="d-flex gap-2 align-items-center">
+                      Recipient Verification Status
+                      <div className="custom-tooltip">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <span class="tooltiptext">
+                          To get approved and receive payments on our platform,
+                          you must complete KYC/KYB verification using Fractal,
+                          a trusted identity verification solution. This helps
+                          others trust transactions with your account. Click
+                          "Get Verified" to start. <br />
+                          <br />
+                          Once verified, your profile will display a badge,
+                          which is valid for 365 days from the date of your
+                          verification. You must renew your verification upon
+                          expiration OR if any of your personal information
+                          changes.
+                        </span>
+                      </div>
+                    </div>
+                  }
+                  description=""
+                >
+                  <div className="border border-1 p-3 rounded-2">
+                    <Widget
+                      src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.VerificationStatus`}
+                      props={{
+                        receiverAccount: receiverAccount,
+                        showGetVerifiedBtn: true,
+                        imageSize: 30,
+                      }}
+                    />
+                  </div>
+                </InputContainer>
+                <InputContainer
+                  heading="Total Amount (USD)"
+                  description={
+                    <>
+                      Enter the exact amount you are seeking. See
+                      <a
+                        href={FundingDocs}
+                        className="text-decoration-underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Funding Documentation
+                      </a>
+                      for guidelines.
+                    </>
+                  }
+                >
+                  {AmountComponent}
+                </InputContainer>
+                <InputContainer
+                  heading="Currency"
+                  description="Select your preferred currency for receiving funds. Note: The exchange rate for NEAR tokens will be the closing rate at the day of the invoice."
+                >
+                  {CurrencyComponent}
+                </InputContainer>
+              </div>
+            </CollapsibleContainer>
+          </div>
+        </div>
       </div>
-    </Container>
-  );
+    </div>
+  </Container>
+);
