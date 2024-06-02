@@ -3,11 +3,8 @@ import {
   REPL_DEVHUB,
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
   REPL_RPC_URL,
-  RFP_IMAGE,
   RFP_TIMELINE_STATUS,
-  CANCEL_RFP_OPTIONS,
   parseJSON,
-  PROPOSALS_APPROVED_STATUS_ARRAY,
 } from "@/includes/common";
 
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
@@ -297,10 +294,6 @@ const [rfpId, setRfpId] = useState(null);
 const [rfpIdsArray, setRfpIdsArray] = useState(null);
 const [isTxnCreated, setCreateTxn] = useState(false);
 const [oldRfpData, setOldRfpData] = useState(null);
-const [isCancelModalOpen, setCancelModal] = useState(false);
-const [isWarningModalOpen, setWarningModal] = useState(false);
-
-const [approvedProposals, setApprovedProposals] = useState(null);
 const [timeline, setTimeline] = useState({
   status: RFP_TIMELINE_STATUS.ACCEPTING_SUBMISSIONS,
 });
@@ -318,10 +311,9 @@ const memoizedDraftData = useMemo(
       labels: labels,
       summary: summary,
       submission_deadline: getTimestamp(submissionDeadline),
-      timeline: timeline,
     },
   }),
-  [title, summary, description, submissionDeadline, labels, timeline]
+  [title, summary, description, submissionDeadline, labels]
 );
 
 useEffect(() => {
@@ -394,48 +386,6 @@ useEffect(() => {
   isTxnCreated,
   showRFPPage,
 ]);
-
-function fetchApprovedRfpProposals() {
-  const queryName = PROPOSAL_FEED_INDEXER_QUERY_NAME;
-  const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
-    ${queryName}(
-      offset: $offset
-      limit: $limit
-      order_by: {proposal_id: desc}
-      where: $where
-    ) {
-      author_id
-      name
-      timeline
-    }
-  }`;
-
-  const FETCH_LIMIT = 50;
-  const variables = {
-    limit: FETCH_LIMIT,
-    offset,
-    where: {
-      proposal_id: { _in: editRfpData.snapshot.linked_proposals },
-    },
-  };
-  fetchGraphQL(query, "GetLatestSnapshot", variables).then(async (result) => {
-    if (result.status === 200) {
-      if (result.body.data) {
-        const data = result.body.data?.[queryName];
-        const approved = [];
-        data.map((item) => {
-          const timeline = parseJSON(item.timeline);
-          if (PROPOSALS_APPROVED_STATUS_ARRAY.includes(timeline.status)) {
-            approved.push(item);
-          }
-        });
-        setApprovedProposals(approved);
-      }
-    }
-  });
-}
-
-fetchApprovedRfpProposals();
 
 const InputContainer = ({ heading, description, children }) => {
   return (
@@ -571,29 +521,6 @@ const onSubmit = () => {
       contractName: REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
       methodName: isEditPage ? "edit_rfp" : "add_rfp",
       args: args,
-      gas: 270000000000000,
-    },
-  ]);
-};
-
-const onCancelRFP = (value) => {
-  setCreateTxn(true);
-
-  Near.call([
-    {
-      contractName: REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
-      methodName: "cancel_rfp",
-      args: {
-        id: rfpId,
-        proposals_to_cancel:
-          value === CANCEL_RFP_OPTIONS.CANCEL_PROPOSALS
-            ? editRfpData.snapshot.linked_proposals
-            : [],
-        proposals_to_unlink:
-          value === CANCEL_RFP_OPTIONS.UNLINK_PROPOSALS
-            ? editRfpData.snapshot.linked_proposals
-            : [],
-      },
       gas: 270000000000000,
     },
   ]);
@@ -806,31 +733,6 @@ if (showRFPPage) {
 } else
   return (
     <Container className="w-100 py-2 px-0 px-sm-2 d-flex flex-column gap-3">
-      <Widget
-        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.ConfirmCancelModal`}
-        props={{
-          isOpen: isCancelModalOpen,
-          onCancelClick: () => {
-            setCancelModal(false);
-            setTimeline({ status: RFP_TIMELINE_STATUS.EVALUATION });
-          },
-          onConfirmClick: (value) => {
-            setCancelModal(false);
-            onCancelRFP(value);
-          },
-          linkedProposalIds: editRfpData.snapshot.linked_proposals,
-        }}
-      />
-      <Widget
-        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.WarningModal`}
-        props={{
-          isOpen: isWarningModalOpen,
-          onConfirmClick: () => {
-            setWarningModal(false);
-            setTimeline({ status: RFP_TIMELINE_STATUS.EVALUATION });
-          },
-        }}
-      />
       <Heading className="px-2 px-sm-0">
         {isEditPage ? "Edit" : "Create"} RFP
       </Heading>
@@ -951,35 +853,6 @@ if (showRFPPage) {
                 </InputContainer>
               </div>
             </CollapsibleContainer>
-            <div className="my-2">
-              <CollapsibleContainer title="Timeline">
-                <Widget
-                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.TimelineConfigurator`}
-                  props={{
-                    timeline: timeline,
-                    setTimeline: (v) => {
-                      if (editRfpData.snapshot.timeline.status === v.status) {
-                        return;
-                      }
-                      // if proposal selected timeline is selected and no approved proposals exist, show warning
-                      if (
-                        v.status === RFP_TIMELINE_STATUS.PROPOSAL_SELECTED &&
-                        Array.isArray(approvedProposals) &&
-                        !approvedProposals.length
-                      ) {
-                        setWarningModal(true);
-                      }
-
-                      if (v.status === RFP_TIMELINE_STATUS.CANCELLED) {
-                        setCancelModal(true);
-                      }
-                      setTimeline(v);
-                    },
-                    disabled: isEditPage ? false : true,
-                  }}
-                />
-              </CollapsibleContainer>
-            </div>
           </div>
         </div>
       </div>
