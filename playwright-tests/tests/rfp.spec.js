@@ -146,7 +146,11 @@ test.describe("Wallet is connected with admin account", () => {
     await page.goto(
       "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfp&id=1"
     );
-    await page.getByRole("button", { name: "Edit" }).click();
+    const buttonSelector = `div[data-testid="setting-btn"]`;
+    await page.waitForSelector(buttonSelector, {
+      state: "visible",
+    });
+    await page.click(buttonSelector);
     await page.getByRole("button", { name: "Accepting Submissions" }).click();
     await page.getByText("Cancelled", { exact: true }).click();
     await page.getByRole("radio").first().click();

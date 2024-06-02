@@ -268,14 +268,6 @@ const rfp = Near.view(REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT, "get_rfp", {
   rfp_id: parseInt(id),
 });
 
-const isModerator = Near.view(
-  REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
-  "is_allowed_to_write_rfps",
-  {
-    editor: context.accountId,
-  }
-);
-
 const queryName = RFP_INDEXER_QUERY_NAME;
 const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${queryName}_bool_exp = {}) {
   ${queryName}(
@@ -454,14 +446,14 @@ const editRFPStatus = () => {
     },
   ]);
 };
-
+console.log({ rfp });
 const onCancelRFP = (value) => {
   Near.call([
     {
       contractName: REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
       methodName: "cancel_rfp",
       args: {
-        id: rdp.id,
+        id: rfp.id,
         proposals_to_cancel:
           value === CANCEL_RFP_OPTIONS.CANCEL_PROPOSALS
             ? snapshot.linked_proposals
@@ -754,8 +746,11 @@ return (
                   <div>
                     <div className="d-flex justify-content-between align-content-center">
                       Timeline
-                      {isModerator && (
-                        <div onClick={() => setShowTimelineSetting(true)}>
+                      {isAllowedToWriteRfp && (
+                        <div
+                          data-testid="setting-btn"
+                          onClick={() => setShowTimelineSetting(true)}
+                        >
                           <i class="bi bi-gear"></i>
                         </div>
                       )}
