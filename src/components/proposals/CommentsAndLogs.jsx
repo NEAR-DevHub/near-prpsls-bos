@@ -299,6 +299,8 @@ function parseTimelineKeyAndValue(timeline, originalValue, modifiedValue) {
           </span>
         )
       );
+    case "payouts":
+      return <span>updated the funding payment links.</span>;
     default:
       return null;
   }

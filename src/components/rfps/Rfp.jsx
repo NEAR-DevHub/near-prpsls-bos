@@ -273,7 +273,7 @@ const query = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $wher
   ${queryName}(
     offset: $offset
     limit: $limit
-    order_by: {rfp_id: desc}
+    order_by: {ts: desc}
     where: $where
   ) {
     editor_id
