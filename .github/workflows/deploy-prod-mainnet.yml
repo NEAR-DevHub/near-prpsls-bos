@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy-mainnet:
-    name: Deploy widgets to social.near (mainnet)
+    name: Deploy components to social.near (mainnet)
     runs-on: ubuntu-latest
     environment: infrastructure-committee.near
     steps:
@@ -15,10 +15,12 @@ jobs:
       - name: Install near-social CLI
         run: |
           curl --proto '=https' --tlsv1.2 -LsSf https://github.com/bos-cli-rs/bos-cli-rs/releases/download/v0.3.14/bos-cli-installer.sh | sh
+      - name: Install dependencies
+        run: npm ci
+      - name: Build components
+        run: npm run build
       - name: Deploy widgets
         run: |
-          npm ci
-          npm run build
           cd .bos/transpiled
           if [[ "$BRANCH" != "main" ]]; then
             echo "Not on main branch, dry run"
