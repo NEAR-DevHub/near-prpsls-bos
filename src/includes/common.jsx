@@ -1,22 +1,23 @@
 export const REPL_DEVHUB = "devhub.near";
 export const REPL_INFRASTRUCTURE_COMMITTEE = "infrastructure-committee.near";
-export const REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT = "truedove38.near";
+export const REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT =
+  "infrastructure-committee.near";
 export const REPL_RPC_URL = "https://rpc.mainnet.near.org";
 export const REPL_NEAR = "near";
 export const RFP_IMAGE =
   "https://ipfs.near.social/ipfs/bafkreicbygt4kajytlxij24jj6tkg2ppc2dw3dlqhkermkjjfgdfnlizzy";
 
 export const RFP_FEED_INDEXER_QUERY_NAME =
-  "polyprogrammist_near_devhub_objects_s_rfps_with_latest_snapshot";
+  "polyprogrammist_near_devhub_ic_v1_rfps_with_latest_snapshot";
 
 export const RFP_INDEXER_QUERY_NAME =
-  "polyprogrammist_near_devhub_objects_s_rfp_snapshots";
+  "polyprogrammist_near_devhub_ic_v1_rfp_snapshots";
 
 export const PROPOSAL_FEED_INDEXER_QUERY_NAME =
-  "polyprogrammist_near_devhub_objects_s_proposals_with_latest_snapshot";
+  "polyprogrammist_near_devhub_ic_v1_proposals_with_latest_snapshot";
 
 export const PROPOSAL_QUERY_NAME =
-  "polyprogrammist_near_devhub_objects_s_proposal_snapshots";
+  "polyprogrammist_near_devhub_ic_v1_proposal_snapshots";
 export const RFP_TIMELINE_STATUS = {
   ACCEPTING_SUBMISSIONS: "ACCEPTING_SUBMISSIONS",
   EVALUATION: "EVALUATION",
