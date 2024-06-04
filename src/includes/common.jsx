@@ -82,7 +82,7 @@ export const PROPOSALS_APPROVED_STATUS_ARRAY = [
 export function getLinkUsingCurrentGateway(url) {
   const data = fetch(`https://httpbin.org/headers`);
   const gatewayURL = data?.body?.headers?.Origin ?? "";
-  `https://${
+  return `https://${
     gatewayURL.includes("near.org") ? "dev.near.org" : "near.social"
   }/${url}`;
 }
