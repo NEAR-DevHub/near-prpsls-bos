@@ -53,27 +53,17 @@ return (
   <Section>
     <h4>Introduction</h4>
     <p>
-      The Infrastructure Committee was formed in response to community concerns
-      around the state of infrastructure in the NEAR Ecosystem. Not to rest on
-      any laurels, various leaders across the NEAR ecosystem devised the
-      Infrastructure Committee to quickly address these concerns with funding
-      and processes to get those funds distributed. These processes handle
-      sharing RFPs, submitting proposals, reviewing and voting on proposals, and
-      getting funds to teams when a proposal is approved. These directives and
-      processes form an initiative to build up resilient, fast, and redundant
-      infrastructure to meet the short-term and future needs of NEAR’s thriving
-      ecosystem.
+      The Infrastructure Committee, a direct response to community concerns, was
+      formed in collaboration with various leaders across the NEAR ecosystem.
+      The committee will swiftly address infrastructure concerns with funding
+      and processes to distribute those funds. These processes handle sharing
+      RFPs, submitting proposals, reviewing and voting on proposals, and getting
+      funds to teams when a proposal is approved. This initiative will focus
+      funds on building resilient, fast, redundant infrastructure to meet NEAR's
+      thriving ecosystem's short-term and future needs.
     </p>
     <p>
-      You can learn more about the Infrastructure Committee on the GitHub
-      <a
-        href="https://github.com/near/Infrastructure-Working-Group/wiki"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Wiki
-      </a>
-      . It includes information about the{" "}
+      The GitHub Wiki provides information about the
       <a
         href="https://github.com/near/Infrastructure-Working-Group/wiki/Infrastructure-Committee"
         target="_blank"
@@ -89,39 +79,41 @@ return (
       >
         Working Group (WG)
       </a>
-      . These articles also list current members.
+      , including current members.
     </p>
     <h4>Process Summary</h4>
     <p>
-      The Committee is looking for proposals to enhance, upgrade, and fortify
-      NEAR ecosystem infrastructure. Towards this effort, the Committee will be
-      drafting several Requests For proposals that outline urgent or highly
-      desired projects. Partners current or new are encouraged to submit
-      proposals, either as a response to an RFP, or standalone.
+      The Committee actively seeks proposals from partners like you to enhance,
+      upgrade, and fortify NEAR ecosystem infrastructure. To this end, the
+      Committee will draft several Requests For Proposals (RFPs) that outline
+      urgent or highly desired projects. We encourage you to submit proposals as
+      a response to an RFP or standalone, as your contributions are crucial to
+      our collective success.
     </p>
     <p>
-      Generally, the process proceeds as follows:
+      Generally, the process proceeds as follows;
       <ol>
         <li>
           The proposal is drafted. Working Group and Committee members are free
           to review and offer suggestions.
         </li>
         <li>
-          Once everyone feels the proposal is ready, the proposal moves into
-          voting. The Committee can vote asynchronously between official
-          meetings but most business is conducted at bi-weekly meetings.
+          Once everyone feels the proposal is ready, it moves to voting. The
+          committee votes asynchronously and in regular committee meetings. A
+          proposal is approved if it receives a majority vote from the Committee
+          members.
         </li>
         <li>
-          If your proposal is rejected, you will be informed by an IC or WG
-          member usually via the Telegram group established. Guidance may be
-          offered on the proposal on how to update the proposal for
-          resubmission.
+          In the event of a rejection, you will be informed by an IC or WG
+          member, usually via the Telegram group established. Guidance may be
+          offered on how to update the proposal for resubmission.
         </li>
         <li>
           If your proposal is approved, you will move into the Funding Pipeline.
-          This will require you (or your company) to complete the KYC/B process
-          including ID Verify (a service) followed by a Legal working agreement,
-          and finally, a test transaction to ensure the target wallet address is
+          You (or your company) will complete the KYC/B process, which involves
+          providing your personal or company information for verification
+          purposes. Next will be a legal working agreement, and finally, a test
+          transaction will be conducted to ensure the target wallet address is
           correct.
         </li>
         <li>
@@ -135,7 +127,7 @@ return (
             {" "}
             Github repo
           </a>{" "}
-          to be tracked on our{" "}
+          where the community tracks progress on our{" "}
           <a
             href="https://github.com/orgs/near/projects/133/views/6"
             target="_blank"
@@ -143,8 +135,8 @@ return (
           >
             Github project
           </a>
-          . This gives the community and ecosystem leaders visibility into the
-          status of awarded projects.
+          . Sharing project status gives the community and ecosystem leaders
+          visibility into the status of awarded projects.
         </li>
       </ol>
     </p>
@@ -152,7 +144,9 @@ return (
     <p>
       The following links contain specific information about the processes of
       responding to RFPs, submitting a proposal, voting, securing funds, and
-      managing the subsequent project for transparency.
+      managing the subsequent project for transparency. Please note that the
+      working group will update articles as processes change. We appreciate your
+      patience and understanding.
       <ul>
         <li>
           <a
@@ -200,17 +194,14 @@ return (
           </a>
         </li>
       </ul>
-      <i>
-        Note: The articles above need to be updated to reflect the new process
-        incoming. Getting Funds should be finished soon (now that I have a
-        better grasp of how it works).
-      </i>
     </p>
 
     <h4>Areas Of Funding</h4>
     <p>
       The Infrastructure Committee is looking for projects in the following
-      areas:
+      areas. These areas are key to the growth and development of the NEAR
+      ecosystem, so we encourage potential proposers to consider them when
+      submitting their proposals.
       <ul>
         <li>Wallets</li>
         <li>Oracles</li>
@@ -224,5 +215,21 @@ return (
         <li>Data Lakes</li>
       </ul>
     </p>
+    <h4>Proposal Markup</h4>
+    <p>
+      Please use the following markup templates when submitting the body of your
+      proposal.
+      <br />
+      <a
+        href="https://docs.google.com/document/d/1UZRfOE1JAOhsnSmp-RmL2hY7KPJbpBImKZVvPV4YJmA/edit?usp=sharing"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Proposal:
+        https://docs.google.com/document/d/1UZRfOE1JAOhsnSmp-RmL2hY7KPJbpBImKZVvPV4YJmA/edit?usp=sharing
+      </a>
+    </p>
+    <h4>Evaluation Criteria</h4>
+    <p>Suggestions are forthcoming.</p>
   </Section>
 );
