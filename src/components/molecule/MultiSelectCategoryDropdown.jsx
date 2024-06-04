@@ -3,8 +3,14 @@ import { REPL_DEVHUB } from "@/includes/common";
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 href || (href = () => {});
 
-const { selected, onChange, disabled, availableOptions, hideDropdown, label } =
-  props;
+const {
+  selected,
+  onChange,
+  disabled,
+  availableOptions,
+  hideDropdown,
+  linkedRfp,
+} = props;
 
 const [selectedOptions, setSelectedOptions] = useState([]);
 const [isOpen, setIsOpen] = useState(false);
@@ -149,7 +155,15 @@ return (
             onClick={!disabled && toggleDropdown}
           >
             <div className={`selected-option`}>
-              {label ?? "Select Category"}
+              {linkedRfp ? (
+                <span className="text-sm d-flex gap-2 align-items-center">
+                  <i class="bi bi-lock-fill"></i>
+                  These categories match the chosen RFP and cannot be changed.
+                  To use different categories, unlink the RFP.
+                </span>
+              ) : (
+                <span>Select Category </span>
+              )}
             </div>
           </div>
 

@@ -874,14 +874,8 @@ const CategoryDropdown = useMemo(() => {
         selected: labels,
         onChange: (v) => setLabels(v),
         disabled: linkedRfp, // when RFP is linked, labels are disabled
-        label: linkedRfp ? (
-          <span className="text-sm d-flex gap-2 align-items-center">
-            <i class="bi bi-lock-fill"></i>These categories match the chosen RFP
-            and cannot be changed. To use different categories, unlink the RFP.{" "}
-          </span>
-        ) : (
-          "Select Category"
-        ),
+        linkedRfp: linkedRfp,
+
         availableOptions: rfpLabelOptions,
       }}
     />
