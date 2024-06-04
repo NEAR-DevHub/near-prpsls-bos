@@ -8,6 +8,7 @@ import {
   REPL_RPC_URL,
   PROPOSAL_TIMELINE_STATUS,
   isNumber,
+  getLinkUsingCurrentGateway,
 } from "@/includes/common";
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 href || (href = () => {});
@@ -154,7 +155,9 @@ const Comment = ({ commentItem }) => {
     blockHeight,
   };
   const content = JSON.parse(Social.get(item.path, blockHeight) ?? "null");
-  const link = `https://near.org/${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=proposal&id=${props.id}&accountId=${accountId}&blockHeight=${blockHeight}`;
+  const link = getLinkUsingCurrentGateway(
+    `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=proposal&id=${props.id}&accountId=${accountId}&blockHeight=${blockHeight}`
+  );
   const hightlightComment =
     parseInt(props.blockHeight ?? "") === blockHeight &&
     props.accountId === accountId;
