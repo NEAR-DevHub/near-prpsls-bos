@@ -2,6 +2,7 @@ import {
   REPL_INFRASTRUCTURE_COMMITTEE,
   PROPOSAL_FEED_INDEXER_QUERY_NAME,
   RFP_FEED_INDEXER_QUERY_NAME,
+  getLinkUsingCurrentGateway,
 } from "@/includes/common";
 
 /**
@@ -37,6 +38,9 @@ const showRfpIdAutoComplete = props.showRfpIdAutoComplete ?? false;
 const autoFocus = props.autoFocus ?? false;
 
 const proposalQueryName = PROPOSAL_FEED_INDEXER_QUERY_NAME;
+const proposalLink = getLinkUsingCurrentGateway(
+  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=proposal&id=`
+);
 const proposalQuery = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${proposalQueryName}_bool_exp = {}) {
 ${proposalQueryName}(
   offset: $offset
@@ -143,6 +147,7 @@ let isEditorInitialized = false;
 let followingData = {};
 let profilesData = {};
 let proposalQuery = '';
+let proposalLink = '';
 let proposalQueryName = '';
 let showAccountAutoComplete = ${showAccountAutoComplete};
 let showProposalIdAutoComplete = ${showProposalIdAutoComplete};
@@ -422,7 +427,7 @@ if (showProposalIdAutoComplete) {
             const startIndex = selectedText.indexOf('#') + 1; 
             const endIndex = selectedText.indexOf(' ', startIndex);
             const id = endIndex !== -1 ? selectedText.substring(startIndex, endIndex) : selectedText.substring(startIndex);
-            const link = "https://near.social/${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=proposal&id=" + id;
+            const link = proposalLink + id;
             const adjustedStart = {
               line: referenceCursorStart.line,
               ch: referenceCursorStart.ch - 1
@@ -498,6 +503,9 @@ window.addEventListener("message", (event) => {
   if (event.data.proposalQueryName) {
     proposalQueryName = event.data.proposalQueryName;
   }
+  if (event.data.proposalLink) {
+    proposalLink = event.data.proposalLink;
+  }
   
 });
 </script>
@@ -521,6 +529,7 @@ return (
       proposalQuery: proposalQuery,
       proposalQueryName: proposalQueryName,
       handler: props.data.handler,
+      proposalLink: proposalLink,
     }}
     onMessage={(e) => {
       switch (e.handler) {

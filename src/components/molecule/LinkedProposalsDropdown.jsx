@@ -131,7 +131,7 @@ return (
     <Widget
       src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.DropDownWithSearch`}
       props={{
-        selectedValue: "",
+        selectedValue: selectedProposals,
         onChange: (v) => {
           if (!selectedProposals.some((item) => item.value === v.value)) {
             setSelectedProposals([...selectedProposals, v]);
