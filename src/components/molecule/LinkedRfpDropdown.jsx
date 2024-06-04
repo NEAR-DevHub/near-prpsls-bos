@@ -167,7 +167,7 @@ return (
       src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.DropDownWithSearch`}
       props={{
         disabled: disabled,
-        selectedValue: selectedRFP,
+        selectedValue: selectedRFP.value,
         onChange: (v) => {
           setSelectedRFP(v);
         },
