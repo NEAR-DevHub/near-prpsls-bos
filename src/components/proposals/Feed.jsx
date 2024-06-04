@@ -566,14 +566,16 @@ const FeedPage = () => {
                     <i className="bi bi-info-circle"></i>
                   </div>
                   <div>
-                    Welcome to the Infrastructure Committee Proposal Feed! This
-                    dedicated space makes it easy to submit and track funding
-                    proposals from the Infrastructure Committee, the primary
-                    organization overseeing improvements pertaining to wallets,
-                    indexers, RPC services, explorers, oracles, bridges, NEAR
-                    Protocol features, and related ecosystem upgrades. You are
-                    welcome to respond to any RFPs that are accepting
-                    submissions or submit an independent proposal.
+                    <span className="fw-bold">
+                      Welcome to the Infrastructure Committee Proposal Feed!
+                    </span>
+                    This dedicated space makes it easy to submit and track
+                    funding proposals from the Infrastructure Committee, the
+                    primary organization overseeing improvements pertaining to
+                    wallets, indexers, RPC services, explorers, oracles,
+                    bridges, NEAR Protocol features, and related ecosystem
+                    upgrades. You are welcome to respond to any RFPs that are
+                    accepting submissions or submit an independent proposal.
                   </div>
                 </p>
               </div>
