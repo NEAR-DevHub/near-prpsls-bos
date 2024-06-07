@@ -124,6 +124,20 @@ return (
             Moderators
           </Tab>
         </li>
+        <li class="nav-item" role="presentation">
+          <Tab
+            className="nav-link"
+            id="about-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#about"
+            type="button"
+            role="tab"
+            aria-controls="about"
+            aria-selected="false"
+          >
+            About
+          </Tab>
+        </li>
       </ul>
       <div class="tab-content" id="myTabContent">
         <div
@@ -133,7 +147,21 @@ return (
           aria-labelledby="profile-tab"
         >
           <Widget
-            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.admin.moderatorsTab`}
+            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.admin.ModeratorsConfigurator`}
+            props={{
+              accessControlInfo,
+              createEditTeam,
+            }}
+          />
+        </div>
+        <div
+          class="tab-pane fade"
+          id="about"
+          role="tabpanel"
+          aria-labelledby="about-tab"
+        >
+          <Widget
+            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.admin.AboutConfigurator`}
             props={{
               accessControlInfo,
               createEditTeam,

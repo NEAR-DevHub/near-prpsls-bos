@@ -23,7 +23,7 @@ const { id, timestamp, rfp_id } = props;
 const isEditPage = typeof id === "string";
 const author = context.accountId;
 const FundingDocs =
-  "https://near.social/${REPL_DEVHUB}/widget/app?page=community&handle=developer-dao&tab=funding";
+  "https://github.com/near/Infrastructure-Working-Group/wiki/Funding-Process-%E2%80%90-Company";
 const ToCDocs =
   "https://docs.google.com/document/d/1jcazxTemEsOf72nfAIbv6CR1og_w4qVXg7GjXuVoGeI/edit?usp=sharing";
 const CoCDocs =
