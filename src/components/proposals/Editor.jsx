@@ -25,9 +25,9 @@ const author = context.accountId;
 const FundingDocs =
   "https://github.com/near/Infrastructure-Working-Group/wiki/Funding-Process-%E2%80%90-Company";
 const ToCDocs =
-  "https://docs.google.com/document/d/1jcazxTemEsOf72nfAIbv6CR1og_w4qVXg7GjXuVoGeI/edit?usp=sharing";
+  "https://github.com/near/Infrastructure-Working-Group/wiki/Terms-&-Conditions";
 const CoCDocs =
-  "https://docs.google.com/document/d/1S0Ky1xPLRlCRSbX6nLOAxBba7b0dYb4SpGJzaAPqI9k/edit?usp=sharing";
+  "https://github.com/near/Infrastructure-Working-Group/wiki/Code-Of-Conduct";
 if (!author) {
   return (
     <Widget src={`${REPL_DEVHUB}/widget/devhub.entity.proposal.LoginScreen`} />
