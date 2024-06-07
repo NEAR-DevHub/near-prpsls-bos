@@ -2,15 +2,18 @@ import {
   REPL_DEVHUB,
   REPL_INFRASTRUCTURE_COMMITTEE,
   REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT,
+  REPL_SOCIAL_CONTRACT,
 } from "@/includes/common";
 
 const { Tile } = VM.require(
   `${REPL_DEVHUB}/widget/devhub.components.molecule.Tile`
 ) || { Tile: () => <></> };
 
-const profile = Social.getr(
-  `${REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT}/profile`
-);
+const item = {
+  path: `${REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT}/profile/**`,
+};
+
+const profile = Social.get(item.path);
 
 if (!profile.description) {
   <div
@@ -52,17 +55,26 @@ const handlePublish = () => {
 
 useEffect(() => {
   if (isTxnCreated) {
-    const newProfileData = Social.getr(
-      `${REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT}/profile`
-    );
-    if (newProfileData === null) {
-      return;
-    }
-    if (newProfileData.description !== initialData) {
-      setCommentToast(true);
-    }
+    const checkForAboutInSocialDB = () => {
+      Near.asyncView(REPL_SOCIAL_CONTRACT, "get", {
+        keys: [item.path],
+      }).then((result) => {
+        try {
+          const submittedAboutText = content;
+          const lastAboutTextFromSocialDB =
+            result[REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT].profile.description;
+          if (submittedAboutText === lastAboutTextFromSocialDB) {
+            setTxnCreated(false);
+            setCommentToast(true);
+            return;
+          }
+        } catch (e) {}
+        setTimeout(() => checkForAboutInSocialDB(), 2000);
+      });
+    };
+    checkForAboutInSocialDB();
   }
-});
+}, [isTxnCreated]);
 
 useEffect(() => {
   if (!content && initialData) {
