@@ -21,8 +21,10 @@ const isEditPage = typeof id === "string";
 const author = context.accountId;
 const FundingDocs =
   "https://github.com/near/Infrastructure-Working-Group/wiki/Funding-Process-%E2%80%90-Company";
-const ToCDocs = "";
-const CoCDocs = "";
+const ToCDocs =
+  "https://github.com/near/Infrastructure-Working-Group/wiki/Terms-&-Conditions";
+const CoCDocs =
+  "https://github.com/near/Infrastructure-Working-Group/wiki/Code-Of-Conduct";
 
 const rfpLabelOptions = getGlobalLabels();
 const isAllowedToWriteRfp = Near.view(
