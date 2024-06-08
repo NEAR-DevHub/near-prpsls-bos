@@ -162,14 +162,16 @@ function composeData() {
           key: account,
           value: proposalId
             ? {
-                type: "devhub/reply",
+                type: "proposal/reply",
                 item,
                 proposal: proposalId,
+                widgetAccountId: REPL_INFRASTRUCTURE_COMMITTEE,
               }
             : {
-                type: "devhub/reply",
+                type: "rfp/reply",
                 item,
-                rfpId: rfpId,
+                rfp: rfpId,
+                widgetAccountId: REPL_INFRASTRUCTURE_COMMITTEE,
               },
         });
       }
