@@ -26,7 +26,7 @@ const Logo = () => {
     <Wrapper>
       <Link
         to={linkHref({
-          widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+          widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
           params: { page: "about" },
         })}
       >
@@ -200,7 +200,7 @@ return (
       <LinksContainer>
         {links.map((link) => (
           <Widget
-            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.NavbarDropdown`}
+            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.NavbarDropdown`}
             props={{
               title: link.title,
               href: link.href,
@@ -229,7 +229,7 @@ return (
               <MobileLink
                 key={`mobile-link-${idx}`}
                 className={link.href === props.page && "active"}
-                href={`/${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=${link.href}`}
+                href={`/${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app?page=${link.href}`}
               >
                 {link.title}
               </MobileLink>
@@ -249,7 +249,7 @@ return (
                   <MobileLink
                     key={`nested-link-${idx}`}
                     className={link.href === props.page && "active"}
-                    href={`/${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=${it.href}`}
+                    href={`/${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app?page=${it.href}`}
                   >
                     /{it.title}
                   </MobileLink>

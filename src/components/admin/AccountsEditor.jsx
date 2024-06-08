@@ -59,7 +59,7 @@ return (
       <Item>
         <div className="flex-grow-1">
           <Widget
-            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.AccountInput`}
+            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.AccountInput`}
             props={{
               onUpdate: (value) => setNewItem(value),
               value: newItem,

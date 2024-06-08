@@ -13,7 +13,7 @@ const draftKey = "INFRA_RFP_EDIT";
 href || (href = () => {});
 
 const { getGlobalLabels } = VM.require(
-  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.core.lib.contract`
+  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.core.lib.contract`
 ) || { getGlobalLabels: () => {} };
 const { id, timestamp } = props;
 
@@ -582,7 +582,7 @@ const CollapsibleContainer = ({ title, children, noPaddingTop }) => {
 const CategoryDropdown = useMemo(() => {
   return (
     <Widget
-      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.MultiSelectCategoryDropdown`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.MultiSelectCategoryDropdown`}
       props={{
         selected: labels,
         onChange: (v) => setLabels(v),
@@ -635,7 +635,7 @@ const SummaryComponent = useMemo(() => {
 const DescriptionComponent = useMemo(() => {
   return (
     <Widget
-      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.Compose`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.Compose`}
       props={{
         data: description,
         onChange: setDescription,
@@ -728,7 +728,7 @@ const SubmissionDeadline = useMemo(() => {
 return (
   <Container className="w-100 py-2 px-0 px-sm-2 d-flex flex-column gap-3">
     <Widget
-      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.ViewRfpModal`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.ViewRfpModal`}
       props={{
         isOpen: showRfpViewModal,
         isEdit: isEditPage,
@@ -736,7 +736,7 @@ return (
       }}
     />
     <Widget
-      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.ConfirmCancelModal`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.ConfirmCancelModal`}
       props={{
         isOpen: isCancelModalOpen,
         onCancelClick: () => {
@@ -751,7 +751,7 @@ return (
       }}
     />
     <Widget
-      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.WarningModal`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.WarningModal`}
       props={{
         isOpen: isWarningModalOpen,
         onConfirmClick: () => {
@@ -822,14 +822,14 @@ return (
                   to={
                     isEditPage
                       ? href({
-                          widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+                          widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
                           params: {
                             page: "rfp",
                             id: parseInt(id),
                           },
                         })
                       : href({
-                          widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+                          widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
                           params: {
                             page: "rfps",
                           },
@@ -883,7 +883,7 @@ return (
           <div className="my-2">
             <CollapsibleContainer title="Timeline">
               <Widget
-                src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.TimelineConfigurator`}
+                src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.TimelineConfigurator`}
                 props={{
                   timeline: timeline,
                   setTimeline: (v) => {

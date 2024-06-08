@@ -43,7 +43,7 @@ const ContentContainer = styled.div`
 
 const AppHeader = ({ page }) => (
   <Widget
-    src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.organism.Navbar`}
+    src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.organism.Navbar`}
     props={{
       page: page,
       ...props,

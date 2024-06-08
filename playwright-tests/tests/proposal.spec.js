@@ -6,16 +6,12 @@ test.describe("Wallet is connected as admin", () => {
     storageState: "playwright-tests/storage-states/wallet-connected-admin.json",
   });
   test("should show proposal feed", async ({ page }) => {
-    await page.goto(
-      "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=proposals"
-    );
+    await page.goto("/infrastructure-committee.near/widget/app?page=proposals");
 
     await expect(await page.locator(".proposal-card").first()).toBeVisible();
   });
   test("should create proposal", async ({ page }) => {
-    await page.goto(
-      "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=proposals"
-    );
+    await page.goto("/infrastructure-committee.near/widget/app?page=proposals");
 
     await page.getByRole("button", { name: " Submit Proposal" }).click();
     await page.getByText("Select Category").click();

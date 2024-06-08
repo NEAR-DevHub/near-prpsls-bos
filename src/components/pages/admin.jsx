@@ -147,7 +147,7 @@ return (
           aria-labelledby="profile-tab"
         >
           <Widget
-            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.admin.ModeratorsConfigurator`}
+            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.admin.ModeratorsConfigurator`}
             props={{
               accessControlInfo,
               createEditTeam,
@@ -161,7 +161,7 @@ return (
           aria-labelledby="about-tab"
         >
           <Widget
-            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.admin.AboutConfigurator`}
+            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.admin.AboutConfigurator`}
             props={{
               accessControlInfo,
               createEditTeam,

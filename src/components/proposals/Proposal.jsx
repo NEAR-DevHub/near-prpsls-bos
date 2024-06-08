@@ -15,7 +15,7 @@ import {
 const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 href || (href = () => {});
 const { getGlobalLabels } = VM.require(
-  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.core.lib.contract`
+  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.core.lib.contract`
 ) || { getGlobalLabels: () => {} };
 
 const { readableDate } = VM.require(
@@ -358,7 +358,7 @@ const item = {
   blockHeight,
 };
 const proposalURL = getLinkUsingCurrentGateway(
-  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=proposal&id=${proposal.id}&timestamp=${snapshot.timestamp}`
+  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app?page=proposal&id=${proposal.id}&timestamp=${snapshot.timestamp}`
 );
 
 const SidePanelItem = ({ title, children, hideBorder, ishidden }) => {
@@ -621,7 +621,7 @@ const TimelineItems = ({ title, children, value, values }) => {
 };
 
 const link = href({
-  widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+  widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
   params: {
     page: "create-proposal",
     id: proposal.id,
@@ -819,7 +819,7 @@ return (
                     </div>
                     <div>
                       <Widget
-                        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.MultiSelectCategoryDropdown`}
+                        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.MultiSelectCategoryDropdown`}
                         props={{
                           selected: snapshot.labels,
                           disabled: true,
@@ -843,7 +843,7 @@ return (
 
                     <div className="d-flex gap-2 align-items-center mt-4">
                       <Widget
-                        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LikeButton`}
+                        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.LikeButton`}
                         props={{
                           item,
                           proposalId: proposal.id,
@@ -870,7 +870,7 @@ return (
               </div>
               <div className="border-bottom pb-4 mt-4">
                 <Widget
-                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.proposals.CommentsAndLogs`}
+                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.proposals.CommentsAndLogs`}
                   props={{
                     ...props,
                     id: proposal.id,
@@ -889,7 +889,7 @@ return (
                 className="pt-4"
               >
                 <Widget
-                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.ComposeComment`}
+                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.ComposeComment`}
                   props={{
                     ...props,
                     item: item,
@@ -917,7 +917,7 @@ return (
                 ishidden={!isNumber(snapshot.linked_rfp)}
               >
                 <Widget
-                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LinkedRfps`}
+                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.LinkedRfps`}
                   props={{
                     linkedRfpIds: [snapshot.linked_rfp],
                   }}
@@ -930,7 +930,7 @@ return (
                 ishidden={!snapshot.linked_proposals.length}
               >
                 <Widget
-                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LinkedProposals`}
+                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.LinkedProposals`}
                   props={{
                     linkedProposalIds: snapshot.linked_proposals,
                   }}

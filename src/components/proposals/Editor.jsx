@@ -15,7 +15,7 @@ const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 href || (href = () => {});
 
 const { getGlobalLabels } = VM.require(
-  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.core.lib.contract`
+  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.core.lib.contract`
 ) || { getGlobalLabels: () => {} };
 
 const { id, timestamp, rfp_id } = props;
@@ -869,7 +869,7 @@ const CollapsibleContainer = ({ title, children, noPaddingTop }) => {
 const CategoryDropdown = useMemo(() => {
   return (
     <Widget
-      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.MultiSelectCategoryDropdown`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.MultiSelectCategoryDropdown`}
       props={{
         selected: labels,
         onChange: (v) => setLabels(v),
@@ -924,7 +924,7 @@ const SummaryComponent = useMemo(() => {
 const DescriptionComponent = useMemo(() => {
   return (
     <Widget
-      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.Compose`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.Compose`}
       props={{
         data: description,
         onChange: setDescription,
@@ -1010,7 +1010,7 @@ const LinkRFPComponent = useMemo(() => {
   return (
     <div className="d-flex flex-column gap-1">
       <Widget
-        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LinkedRfpDropdown`}
+        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.LinkedRfpDropdown`}
         props={{
           onChange: setLinkedRfp,
           linkedRfp: linkedRfp,
@@ -1029,7 +1029,7 @@ const LinkedProposalsComponent = useMemo(() => {
         Link any relevant proposals (e.g. previous milestones).
       </div>
       <Widget
-        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LinkedProposalsDropdown`}
+        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.LinkedProposalsDropdown`}
         props={{
           onChange: setLinkedProposals,
           linkedProposals: linkedProposals,
@@ -1095,7 +1095,7 @@ return (
       {isEditPage ? "Edit" : "Create"} Proposal
     </Heading>
     <Widget
-      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.proposals.ViewProposalModal`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.proposals.ViewProposalModal`}
       props={{
         isOpen: showProposalViewModal,
         isEdit: isEditPage,
@@ -1231,14 +1231,14 @@ return (
                     to={
                       isEditPage
                         ? href({
-                            widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+                            widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
                             params: {
                               page: "proposal",
                               id: parseInt(id),
                             },
                           })
                         : href({
-                            widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+                            widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
                             params: {
                               page: "proposals",
                             },

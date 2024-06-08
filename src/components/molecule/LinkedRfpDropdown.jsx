@@ -139,7 +139,7 @@ return (
         <a
           className="text-decoration-underline flex-1"
           href={href({
-            widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+            widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
             params: {
               page: "rfp",
               id: selectedRFP.value,
@@ -164,7 +164,7 @@ return (
       </div>
     )}
     <Widget
-      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.DropDownWithSearch`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.DropDownWithSearch`}
       props={{
         disabled: disabled,
         selectedValue: selectedRFP.value,

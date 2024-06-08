@@ -39,7 +39,7 @@ return (
       return (
         <a
           href={href({
-            widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+            widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
             params: {
               page: "rfp",
               id: item.id,

@@ -90,7 +90,7 @@ const Compose = ({
         {state.selectedTab === "editor" ? (
           <>
             <Widget
-              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.SimpleMDE`}
+              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.SimpleMDE`}
               props={{
                 data: { handler: state.handler, content: state.data },
                 onChange: (content) => {

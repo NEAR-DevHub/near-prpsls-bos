@@ -213,7 +213,7 @@ const LoadingButtonSpinner = (
 const Compose = useMemo(() => {
   return (
     <Widget
-      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.Compose`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.Compose`}
       props={{
         data: comment,
         onChangeKeyup: setComment,

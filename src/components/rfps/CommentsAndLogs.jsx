@@ -151,7 +151,7 @@ const Comment = ({ commentItem }) => {
   };
   const content = JSON.parse(Social.get(item.path, blockHeight) ?? "null");
   const link = getLinkUsingCurrentGateway(
-    `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=rfp&id=${props.id}&accountId=${accountId}&blockHeight=${blockHeight}`
+    `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app?page=rfp&id=${props.id}&accountId=${accountId}&blockHeight=${blockHeight}`
   );
   function getHighlightCommentStyle() {
     const highlightComment =
@@ -250,7 +250,7 @@ function parseTimelineKeyAndValue(timeline, originalValue, modifiedValue) {
           <span className="inline-flex">
             moved RFP to{" "}
             <Widget
-              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.StatusTag`}
+              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.StatusTag`}
               props={{
                 timelineStatus: newValue,
               }}
@@ -273,14 +273,14 @@ function parseTimelineKeyAndValue(timeline, originalValue, modifiedValue) {
           <span className="inline-flex">
             moved RFP from{" "}
             <Widget
-              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.StatusTag`}
+              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.StatusTag`}
               props={{
                 timelineStatus: oldValue,
               }}
             />
             to{" "}
             <Widget
-              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.StatusTag`}
+              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.StatusTag`}
               props={{
                 timelineStatus: newValue,
               }}
@@ -321,7 +321,7 @@ const LinkToProposal = ({ id, children }) => {
     <a
       className="text-decoration-underline flex-1"
       href={href({
-        widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+        widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
         params: {
           page: "proposal",
           id: id,

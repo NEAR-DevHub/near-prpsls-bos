@@ -14,9 +14,7 @@ test.describe("Wallet is connected", () => {
   test("should open RFPs and also search with a query that has no results", async ({
     page,
   }) => {
-    await page.goto(
-      "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfps"
-    );
+    await page.goto("/infrastructure-committee.near/widget/app?page=rfps");
 
     await expect(await page.locator(".content-container")).toContainText("RFP");
     await expect(await page.locator(".rfp-card").first()).toContainText(
@@ -33,9 +31,7 @@ test.describe("Wallet is connected", () => {
   test("create RFP button should be hidden for a non admin account", async ({
     page,
   }) => {
-    await page.goto(
-      "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfps"
-    );
+    await page.goto("/infrastructure-committee.near/widget/app?page=rfps");
     await expect(await page.locator(".content-container")).toContainText("RFP");
     await expect(await page.locator(".rfp-card").first()).toContainText(
       "Submission Deadline"
@@ -77,9 +73,7 @@ test.describe("Wallet is connected with admin account", () => {
       ],
     });
 
-    await page.goto(
-      "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfps"
-    );
+    await page.goto("/infrastructure-committee.near/widget/app?page=rfps");
     await page.getByRole("button", { name: " Create RFP" }).click();
     await page.getByText("Select Category").click();
     await page.getByText("Explorers").click();
@@ -143,9 +137,7 @@ test.describe("Wallet is connected with admin account", () => {
       },
     });
 
-    await page.goto(
-      "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfp&id=1"
-    );
+    await page.goto("/infrastructure-committee.near/widget/app?page=rfp&id=1");
     const buttonSelector = `div[data-testid="setting-btn"]`;
     await page.waitForSelector(buttonSelector, {
       state: "visible",
@@ -188,9 +180,7 @@ test.describe("Wallet is connected with admin account", () => {
       },
     });
 
-    await page.goto(
-      "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfp&id=1"
-    );
+    await page.goto("/infrastructure-committee.near/widget/app?page=rfp&id=1");
     await page.getByRole("button", { name: "Edit" }).click();
 
     await page.locator(".badge .bi-trash3-fill").click();
@@ -266,13 +256,10 @@ test.describe("Admin with don't ask again enabled", () => {
         return originalResult;
       },
     });
-    await page.goto(
-      "/infrastructure-committee.near/widget/near-prpsls-bos.components.pages.app?page=rfp&id=1"
-    );
+    await page.goto("/infrastructure-committee.near/widget/app?page=rfp&id=1");
     await setDontAskAgainCacheValues({
       page,
-      widgetSrc:
-        "infrastructure-committee.near/widget/near-prpsls-bos.components.rfps.Editor",
+      widgetSrc: "infrastructure-committee.near/widget/components.rfps.Editor",
       methodName: "edit_rfp",
     });
 

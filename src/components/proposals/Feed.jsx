@@ -15,7 +15,7 @@ const { href } = VM.require(`${REPL_DEVHUB}/widget/core.lib.url`);
 href || (href = () => {});
 
 const { getGlobalLabels } = VM.require(
-  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.core.lib.contract`
+  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.core.lib.contract`
 ) || { getGlobalLabels: () => {} };
 
 const Container = styled.div`
@@ -129,7 +129,7 @@ const FeedItem = ({ proposal, index }) => {
   return (
     <a
       href={href({
-        widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+        widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
         params: {
           page: "proposal",
           id: proposal.proposal_id,
@@ -155,7 +155,7 @@ const FeedItem = ({ proposal, index }) => {
             <div className="d-flex gap-2 align-items-center flex-wrap w-100">
               <div className="h6 mb-0 text-black">{proposal.name}</div>
               <Widget
-                src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.MultiSelectCategoryDropdown`}
+                src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.MultiSelectCategoryDropdown`}
                 props={{
                   selected: proposal.labels,
                   disabled: true,
@@ -172,7 +172,7 @@ const FeedItem = ({ proposal, index }) => {
                 <a
                   className="text-decoration-underline flex-1"
                   href={href({
-                    widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+                    widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
                     params: {
                       page: "rfp",
                       id: rfpData.rfp_id,
@@ -512,7 +512,7 @@ const FeedPage = () => {
           />
           <div className="d-flex gap-4 align-items-center">
             <Widget
-              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.FilterByLabel`}
+              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.FilterByLabel`}
               props={{
                 onStateChange: (select) => {
                   State.update({ label: select.value });
@@ -533,7 +533,7 @@ const FeedPage = () => {
         <div className="mt-2 mt-xs-0">
           <Link
             to={href({
-              widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+              widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
               params: { page: "create-proposal" },
             })}
           >

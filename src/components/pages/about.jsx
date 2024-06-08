@@ -20,7 +20,7 @@ if (!profile) {
 return (
   <div className="p-sm-2 p-4">
     <Widget
-      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.Markdown`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.Markdown`}
       props={{
         content: profile.description,
       }}

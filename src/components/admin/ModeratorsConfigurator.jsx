@@ -54,7 +54,7 @@ return (
       {editModerators ? (
         <>
           <Widget
-            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.admin.AccountsEditor`}
+            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.admin.AccountsEditor`}
             props={{
               data: {
                 maxLength: 100,
