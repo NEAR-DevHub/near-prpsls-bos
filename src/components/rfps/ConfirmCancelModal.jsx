@@ -132,7 +132,7 @@ const OptionForm = useMemo(() => {
   return (
     <div className="d-flex flex-column gap-1 pl-2">
       <Widget
-        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.RadioButton`}
+        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.RadioButton`}
         props={{
           value: CANCEL_RFP_OPTIONS.CANCEL_PROPOSALS,
           label: (
@@ -150,7 +150,7 @@ const OptionForm = useMemo(() => {
         }}
       />
       <Widget
-        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.RadioButton`}
+        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.RadioButton`}
         props={{
           value: CANCEL_RFP_OPTIONS.UNLINK_PROPOSALS,
           label: (
@@ -168,7 +168,7 @@ const OptionForm = useMemo(() => {
         }}
       />
       <Widget
-        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.RadioButton`}
+        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.RadioButton`}
         props={{
           value: CANCEL_RFP_OPTIONS.NONE,
           label: (
@@ -205,7 +205,7 @@ return (
               Linked Proposals ({linkedProposalIds.length})
             </div>
             <Widget
-              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LinkedProposals`}
+              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.LinkedProposals`}
               props={{
                 linkedProposalIds: linkedProposalIds,
                 showStatus: true,

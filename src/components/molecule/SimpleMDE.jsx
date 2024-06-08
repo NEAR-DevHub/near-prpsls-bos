@@ -39,7 +39,7 @@ const autoFocus = props.autoFocus ?? false;
 
 const proposalQueryName = PROPOSAL_FEED_INDEXER_QUERY_NAME;
 const proposalLink = getLinkUsingCurrentGateway(
-  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=proposal&id=`
+  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app?page=proposal&id=`
 );
 const proposalQuery = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${proposalQueryName}_bool_exp = {}) {
 ${proposalQueryName}(

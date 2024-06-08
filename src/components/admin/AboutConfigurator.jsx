@@ -87,7 +87,7 @@ function Preview() {
   return (
     <Tile className="p-3" style={{ background: "white" }}>
       <Widget
-        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.Markdown`}
+        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.Markdown`}
         props={{
           content: content,
         }}
@@ -147,7 +147,7 @@ return (
         aria-labelledby="edit-tab"
       >
         <Widget
-          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.SimpleMDE`}
+          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.SimpleMDE`}
           props={{
             data: { handler: handler, content: content },
             onChangeKeyup: (v) => {

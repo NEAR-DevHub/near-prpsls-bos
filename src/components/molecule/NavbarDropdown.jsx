@@ -78,7 +78,7 @@ return (
         <Link
           style={{ textDecoration: "none" }}
           to={linkHref({
-            widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+            widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
             params: { page: href },
           })}
         >
@@ -115,7 +115,7 @@ return (
                 <Link
                   style={{ textDecoration: "none" }}
                   to={linkHref({
-                    widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+                    widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
                     params: { page: link.href },
                   })}
                 >

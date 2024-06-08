@@ -18,7 +18,7 @@ const { readableDate } = VM.require(
 ) || { readableDate: () => {} };
 
 const { getGlobalLabels } = VM.require(
-  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.core.lib.contract`
+  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.core.lib.contract`
 ) || { getGlobalLabels: () => {} };
 
 const accountId = context.accountId;
@@ -345,7 +345,7 @@ const item = {
   blockHeight,
 };
 const rfpURL = getLinkUsingCurrentGateway(
-  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=rfp&id=${rfp.id}&timestamp=${snapshot.timestamp}`
+  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app?page=rfp&id=${rfp.id}&timestamp=${snapshot.timestamp}`
 );
 
 const SidePanelItem = ({ title, children, hideBorder, ishidden }) => {
@@ -373,7 +373,7 @@ const isAllowedToWriteRfp = Near.view(
 );
 
 const link = href({
-  widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+  widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
   params: {
     page: "create-rfp",
     id: rfp.id,
@@ -485,7 +485,7 @@ const SubmitProposalBtn = () => {
     <div style={{ minWidth: "fit-content" }}>
       <Link
         to={href({
-          widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+          widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
           params: { page: "create-proposal", rfp_id: rfp.id },
         })}
       >
@@ -507,7 +507,7 @@ const SubmitProposalBtn = () => {
 return (
   <Container className="d-flex flex-column gap-2 w-100 mt-4">
     <Widget
-      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.ConfirmCancelModal`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.ConfirmCancelModal`}
       props={{
         isOpen: isCancelModalOpen,
         onCancelClick: () => {
@@ -522,7 +522,7 @@ return (
       }}
     />
     <Widget
-      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.WarningModal`}
+      src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.WarningModal`}
       props={{
         isOpen: isWarningModalOpen,
         onConfirmClick: () => {
@@ -559,7 +559,7 @@ return (
     </div>
     <div className="d-flex flex-wrap flex-md-nowrap px-3 px-lg-0 gap-2 align-items-center text-sm pb-3 w-100">
       <Widget
-        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.StatusTag`}
+        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.StatusTag`}
         props={{
           timelineStatus: snapshot.timeline.status,
           size: "sm",
@@ -641,7 +641,7 @@ return (
                       RFP CATEGORY
                       <div className="my-2">
                         <Widget
-                          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.MultiSelectCategoryDropdown`}
+                          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.MultiSelectCategoryDropdown`}
                           props={{
                             selected: snapshot.labels,
                             disabled: true,
@@ -666,7 +666,7 @@ return (
 
                     <div className="d-flex gap-2 align-items-center mt-4">
                       <Widget
-                        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LikeButton`}
+                        src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.LikeButton`}
                         props={{
                           item,
                           rfpId: rfp.id,
@@ -693,7 +693,7 @@ return (
               </div>
               <div className="border-bottom pb-4 mt-4">
                 <Widget
-                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.CommentsAndLogs`}
+                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.CommentsAndLogs`}
                   props={{
                     ...props,
                     id: rfp.id,
@@ -712,7 +712,7 @@ return (
                 className="pt-4"
               >
                 <Widget
-                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.ComposeComment`}
+                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.ComposeComment`}
                   props={{
                     ...props,
                     item: item,
@@ -761,7 +761,7 @@ return (
                 }
               >
                 <Widget
-                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.TimelineConfigurator`}
+                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.TimelineConfigurator`}
                   props={{
                     timeline: timeline,
                     setTimeline: (v) => {
@@ -824,7 +824,7 @@ return (
                 ishidden={!approvedProposals.length}
               >
                 <Widget
-                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LinkedProposals`}
+                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.LinkedProposals`}
                   props={{
                     linkedProposalIds: (approvedProposals ?? []).map(
                       (i) => i.proposal_id
@@ -843,7 +843,7 @@ return (
                 ishidden={!snapshot.linked_proposals.length}
               >
                 <Widget
-                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.LinkedProposals`}
+                  src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.LinkedProposals`}
                   props={{
                     linkedProposalIds: snapshot.linked_proposals,
                     showStatus:

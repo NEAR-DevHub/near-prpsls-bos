@@ -9,7 +9,7 @@ const { page, ...passProps } = props;
 
 // Import our modules
 const { AppLayout } = VM.require(
-  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.template.AppLayout`
+  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.template.AppLayout`
 );
 
 if (!AppLayout) {
@@ -45,7 +45,7 @@ function Page() {
     case "about": {
       return (
         <Widget
-          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.about`}
+          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.pages.about`}
           props={passProps}
         />
       );
@@ -53,7 +53,7 @@ function Page() {
     case "rfps": {
       return (
         <Widget
-          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.Feed`}
+          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.Feed`}
           props={passProps}
         />
       );
@@ -61,7 +61,7 @@ function Page() {
     case "rfp": {
       return (
         <Widget
-          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.Rfp`}
+          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.Rfp`}
           props={passProps}
         />
       );
@@ -69,7 +69,7 @@ function Page() {
     case "create-rfp": {
       return (
         <Widget
-          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.Editor`}
+          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.Editor`}
           props={passProps}
         />
       );
@@ -77,7 +77,7 @@ function Page() {
     case "create-proposal": {
       return (
         <Widget
-          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.proposals.Editor`}
+          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.proposals.Editor`}
           props={{ ...passProps }}
         />
       );
@@ -86,7 +86,7 @@ function Page() {
     case "proposals": {
       return (
         <Widget
-          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.proposals.Feed`}
+          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.proposals.Feed`}
           props={passProps}
         />
       );
@@ -94,7 +94,7 @@ function Page() {
     case "proposal": {
       return (
         <Widget
-          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.proposals.Proposal`}
+          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.proposals.Proposal`}
           props={passProps}
         />
       );
@@ -102,7 +102,7 @@ function Page() {
     case "about": {
       return (
         <Widget
-          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.about`}
+          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.pages.about`}
           props={passProps}
         />
       );
@@ -110,7 +110,7 @@ function Page() {
     case "admin": {
       return (
         <Widget
-          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.admin`}
+          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.pages.admin`}
           props={passProps}
         />
       );

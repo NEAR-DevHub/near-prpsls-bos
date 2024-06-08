@@ -156,7 +156,7 @@ const Comment = ({ commentItem }) => {
   };
   const content = JSON.parse(Social.get(item.path, blockHeight) ?? "null");
   const link = getLinkUsingCurrentGateway(
-    `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app?page=proposal&id=${props.id}&accountId=${accountId}&blockHeight=${blockHeight}`
+    `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app?page=proposal&id=${props.id}&accountId=${accountId}&blockHeight=${blockHeight}`
   );
   const hightlightComment =
     parseInt(props.blockHeight ?? "") === blockHeight &&
@@ -329,7 +329,7 @@ const LinkToRfp = ({ id, children }) => {
     <a
       className="text-decoration-underline flex-1"
       href={href({
-        widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+        widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
         params: {
           page: "rfp",
           id: id,

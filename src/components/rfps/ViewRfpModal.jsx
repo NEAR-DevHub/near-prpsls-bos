@@ -141,7 +141,7 @@ return (
         <div className="d-flex gap-2 justify-content-center mt-2">
           <Link
             to={linkHref({
-              widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+              widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
               params: { page: "rfp", id: rfpId },
             })}
           >

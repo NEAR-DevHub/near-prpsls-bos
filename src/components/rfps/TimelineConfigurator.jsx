@@ -118,7 +118,7 @@ return (
       <div className="d-flex flex-column gap-2">
         <h6 className="mb-0">Status</h6>
         <Widget
-          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.DropDown`}
+          src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.DropDown`}
           props={{
             options: TimelineStatusOptions,
             selectedValue: TimelineStatusOptions.find(
@@ -203,7 +203,7 @@ return (
           <div className="d-flex flex-column gap-2">
             <div>Sponsor makes a final decision:</div>
             <Widget
-              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.RadioButton`}
+              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.RadioButton`}
               props={{
                 value: "",
                 label: <div className="fw-bold">Proposal Selected</div>,
@@ -220,7 +220,7 @@ return (
               }}
             />
             <Widget
-              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.RadioButton`}
+              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.RadioButton`}
               props={{
                 value: "",
                 disabled: disabled,

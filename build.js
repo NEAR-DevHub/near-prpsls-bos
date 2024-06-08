@@ -1,7 +1,7 @@
 import fs from "fs";
 import replaceInFiles from "replace-in-files";
 
-const transpiledPathPrefix = ".bos/transpiled/src/near-prpsls-bos";
+const transpiledPathPrefix = ".bos/transpiled/src";
 
 async function build() {
   await replaceInFiles({
@@ -55,13 +55,9 @@ async function build() {
   });
 
   await new Promise((resolve) => {
-    fs.rename(
-      transpiledPathPrefix,
-      `${transpiledPathPrefix}/../${packageJson.name}`,
-      () => {
-        resolve();
-      }
-    );
+    fs.rename(transpiledPathPrefix, `${transpiledPathPrefix}/..`, () => {
+      resolve();
+    });
   });
 
   console.log("DONE");

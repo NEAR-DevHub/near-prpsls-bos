@@ -16,7 +16,7 @@ const { readableDate } = VM.require(
 ) || { readableDate: () => {} };
 
 const { getGlobalLabels } = VM.require(
-  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.core.lib.contract`
+  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.core.lib.contract`
 ) || { getGlobalLabels: () => {} };
 
 const Container = styled.div`
@@ -129,7 +129,7 @@ const FeedItem = ({ rfp, index }) => {
   return (
     <a
       href={href({
-        widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+        widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
         params: {
           page: "rfp",
           id: rfp.rfp_id,
@@ -150,7 +150,7 @@ const FeedItem = ({ rfp, index }) => {
             <div className="d-flex gap-2 align-items-center flex-wrap w-100">
               <div className="h6 mb-0 text-black">{rfp.name}</div>
               <Widget
-                src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.MultiSelectCategoryDropdown`}
+                src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.MultiSelectCategoryDropdown`}
                 props={{
                   selected: rfp.labels,
                   disabled: true,
@@ -213,7 +213,7 @@ const FeedItem = ({ rfp, index }) => {
         </div>
         <div className="align-self-center" style={{ minWidth: "fit-content" }}>
           <Widget
-            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.StatusTag`}
+            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.StatusTag`}
             props={{
               timelineStatus: rfp.timeline.status,
             }}
@@ -481,7 +481,7 @@ const FeedPage = () => {
             }}
           />
           <Widget
-            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.molecule.FilterByLabel`}
+            src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.FilterByLabel`}
             props={{
               onStateChange: (select) => {
                 State.update({ label: select.value });
@@ -491,7 +491,7 @@ const FeedPage = () => {
           />
           <div className="d-flex gap-4 align-items-center">
             <Widget
-              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.rfps.StageDropdown`}
+              src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.rfps.StageDropdown`}
               props={{
                 onStateChange: (select) => {
                   State.update({ stage: select.value });
@@ -504,7 +504,7 @@ const FeedPage = () => {
           <div className="mt-2 mt-xs-0">
             <Link
               to={href({
-                widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/near-prpsls-bos.components.pages.app`,
+                widgetSrc: `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app`,
                 params: { page: "create-rfp" },
               })}
             >
