@@ -54,14 +54,18 @@ ${proposalQueryName}(
 }`;
 
 const rfpQueryName = RFP_FEED_INDEXER_QUERY_NAME;
+const rfpLink = getLinkUsingCurrentGateway(
+  `${REPL_INFRASTRUCTURE_COMMITTEE}/widget/app?page=rfp&id=`
+);
 const rfpQuery = `query GetLatestSnapshot($offset: Int = 0, $limit: Int = 10, $where: ${rfpQueryName}_bool_exp = {}) {
 ${rfpQueryName}(
   offset: $offset
   limit: $limit
-  order_by: {proposal_id: desc}
+  order_by: {rfp_id: desc}
   where: $where
 ) {
   rfp_id
+  name
 }
 }`;
 
@@ -149,6 +153,9 @@ let profilesData = {};
 let proposalQuery = '';
 let proposalLink = '';
 let proposalQueryName = '';
+let rfpQuery = '';
+let rfpLink = '';
+let rfpQueryName = '';
 let showAccountAutoComplete = ${showAccountAutoComplete};
 let showProposalIdAutoComplete = ${showProposalIdAutoComplete};
 let showRfpIdAutoComplete = ${showRfpIdAutoComplete}
@@ -226,10 +233,53 @@ function extractNumbers(str) {
   return numbers;
 };
 
+async function getSuggestedRfps(id) {
+  let results = [];
+  const variables = {
+    limit: 3,
+    offset: 0,
+    where: {},
+  };
+  if (id) {
+    const rfpId = extractNumbers(id);
+    if (rfpId) {
+      variables["where"] = { rfp_id: { _eq: id } };
+    } else {
+      variables["where"] = {
+        _or: [
+          { name: { _iregex: id } },
+          { summary: { _iregex: id } },
+          { description: { _iregex: id} },
+        ]
+      };
+    }
+  }
+  await asyncFetch("https://near-queryapi.api.pagoda.co/v1/graphql", {
+    method: "POST",
+    headers: { "x-hasura-role": "polyprogrammist_near" },
+    body: JSON.stringify({
+      query: rfpQuery,
+      variables: variables,
+      operationName: "GetLatestSnapshot",
+    }),
+  })
+    .then((res) => {
+      const rfps =
+        res?.data?.[
+          rfpQueryName
+        ];
+      results = rfps;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  return results;
+};
+
 async function getSuggestedProposals(id) {
   let results = [];
   const variables = {
-    limit: 5,
+    limit: 3,
     offset: 0,
     where: {},
   };
@@ -238,7 +288,13 @@ async function getSuggestedProposals(id) {
     if (proposalId) {
       variables["where"] = { proposal_id: { _eq: id } };
     } else {
-      variables["where"] = { name: { _ilike: "%" + id + "%" } };
+      variables["where"] = {
+        _or: [
+          { name: { _iregex: id } },
+          { summary: { _iregex: id } },
+          { description: { _iregex: id} },
+        ]
+      };
     }
   }
   await asyncFetch("https://near-queryapi.api.pagoda.co/v1/graphql", {
@@ -409,17 +465,27 @@ if (showProposalIdAutoComplete) {
 
     const createReferenceDropDownOptions = async () => {
       try {
-        const proposalIdInput = cm.getRange(referenceCursorStart, cursor);
+        const input = cm.getRange(referenceCursorStart, cursor);
         dropdown.innerHTML = ''; // Clear previous content
         dropdown.appendChild(loader); // Show loader
 
-        const suggestedProposals = await getSuggestedProposals(proposalIdInput);
-        dropdown.innerHTML = suggestedProposals
+        const suggestedProposals = await getSuggestedProposals(input);
+        const suggestedRFPs = await getSuggestedRfps(input);
+
+       const proposalItems = suggestedProposals
         .map(
           (item) =>
-            '<li><button class="dropdown-item cursor-pointer w-100 text-wrap">' + "#" + item?.proposal_id + " " + item.name + '</button></li>'
+            '<li><button class="dropdown-item cursor-pointer w-100 text-wrap">' + "#" + item?.proposal_id + " Proposal: " + item.name + '</button></li>'
         )
         .join("");
+
+        const rfpItems = suggestedRFPs
+        .map(
+          (item) =>
+            '<li><button class="dropdown-item cursor-pointer w-100 text-wrap">' + "#" + item?.rfp_id + " RFP: " + " " + item.name + '</button></li>'
+        )
+        .join("");
+        dropdown.innerHTML = proposalItems + rfpItems;
 
         dropdown.querySelectorAll("li").forEach((li) => {
           li.addEventListener("click", () => {
@@ -427,7 +493,7 @@ if (showProposalIdAutoComplete) {
             const startIndex = selectedText.indexOf('#') + 1; 
             const endIndex = selectedText.indexOf(' ', startIndex);
             const id = endIndex !== -1 ? selectedText.substring(startIndex, endIndex) : selectedText.substring(startIndex);
-            const link = proposalLink + id;
+            const link = (selectedText.includes("RFP:") ? rfpLink : proposalLink) + id;
             const adjustedStart = {
               line: referenceCursorStart.line,
               ch: referenceCursorStart.ch - 1
@@ -506,6 +572,16 @@ window.addEventListener("message", (event) => {
   if (event.data.proposalLink) {
     proposalLink = event.data.proposalLink;
   }
+
+  if (event.data.rfpQuery) {
+    rfpQuery = event.data.rfpQuery;
+  }
+  if (event.data.rfpQueryName) {
+    rfpQueryName = event.data.rfpQueryName;
+  }
+  if (event.data.rfpLink) {
+    rfpLink = event.data.rfpLink;
+  }
   
 });
 </script>
@@ -528,8 +604,11 @@ return (
       profilesData: JSON.stringify(profilesData),
       proposalQuery: proposalQuery,
       proposalQueryName: proposalQueryName,
-      handler: props.data.handler,
       proposalLink: proposalLink,
+      rfpQuery: rfpQuery,
+      rfpQueryName: rfpQueryName,
+      rfpLink: rfpLink,
+      handler: props.data.handler,
     }}
     onMessage={(e) => {
       switch (e.handler) {
