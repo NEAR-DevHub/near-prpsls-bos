@@ -96,13 +96,16 @@ const likeClick = (e) => {
           key: account,
           value: proposalId
             ? {
-                type: "devhub/like",
+                type: "proposal/like",
                 item,
                 proposal: proposalId,
+                widgetAccountId: REPL_INFRASTRUCTURE_COMMITTEE,
               }
             : {
-                type: "like",
+                type: "rfp/like",
                 item,
+                rfp: rfpId,
+                widgetAccountId: REPL_INFRASTRUCTURE_COMMITTEE,
               },
         };
       }
