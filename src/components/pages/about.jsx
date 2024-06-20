@@ -18,7 +18,7 @@ if (!profile) {
 }
 
 return (
-  <div className="p-sm-2 p-4">
+  <div style={{ width: "-webkit-fill-available" }} className="p-3">
     <Widget
       src={`${REPL_INFRASTRUCTURE_COMMITTEE}/widget/components.molecule.Markdown`}
       props={{
