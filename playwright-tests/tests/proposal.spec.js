@@ -39,7 +39,6 @@ test.describe("Wallet is connected as admin", () => {
 
     await page.getByRole("textbox").nth(3).fill("2000");
     await page.getByRole("checkbox").first().click();
-    await page.getByRole("checkbox").nth(1).click();
     await page.getByText("Submit Draft").click();
 
     const transactionText = JSON.stringify(
