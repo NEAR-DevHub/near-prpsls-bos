@@ -89,7 +89,6 @@ test.describe("Wallet is connected with admin account", () => {
       .pressSequentially("The RFP description");
 
     await page.getByRole("checkbox").first().click();
-    await page.getByRole("checkbox").nth(1).click();
 
     const submitbutton = await page.locator("button", { hasText: "submit" });
     await submitbutton.scrollIntoViewIfNeeded();
