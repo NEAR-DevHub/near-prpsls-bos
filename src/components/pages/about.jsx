@@ -5,7 +5,9 @@ import {
 } from "@/includes/common";
 
 const profile = Social.getr(
-  `${REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT}/profile`
+  `${REPL_INFRASTRUCTURE_COMMITTEE_CONTRACT}/profile`,
+  "final",
+  { subscribe: true }
 );
 
 if (!profile) {
