@@ -61,7 +61,9 @@ function createEditTeam({
           metadata: {
             member_metadata_version: "V0",
             description: description,
-            permissions: {},
+            permissions: {
+              "*": ["use-labels", "edit-post"],
+            },
             children: [],
             parents: [],
           },
@@ -82,7 +84,9 @@ function createEditTeam({
         metadata: {
           member_metadata_version: "V0",
           description: description,
-          permissions: {},
+          permissions: {
+            "*": ["use-labels", "edit-post"],
+          },
           children: members,
           parents: [],
         },
