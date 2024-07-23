@@ -795,7 +795,7 @@ const onSubmit = ({ isDraft, isCancel }) => {
         },
   };
   const args = {
-    labels: linkedRfp ? [] : (labels ?? []).map((i) => i.value ?? i),
+    labels: typeof linkedRfp === "number" ? [] : (labels ?? []).map((i) => i.value ?? i),
     body: body,
   };
   if (isEditPage) {
